@@ -15,12 +15,13 @@ const Nominee = ({
   router,
   nominee,
   selectedNomineeId,
-  correctId,
+  correctIds,
   hasStarted,
   isMaster,
+  isPeoplesChoice,
   onClickNominee
 }) => {
-  const answer = correctId === nominee.id
+  const answer = correctIds.includes(nominee.id)
   const notSelected = !selectedNomineeId || selectedNomineeId !== nominee.id
 
   const nomineeClasses = classNames(
@@ -29,7 +30,7 @@ const Nominee = ({
     { 'Nominee--unselectable': hasStarted && !isMaster },
     {
       'Nominee--not-selected': (selectedNomineeId && notSelected) ||
-        (correctId && !selectedNomineeId)
+        (correctIds.size !== 0 && !selectedNomineeId)
     },
     { 'Nominee--answer': answer }
   )
@@ -39,7 +40,7 @@ const Nominee = ({
     'linear-gradient(rgba(183, 162, 97, 0.5), rgba(183, 162, 97, 0.7)),'
 
   const backgroundImage = classNames(
-    { [red]: correctId && !notSelected && !answer },
+    { [red]: correctIds.size !== 0 && !notSelected && !answer },
     { [gold]: answer },
     `url(${nominee.imageUrl})`
   )
@@ -70,9 +71,10 @@ Nominee.propTypes = {
   router: PropTypes.object,
   nominee: PropTypes.instanceOf(Record),
   selectedNomineeId: PropTypes.string,
-  correctId: PropTypes.string,
+  correctIds: PropTypes.object,
   hasStarted: PropTypes.bool,
   isMaster: PropTypes.bool,
+  isPeoplesChoice: PropTypes.bool,
   onClickNominee: PropTypes.func.isRequired
 }
 
@@ -88,7 +90,7 @@ const mapDispatchToProps = (dispatch, props) => {
     onClickNominee: props.nominee.game === props.router.params.id
       ? (_, nominee) => dispatch(toggleCorrectNominee(nominee))
       : (entryId, nominee) => {
-        dispatch(selectNominee(entryId, nominee))
+        dispatch(selectNominee(entryId, nominee, props.isPeoplesChoice))
       }
   }
 }

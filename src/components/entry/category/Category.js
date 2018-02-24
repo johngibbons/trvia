@@ -1,18 +1,32 @@
 import React, { PropTypes } from 'react'
 import './Category.css'
-import { Record, Seq } from 'immutable'
+import { Record, Seq, List } from 'immutable'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { currentNomineesSelector } from '../../../selectors/nominees-selector'
+import {
+  currentNomineesSelector,
+  selectedNomineeIdSelector
+} from '../../../selectors/nominees-selector'
+import {
+  mostPopularNomineeIdsSelector
+} from '../../../selectors/entries-selector'
 
 import { Card, CardHeader } from 'material-ui/Card'
 import NomineesGrid from './nomineesGrid/NomineesGrid'
 import IncorrectIcon from 'material-ui/svg-icons/navigation/cancel'
 import CorrectIcon from 'material-ui/svg-icons/action/check-circle'
 
-const Category = ({ category, value, nominees, selectedNomineeId }) => {
-  const incorrect =
-    category.correctAnswer && category.correctAnswer !== selectedNomineeId
+const Category = ({
+  category,
+  value,
+  nominees,
+  selectedNomineeId,
+  mostPopularNomineeIds,
+  isPeoplesChoice
+}) => {
+  const incorrect = category.correctAnswer && isPeoplesChoice
+    ? !mostPopularNomineeIds.includes(selectedNomineeId)
+    : category.correctAnswer !== selectedNomineeId
   const correct = category.correctAnswer && !incorrect
   const categoryClasses = classNames('Category', {
     'Category--selected': !!selectedNomineeId,
@@ -62,8 +76,15 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
         categoryId={category.id}
         nominees={nominees}
         selectedNomineeId={selectedNomineeId}
-        correctNomineeId={category.correctAnswer}
+        correctNomineeIds={
+          isPeoplesChoice && category.correctAnswer
+            ? mostPopularNomineeIds
+            : category.correctAnswer
+                ? new List().push(category.correctAnswer)
+                : new List()
+        }
         isIncorrect={incorrect}
+        isPeoplesChoice={isPeoplesChoice}
       />
     </Card>
   )
@@ -74,15 +95,16 @@ Category.propTypes = {
   category: PropTypes.instanceOf(Record).isRequired,
   value: PropTypes.number,
   nominees: PropTypes.instanceOf(Seq).isRequired,
-  selectedNomineeId: PropTypes.string
+  selectedNomineeId: PropTypes.string,
+  mostPopularNomineeIds: PropTypes.object
 }
 
 const mapStateToProps = (state, props) => {
   return {
     nominees: currentNomineesSelector(state, props),
-    selectedNomineeId: props.entry
-      ? props.entry.getIn(['selections', props.category.id])
-      : props.category.correctAnswer
+    selectedNomineeId: selectedNomineeIdSelector(state, props),
+    mostPopularNomineeIds: props.entry &&
+      (mostPopularNomineeIdsSelector(state, props) || new List())
   }
 }
 export default connect(mapStateToProps)(Category)

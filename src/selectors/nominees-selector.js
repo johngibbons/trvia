@@ -5,6 +5,9 @@ import Nominee from '../models/Nominee'
 import { CURRENT_GAME } from '../constants'
 
 export const nomineesSelector = state => state.nominees
+const currentEntrySelector = (state, props) => props.entry
+const currentCategorySelector = (state, props) => props.category
+const isPeoplesChoiceSelector = (state, props) => props.isPeoplesChoice
 
 export const currentNomineesSelector = createSelector(
   givenCategorySelector,
@@ -21,4 +24,16 @@ export const gameNomineesSelector = createSelector(nomineesSelector, nominees =>
     .filter(nominee => nominee.game === CURRENT_GAME)
     .map(nominee => nominee)
     .toSet()
+)
+
+export const selectedNomineeIdSelector = createSelector(
+  currentEntrySelector,
+  currentCategorySelector,
+  isPeoplesChoiceSelector,
+  (entry, category, isPeoplesChoice) =>
+    (entry
+      ? isPeoplesChoice
+          ? entry.getIn(['peoplesChoiceSelections', category.id])
+          : entry.getIn(['selections', category.id])
+      : category.correctAnswer)
 )

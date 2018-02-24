@@ -1,31 +1,33 @@
 import React, { PropTypes } from 'react'
+import { Tabs, Tab } from 'material-ui/Tabs'
 import './Entry.css'
-import EntryModel from '../../models/Entry';
-import Game from '../../models/Game';
-import Group from '../../models/Group';
-import { connect } from 'react-redux';
+import EntryModel from '../../models/Entry'
+import Game from '../../models/Game'
+import Group from '../../models/Group'
+import { connect } from 'react-redux'
 import {
   currentEntrySelector,
   entryVisibleSelector,
   entryCompleteSelector,
   isEntryOwnerSelector,
   entryGroupSelector
-} from '../../selectors/entries-selector';
+} from '../../selectors/entries-selector'
 import {
   entryGameSelector,
   entryGameStartedSelector
-} from '../../selectors/games-selector';
-import { entryCategoriesSelector } from '../../selectors/categories-selector';
+} from '../../selectors/games-selector'
+import { entryCategoriesSelector } from '../../selectors/categories-selector'
 import {
   entryScoreSelector,
   entryPossibleScoreSelector,
   gameTotalPossibleSelector
-} from '../../selectors/categories-selector';
-import { Seq } from 'immutable';
+} from '../../selectors/categories-selector'
+import { Seq } from 'immutable'
 
-import PageHeading from '../pageHeading/PageHeading';
-import Category from './category/Category';
-import { Link } from 'react-router';
+import PageHeading from '../pageHeading/PageHeading'
+import Category from './category/Category'
+import { Link } from 'react-router'
+import { green500 } from 'material-ui/styles/colors'
 
 const Entry = ({
   entry,
@@ -41,47 +43,61 @@ const Entry = ({
 }) => {
   return (
     <div>
-      <div
-        className='Entry--score-progress-bar'
-        style={{
-          width: `calc(${possible}/${totalPossible} * 100%)`
-        }}
-      />
-      <div
-        className='Entry--score-progress-bar entry'
-        style={{
-          width: `calc(${score}/${totalPossible} * 100%)`
-        }}
-      />
       <h5 className='Entry--game-name'>{game.name}</h5>
       <div className='Entry--title-container'>
-        <PageHeading
-          text={entry.name}
-        >
-          <Link
-            to={`/groups/${entry.group}`}
-            className={'Entry--group-link'}
-          >{group.name}</Link>
+        <PageHeading text={entry.name}>
+          <Link to={`/groups/${entry.group}`} className={'Entry--group-link'}>
+            {group.name}
+          </Link>
         </PageHeading>
         <div className='Entry--score-container'>
-        {isComplete || hasStarted ?
-            <h3 className='Entry--score'>{`${score}/${possible} points`}</h3>
-            :
-          <h3 className='Entry--incomplete'>incomplete</h3>}
+          {isComplete || hasStarted
+            ? <h3 className='Entry--score'>{`${score}/${possible} points`}</h3>
+            : <h3 className='Entry--incomplete'>incomplete</h3>}
         </div>
       </div>
-      {isVisible ? categories.map((category, i) => {
-        return (
-          <Category
-            key={i}
-            category={category}
-            value={group.values.get(category.id)}
-            entry={entry}
-          />
-        )
-      }) :
-        <h5>Entry not visible until game starts</h5>
-      }
+      <Tabs
+        tabItemContainerStyle={{
+          width: 'calc(100% + 40px)',
+          marginLeft: '-20px',
+          marginRight: '-20px'
+        }}
+        inkBarStyle={{
+          marginLeft: '-20px',
+          marginRight: '-20px',
+          backgroundColor: green500
+        }}
+      >
+        <Tab className='Entry__tab' label='Who you think will win'>
+          {isVisible
+            ? categories.map((category, i) => {
+              return (
+                <Category
+                  key={i}
+                  category={category}
+                  value={group.values.get(category.id)}
+                  entry={entry}
+                  />
+              )
+            })
+            : <h5>Entry not visible until game starts</h5>}
+        </Tab>
+        <Tab className='Entry__tab' label = 'Who you want to win' >
+          {isVisible
+            ? categories.map((category, i) => {
+              return (
+                <Category
+                  key={`peoplesChoice-${i}`}
+                  category={category}
+                  value={group.values.get(category.id)}
+                  entry={entry}
+                  isPeoplesChoice
+                  />
+              )
+            })
+            : <h5>Entry not visible until game starts</h5>}
+        </Tab>
+      </Tabs>
     </div>
   )
 }

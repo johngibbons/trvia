@@ -6,9 +6,10 @@ const Entry = Record({
   group: undefined,
   game: undefined,
   selections: Map(),
+  peoplesChoiceSelections: Map(),
   user: undefined,
   score: 0,
   rank: 1
 })
 
-export default Entry;
+export default Entry

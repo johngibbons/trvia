@@ -56,7 +56,8 @@ export function * selectNominee (action) {
     yield call(
       API.selectNominee,
       action.payload.entryId,
-      action.payload.nominee
+      action.payload.nominee,
+      action.payload.isPeoplesChoice
     )
     yield put(
       selectNomineeSuccess(action.payload.entryId, action.payload.nominee)

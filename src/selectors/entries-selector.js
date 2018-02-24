@@ -14,6 +14,7 @@ const groupsSelector = state => state.groups
 const usersSelector = state => state.users
 const userFromParamsSelector = (state, props) =>
   state.users.get(props.routeParams.id)
+const currentCategorySelector = (state, props) => props.category
 
 const entryScore = (entry, categories, games, group) => {
   const game = games.get(entry.game)
@@ -50,7 +51,9 @@ export const peoplesChoicesSelector = createSelector(
   groupEntriesSelector,
   entries => {
     return entries
-      .map(entry => entry.selections)
+      .map(entry => {
+        return entry.peoplesChoiceSelections
+      })
       .toList()
       .reduce((acc, selections) => {
         return acc.size === 0
@@ -105,12 +108,22 @@ export const currentEntrySelector = (state, props) => {
   }
 }
 
+export const mostPopularByCategorySelector = createSelector(
+  peoplesChoicesSelector,
+  answersWithCounts => answersWithCounts.map(obj => obj.keySeq())
+)
+
+export const mostPopularNomineeIdsSelector = createSelector(
+  currentCategorySelector,
+  mostPopularByCategorySelector,
+  (category, mostPopularByCategory) => mostPopularByCategory.get(category.id)
+)
+
 export const entryPeoplesChoiceScore = createSelector(
   currentEntrySelector,
-  peoplesChoicesSelector,
+  mostPopularByCategorySelector,
   currentGroupSelector,
-  (entry, answersWithCounts, group) => {
-    const answersByCategory = answersWithCounts.map(obj => obj.keySeq())
+  (entry, answersByCategory, group) => {
     return answersByCategory.reduce((acc, answers, category) => {
       return answers.includes(entry.selections.get(category))
         ? acc + group.values.get(category)

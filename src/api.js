@@ -78,10 +78,17 @@ export default class API {
     return database().ref().update(updates)
   }
 
-  static selectNominee (entryId, nominee) {
-    return database()
-      .ref(`/entries/${entryId}/selections/${nominee.category}`)
-      .set(nominee.id)
+  static selectNominee (entryId, nominee, isPeoplesChoice) {
+    console.log('isPeoplesChoice', isPeoplesChoice)
+    return isPeoplesChoice
+      ? database()
+          .ref(
+            `/entries/${entryId}/peoplesChoiceSelections/${nominee.category}`
+          )
+          .set(nominee.id)
+      : database()
+          .ref(`/entries/${entryId}/selections/${nominee.category}`)
+          .set(nominee.id)
   }
 
   static selectCorrectNominee (nominee) {

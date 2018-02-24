@@ -7,9 +7,9 @@ import {
   SELECT_NOMINEE,
   SELECT_NOMINEE_SUCCESS,
   FETCH_USER_ENTRIES
-} from './action-types';
+} from './action-types'
 
-export function createEntry(name, group, game, user) {
+export function createEntry (name, group, game, user) {
   return {
     type: CREATE_ENTRY,
     payload: {
@@ -21,7 +21,7 @@ export function createEntry(name, group, game, user) {
   }
 }
 
-export function fetchEntry(id) {
+export function fetchEntry (id) {
   return {
     type: FETCH_ENTRY,
     payload: {
@@ -30,7 +30,7 @@ export function fetchEntry(id) {
   }
 }
 
-export function setEntry(entry) {
+export function setEntry (entry) {
   return {
     type: SET_ENTRY,
     payload: {
@@ -39,7 +39,7 @@ export function setEntry(entry) {
   }
 }
 
-export function syncEntry({ value }) {
+export function syncEntry ({ value }) {
   return {
     type: SET_ENTRY,
     payload: {
@@ -48,7 +48,7 @@ export function syncEntry({ value }) {
   }
 }
 
-export function setEntries(entries) {
+export function setEntries (entries) {
   return {
     type: SET_ENTRIES,
     payload: {
@@ -57,7 +57,7 @@ export function setEntries(entries) {
   }
 }
 
-export function updateEntry(entry) {
+export function updateEntry (entry) {
   return {
     type: UPDATE_ENTRY,
     payload: {
@@ -66,17 +66,18 @@ export function updateEntry(entry) {
   }
 }
 
-export function selectNominee(entryId, nominee) {
+export function selectNominee (entryId, nominee, isPeoplesChoice) {
   return {
     type: SELECT_NOMINEE,
     payload: {
       entryId,
-      nominee
+      nominee,
+      isPeoplesChoice
     }
   }
 }
 
-export function selectNomineeSuccess(entryId, nominee) {
+export function selectNomineeSuccess (entryId, nominee) {
   return {
     type: SELECT_NOMINEE_SUCCESS,
     payload: {
@@ -86,7 +87,7 @@ export function selectNomineeSuccess(entryId, nominee) {
   }
 }
 
-export function fetchUserEntries(userId) {
+export function fetchUserEntries (userId) {
   return {
     type: FETCH_USER_ENTRIES,
     payload: {
