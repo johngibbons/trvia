@@ -1,5 +1,4 @@
 .EntriesTable {
-  padding-top: 80px;
   overflow: auto;
 }
 
@@ -124,8 +123,6 @@
 .EntriesTable--avatar {
   margin-top: 4px;
 }
-
-.EntriesTable--col-entry-name {}
 
 .EntriesTable--entry-name {
   overflow: hidden;

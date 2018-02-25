@@ -56,37 +56,40 @@ const EntryRow = ({
         {entry.score} / {possibleScore}
       </td>
       {gameStarted &&
-        categories.map(category => {
-          const entryPCSelection = entry.peoplesChoiceSelections.get(
-            category.id
-          )
-          const isCorrect = isPeoplesChoice
-            ? entryPCSelection &&
-                category.peoplesChoiceIds.includes(entryPCSelection)
-            : category.correctAnswer === entry.selections.get(category.id)
-          const categoryClasses = classNames(
-            'EntriesTable--col',
-            'EntriesTable--col-category',
-            {
-              'EntriesTable--col-correct': category.correctAnswer && isCorrect
-            },
-            {
-              'EntriesTable--col-incorrect': category.correctAnswer &&
-                !isCorrect
-            }
-          )
-          const selectedNomineeId = isPeoplesChoice
-            ? entry.peoplesChoiceSelections.get(category.id)
-            : entry.selections.get(category.id)
-          const nominee = nominees.get(selectedNomineeId)
-          return (
-            <td className={categoryClasses}>
-              <div className='EntriesTable--col-category-content'>
-                {nominee ? nominee.text : 'DNP'}
-              </div>
-            </td>
-          )
-        })}
+        categories
+          .filter(category => (isPeoplesChoice ? category.correctAnswer : true))
+          .map(category => {
+            const entryPCSelection = entry.peoplesChoiceSelections.get(
+              category.id
+            )
+            const isCorrect = isPeoplesChoice
+              ? entryPCSelection &&
+                  category.peoplesChoiceIds.includes(entryPCSelection)
+              : category.correctAnswer === entry.selections.get(category.id)
+            const categoryClasses = classNames(
+              'EntriesTable--col',
+              'EntriesTable--col-category',
+              {
+                'EntriesTable--col-correct': category.correctAnswer &&
+                  isCorrect
+              },
+              {
+                'EntriesTable--col-incorrect': category.correctAnswer &&
+                  !isCorrect
+              }
+            )
+            const selectedNomineeId = isPeoplesChoice
+              ? entry.peoplesChoiceSelections.get(category.id)
+              : entry.selections.get(category.id)
+            const nominee = nominees.get(selectedNomineeId)
+            return (
+              <td className={categoryClasses}>
+                <div className='EntriesTable--col-category-content'>
+                  {nominee ? nominee.text : 'DNP'}
+                </div>
+              </td>
+            )
+          })}
     </tr>
   )
 }

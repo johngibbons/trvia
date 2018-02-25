@@ -22,24 +22,25 @@ body {
 }
 
 .ui .item {
-  cursor: pointer;
-  flex: 0 0 auto;
-  position: relative;
-  vertical-align: middle;
-  line-height: 1;
-  text-decoration: none;
-  display: flex;
   align-items: center;
-  border-bottom-color: transparent;
-  margin-right: 20px;
-  padding-bottom: 10px;
-  border-bottom-style: solid;
-  border-radius: 0;
   align-self: flex-end;
-  margin: 0 0 -2px;
-  padding: 10px 1.14285714em;
+  border-bottom-color: transparent;
+  border-bottom-style: solid;
   border-bottom-width: 2px;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  flex: 0 0 auto;
+  line-height: 1;
+  margin: 0 0 -2px;
+  max-width: calc(50% - 40px);
+  padding: 10px 1.14285714em;
+  padding-bottom: 10px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
   transition: color .1s ease;
+  vertical-align: middle;
 }
 
 .tab {
