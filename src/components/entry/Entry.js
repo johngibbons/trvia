@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Tabs, Tab } from 'material-ui/Tabs'
+import { Tab } from 'semantic-ui-react'
 import './Entry.css'
 import EntryModel from '../../models/Entry'
 import Game from '../../models/Game'
@@ -10,7 +10,8 @@ import {
   entryVisibleSelector,
   entryCompleteSelector,
   isEntryOwnerSelector,
-  entryGroupSelector
+  entryGroupSelector,
+  entryPeoplesChoiceScoreSelector
 } from '../../selectors/entries-selector'
 import {
   entryGameSelector,
@@ -27,7 +28,6 @@ import { Seq } from 'immutable'
 import PageHeading from '../pageHeading/PageHeading'
 import Category from './category/Category'
 import { Link } from 'react-router'
-import { green500 } from 'material-ui/styles/colors'
 
 const Entry = ({
   entry,
@@ -35,40 +35,23 @@ const Entry = ({
   group,
   categories,
   score,
+  peoplesChoiceScore,
   possible,
   isVisible,
   isComplete,
   hasStarted,
   totalPossible
 }) => {
-  return (
-    <div>
-      <h5 className='Entry--game-name'>{game.name}</h5>
-      <div className='Entry--title-container'>
-        <PageHeading text={entry.name}>
-          <Link to={`/groups/${entry.group}`} className={'Entry--group-link'}>
-            {group.name}
-          </Link>
-        </PageHeading>
-        <div className='Entry--score-container'>
-          {isComplete || hasStarted
-            ? <h3 className='Entry--score'>{`${score}/${possible} points`}</h3>
-            : <h3 className='Entry--incomplete'>incomplete</h3>}
-        </div>
-      </div>
-      <Tabs
-        tabItemContainerStyle={{
-          width: 'calc(100% + 40px)',
-          marginLeft: '-20px',
-          marginRight: '-20px'
-        }}
-        inkBarStyle={{
-          marginLeft: '-20px',
-          marginRight: '-20px',
-          backgroundColor: green500
-        }}
-      >
-        <Tab className='Entry__tab' label='Who you think will win'>
+  const panes = [
+    {
+      menuItem: 'Who you think will win',
+      pane: (
+        <Tab.Pane key='regular' className='Entry__tab' attached={false}>
+          <div className='Entry--score-container'>
+            {isComplete || hasStarted
+              ? <h3 className='Entry--score'>{`${score}/${possible} points`}</h3>
+              : <h3 className='Entry--incomplete'>incomplete</h3>}
+          </div>
           {isVisible
             ? categories.map((category, i) => {
               return (
@@ -81,8 +64,18 @@ const Entry = ({
               )
             })
             : <h5>Entry not visible until game starts</h5>}
-        </Tab>
-        <Tab className='Entry__tab' label = 'Who you want to win' >
+        </Tab.Pane>
+      )
+    },
+    {
+      menuItem: 'Who you want to win',
+      pane: (
+        <Tab.Pane key='peoplesChoice' className='Entry__tab' attached={false}>
+          <div className='Entry--score-container'>
+            {isComplete || hasStarted
+              ? <h3 className='Entry--score'>{`${peoplesChoiceScore}/${possible} points`}</h3>
+              : <h3 className='Entry--incomplete'>incomplete</h3>}
+          </div>
           {isVisible
             ? categories.map((category, i) => {
               return (
@@ -96,8 +89,26 @@ const Entry = ({
               )
             })
             : <h5>Entry not visible until game starts</h5>}
-        </Tab>
-      </Tabs>
+        </Tab.Pane>
+      )
+    }
+  ]
+
+  return (
+    <div className='Entry'>
+      <h5 className='Entry--game-name'>{game.name}</h5>
+      <div className='Entry--title-container'>
+        <PageHeading text={entry.name}>
+          <Link to={`/groups/${entry.group}`} className={'Entry--group-link'}>
+            {group.name}
+          </Link>
+        </PageHeading>
+      </div>
+      <Tab
+        menu={{ secondary: true, pointing: true }}
+        panes={panes}
+        renderActiveOnly={false}
+      />
     </div>
   )
 }
@@ -122,6 +133,7 @@ const mapStateToProps = (state, props) => {
     game: entryGameSelector(state, props),
     categories: entryCategoriesSelector(state, props),
     score: entryScoreSelector(state, props),
+    peoplesChoiceScore: entryPeoplesChoiceScoreSelector(state, props),
     possible: entryPossibleScoreSelector(state, props),
     isVisible: entryVisibleSelector(state, props),
     isComplete: entryCompleteSelector(state, props),

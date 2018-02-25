@@ -9,8 +9,7 @@ import {
 } from '../../../../selectors/categories-selector'
 import {
   entryUserSelector,
-  entryCompleteSelector,
-  entryPeoplesChoiceScore
+  entryCompleteSelector
 } from '../../../../selectors/entries-selector'
 import { entryGameStartedSelector } from '../../../../selectors/games-selector'
 import classNames from 'classnames'
@@ -27,7 +26,8 @@ const EntryRow = ({
   entryComplete,
   gameStarted,
   onClickEntry,
-  user
+  user,
+  isPeoplesChoice
 }) => {
   const entryCompleteClasses = classNames(
     'EntriesTable--entry-complete-indicator',
@@ -57,24 +57,32 @@ const EntryRow = ({
       </td>
       {gameStarted &&
         categories.map(category => {
+          const entryPCSelection = entry.peoplesChoiceSelections.get(
+            category.id
+          )
+          const isCorrect = isPeoplesChoice
+            ? entryPCSelection &&
+                category.peoplesChoiceIds.includes(entryPCSelection)
+            : category.correctAnswer === entry.selections.get(category.id)
           const categoryClasses = classNames(
             'EntriesTable--col',
             'EntriesTable--col-category',
             {
-              'EntriesTable--col-correct': category.correctAnswer &&
-                category.correctAnswer === entry.selections.get(category.id)
+              'EntriesTable--col-correct': category.correctAnswer && isCorrect
             },
             {
               'EntriesTable--col-incorrect': category.correctAnswer &&
-                category.correctAnswer !== entry.selections.get(category.id)
+                !isCorrect
             }
           )
-          const selectedNomineeId = entry.selections.get(category.id)
+          const selectedNomineeId = isPeoplesChoice
+            ? entry.peoplesChoiceSelections.get(category.id)
+            : entry.selections.get(category.id)
           const nominee = nominees.get(selectedNomineeId)
           return (
             <td className={categoryClasses}>
               <div className='EntriesTable--col-category-content'>
-                {nominee.text}
+                {nominee ? nominee.text : 'DNP'}
               </div>
             </td>
           )
@@ -95,7 +103,6 @@ EntryRow.propTypes = {
 
 const mapStateToProps = (state, props) => {
   return {
-    peoplesChoiceScore: entryPeoplesChoiceScore(state, props),
     possibleScore: entryPossibleScoreSelector(state, props),
     user: entryUserSelector(state, props),
     entryComplete: entryCompleteSelector(state, props),

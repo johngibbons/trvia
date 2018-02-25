@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import './AlertBar.css'
 import { connect } from 'react-redux'
 import { hideAlertBar } from '../../actions/ui-actions'

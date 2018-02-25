@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import './Group.css'
+import { Tab } from 'semantic-ui-react'
 import { List, Seq } from 'immutable'
 import GroupModel from '../../models/Group'
 import Game from '../../models/Game'
 import {
   rankedGroupEntriesSelector,
+  rankedGroupPeoplesChoiceEntriesSelector,
   winningEntriesSelector
 } from '../../selectors/entries-selector'
 import { currentGroupSelector } from '../../selectors/group-selector'
@@ -32,12 +34,42 @@ const Group = ({
   categories,
   game,
   entries,
+  peoplesChoiceEntries,
   winningEntries,
   params,
   gameStarted,
   gameEnded,
   onClickNewEntry
 }) => {
+  const panes = [
+    {
+      menuItem: 'Awards Standings',
+      pane: (
+        <Tab.Pane key='regular' className='Entry__tab' attached={false}>
+          {gameEnded && <WinnerBanner winningEntries={winningEntries} />}
+          <EntriesTable
+            entries={entries}
+            categories={categories}
+            gameStarted={gameStarted}
+          />
+        </Tab.Pane>
+      )
+    },
+    {
+      menuItem: "People's Choice Standings",
+      pane: (
+        <Tab.Pane key='peoplesChoice' className='Entry__tab' attached={false}>
+          {gameEnded && <WinnerBanner winningEntries={winningEntries} />}
+          <EntriesTable
+            entries={peoplesChoiceEntries}
+            categories={categories}
+            gameStarted={gameStarted}
+            isPeoplesChoice
+          />
+        </Tab.Pane>
+      )
+    }
+  ]
   return (
     <div className='Group'>
       <h5 className='Group--game-name'>{game.name}</h5>
@@ -61,11 +93,10 @@ const Group = ({
           }}
           onClick={() => onClickNewEntry('EDIT_VALUES')}
         />}
-      {gameEnded && <WinnerBanner winningEntries={winningEntries} />}
-      <EntriesTable
-        entries={entries}
-        categories={categories}
-        gameStarted={gameStarted}
+      <Tab
+        menu={{ secondary: true, pointing: true }}
+        panes={panes}
+        renderActiveOnly={false}
       />
       {group.id && <NewEntryModal groupId={params.id} gameId={group.game} />}
       {currentUser.id === group.admin && <EditValuesModal group={group} />}
@@ -90,6 +121,7 @@ const mapStateToProps = (state, props) => {
   return {
     currentUser: state.currentUser,
     entries: rankedGroupEntriesSelector(state, props),
+    peoplesChoiceEntries: rankedGroupPeoplesChoiceEntriesSelector(state, props),
     group: currentGroupSelector(state, props),
     categories: currentGroupCategoriesSelector(state, props),
     gameStarted: groupGameStartedSelector(state, props),

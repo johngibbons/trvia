@@ -11,7 +11,7 @@ import {
   mostPopularNomineeIdsSelector
 } from '../../../selectors/entries-selector'
 
-import { Card, CardHeader } from 'material-ui/Card'
+import { Header } from 'semantic-ui-react'
 import NomineesGrid from './nomineesGrid/NomineesGrid'
 import IncorrectIcon from 'material-ui/svg-icons/navigation/cancel'
 import CorrectIcon from 'material-ui/svg-icons/action/check-circle'
@@ -25,53 +25,33 @@ const Category = ({
   isPeoplesChoice
 }) => {
   const incorrect = category.correctAnswer && isPeoplesChoice
-    ? !mostPopularNomineeIds.includes(selectedNomineeId)
+    ? !selectedNomineeId || !mostPopularNomineeIds.includes(selectedNomineeId)
     : category.correctAnswer !== selectedNomineeId
   const correct = category.correctAnswer && !incorrect
   const categoryClasses = classNames('Category', {
     'Category--selected': !!selectedNomineeId,
     'Category--correct': correct,
-    'Category--incorrect': incorrect
+    'Category--incorrect': category.correctAnswer && incorrect
   })
 
   return (
-    <Card className={categoryClasses}>
-      <CardHeader
-        avatar={
-          category.correctAnswer &&
-            (incorrect
-              ? <IncorrectIcon
-                className='Category__status-icon Category__status-icon--incorrect'
-                color='rgb(255, 0, 0)'
-                />
-              : <CorrectIcon
-                className='Category__status-icon Category__status-icon--correct'
-                color='#b7a261'
-                />)
-        }
-        title={category.name}
-        subtitle={`${value} points`}
-        titleStyle={{
-          fontSize: '18px'
-        }}
-        titleColor={
-          category.correctAnswer
-            ? correct ? '#b7a261' : 'rgb(255, 0, 0)'
-            : 'rgba(66, 66, 66, 0.87)'
-        }
-        subtitleStyle={{
-          fontSize: '15px'
-        }}
-        subtitleColor={
-          category.correctAnswer
-            ? correct ? '#b7a261' : 'rgb(255, 0, 0)'
-            : 'rgba(66, 66, 66, 0.54)'
-        }
-        style={{
-          display: 'flex',
-          alignItems: 'center'
-        }}
-      />
+    <div className={categoryClasses}>
+      <Header className='Category__header'>
+        {category.correctAnswer &&
+          (incorrect
+            ? <IncorrectIcon
+              className='Category__status-icon Category__status-icon--incorrect'
+              color='rgb(255, 0, 0)'
+              />
+            : <CorrectIcon
+              className='Category__status-icon Category__status-icon--correct'
+              color='#b7a261'
+              />)}
+        <Header.Content className='Category__header-content'>
+          {category.name}
+          <Header.Subheader className='Category__subheader'>{`${value} points`}</Header.Subheader>
+        </Header.Content>
+      </Header>
       <NomineesGrid
         categoryId={category.id}
         nominees={nominees}
@@ -86,7 +66,7 @@ const Category = ({
         isIncorrect={incorrect}
         isPeoplesChoice={isPeoplesChoice}
       />
-    </Card>
+    </div>
   )
 }
 

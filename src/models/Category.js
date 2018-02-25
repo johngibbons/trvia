@@ -1,4 +1,4 @@
-import { Record, Map } from 'immutable'
+import { Record, Map, List } from 'immutable'
 
 const Category = Record({
   id: undefined,
@@ -7,6 +7,7 @@ const Category = Record({
   nominees: new Map(),
   correctAnswer: null,
   order: 0,
+  peoplesChoiceIds: new List(),
   presentationOrder: 0,
   value: 0
 })

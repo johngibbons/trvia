@@ -1,5 +1,7 @@
-.Entry__tab {
-  background-color: rgba(150, 150, 150, 1) !important;
+.Entry__tab.tab.active {
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .Entry--score-progress-bar {
@@ -39,6 +41,10 @@
   .Entry--title-container .PageHeading {
     margin-bottom: 0;
   }
+}
+
+.Entry--score-container {
+  margin-bottom: 1rem;
 }
 
 .Entry--score {

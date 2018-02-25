@@ -8,9 +8,11 @@ const entryFromPropsSelector = (state, props) =>
   state.entries.get(props.entry.id)
 
 export const currentGroupSelector = (state, props) => {
-  return props.routeParams
-    ? state.groups.get(props.routeParams.id) || new Group()
-    : state.groups.get(props.entry.group)
+  return props.entry
+    ? state.groups.get(props.entry.group)
+    : state.groups.get(props.routeParams.id) ||
+        state.groups.get(state.entries.get(props.routeParams.id).group) ||
+        new Group()
 }
 
 export const userGroupsSelector = createSelector(

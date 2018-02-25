@@ -1,14 +1,15 @@
-import { createSelector } from 'reselect';
-import Game from '../models/Game';
-import { currentEntrySelector } from './entries-selector';
+import { createSelector } from 'reselect'
+import Game from '../models/Game'
+import { currentEntrySelector } from './entries-selector'
 
-export const gamesSelector = state => state.games;
-const currentNomineeSelector = (_, props) => props.nominee;
-const categoriesSelector = state => state.categories;
-const currentGroupSelector = (state, props) => state.groups.get(props.routeParams.id)
+export const gamesSelector = state => state.games
+const currentNomineeSelector = (_, props) => props.nominee
+const categoriesSelector = state => state.categories
+const currentGroupSelector = (state, props) =>
+  state.groups.get(props.routeParams.id)
 
 export const currentGameSelector = (state, props) =>
-  state.games.get(props.routeParams.id) || new Game();
+  state.games.get(props.routeParams.id) || new Game()
 
 export const entryGameSelector = createSelector(
   currentEntrySelector,
@@ -19,13 +20,13 @@ export const entryGameSelector = createSelector(
 export const groupGameSelector = createSelector(
   currentGroupSelector,
   gamesSelector,
-  (group, games) => group && games.get(group.game) || new Game()
+  (group, games) => group && (games.get(group.game) || new Game())
 )
 
 const gameStarted = (categoriesSet, categories) => {
   return categoriesSet.reduce((acc, _, key) => {
-    const category = categories.get(key);
-    return acc || !!(category && category.correctAnswer);
+    const category = categories.get(key)
+    return acc || !!(category && category.correctAnswer)
   }, false)
 }
 
@@ -34,9 +35,9 @@ export const gameStartedSelector = createSelector(
   categoriesSelector,
   currentNomineeSelector,
   (games, categories, nominee) => {
-    const game = games.get(nominee.game) || new Game();
-    const gameCategories = game.categories;
-    return gameStarted(gameCategories, categories);
+    const game = games.get(nominee.game) || new Game()
+    const gameCategories = game.categories
+    return gameStarted(gameCategories, categories)
   }
 )
 
@@ -45,9 +46,9 @@ export const entryGameStartedSelector = createSelector(
   categoriesSelector,
   currentEntrySelector,
   (games, categories, entry) => {
-    const game = games.get(entry.game) || new Game();
-    const gameCategories = game.categories;
-    return gameStarted(gameCategories, categories);
+    const game = games.get(entry.game) || new Game()
+    const gameCategories = game.categories
+    return gameStarted(gameCategories, categories)
   }
 )
 
@@ -56,9 +57,9 @@ export const groupGameStartedSelector = createSelector(
   categoriesSelector,
   currentGroupSelector,
   (games, categories, group) => {
-    const game = (group && games.get(group.game)) || new Game();
-    const gameCategories = game.categories;
-    return gameStarted(gameCategories, categories);
+    const game = (group && games.get(group.game)) || new Game()
+    const gameCategories = game.categories
+    return gameStarted(gameCategories, categories)
   }
 )
 
@@ -67,15 +68,15 @@ export const groupGameEndedSelector = createSelector(
   categoriesSelector,
   currentGroupSelector,
   (games, categories, group) => {
-    const game = (group && games.get(group.game)) || new Game();
-    const gameCategories = game.categories;
+    const game = (group && games.get(group.game)) || new Game()
+    const gameCategories = game.categories
     return gameCategories.reduce((acc, value, key) => {
-      const category = categories.get(key);
-      return acc && category && !!category.correctAnswer;
-    }, true);
+      const category = categories.get(key)
+      return acc && category && !!category.correctAnswer
+    }, true)
   }
 )
 
 export const entriesGameSelector = (state, props) => {
-  return state.games.get(props.group.first().game);
+  return state.games.get(props.group.first().game)
 }

@@ -6,8 +6,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import { startFirebase } from './firebaseSetup'
 import firebase from 'firebase'
 import firebaseui from 'firebaseui'
-import { CURRENT_GAME } from './constants'
 import { save, saveImages } from './helpers/game-helper'
+
 injectTapEventPlugin()
 startFirebase()
 save()

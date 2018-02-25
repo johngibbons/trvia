@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect'
-import { currentGroupSelector } from './group-selector'
 import { Map, Seq, List } from 'immutable'
+import { currentGroupSelector } from '../selectors/group-selector'
 import Entry from '../models/Entry'
 import Game from '../models/Game'
 import Group from '../models/Group'
@@ -98,6 +98,59 @@ export const rankedGroupEntriesSelector = createSelector(
   }
 )
 
+const calculatePeoplesChoiceScore = (
+  categories,
+  entry,
+  answersByCategory,
+  group
+) => {
+  return answersByCategory.reduce((acc, answers, categoryId) => {
+    return categories.get(categoryId).correctAnswer &&
+      entry.peoplesChoiceSelections.get(categoryId) &&
+      answers.includes(entry.peoplesChoiceSelections.get(categoryId))
+      ? acc + group.values.get(categoryId)
+      : acc
+  }, 0)
+}
+
+export const mostPopularByCategorySelector = createSelector(
+  peoplesChoicesSelector,
+  answersWithCounts => {
+    return answersWithCounts.map(obj => obj.keySeq())
+  }
+)
+
+export const rankedGroupPeoplesChoiceEntriesSelector = createSelector(
+  entriesSelector,
+  currentGroupSelector,
+  categoriesSelector,
+  mostPopularByCategorySelector,
+  usersSelector,
+  (entries, group, categories, answersByCategory, users) => {
+    if (!group) return new Seq()
+    return group.entries
+      .keySeq()
+      .map(key => {
+        const entry = entries.get(key)
+        return entry
+          ? entry
+              .set(
+                'score',
+                calculatePeoplesChoiceScore(
+                  categories,
+                  entry,
+                  answersByCategory,
+                  group
+                )
+              )
+              .set('user', users.get(entry.user) || new User())
+          : new Entry({ user: new User() })
+      })
+      .sort((entryA, entryB) => entryB.score - entryA.score)
+      .reduce(entryRankReducer, new List())
+  }
+)
+
 export const currentEntrySelector = (state, props) => {
   if (props.entry && props.entry.id) {
     return state.entries.get(props.entry.id) || new Entry()
@@ -108,28 +161,18 @@ export const currentEntrySelector = (state, props) => {
   }
 }
 
-export const mostPopularByCategorySelector = createSelector(
-  peoplesChoicesSelector,
-  answersWithCounts => answersWithCounts.map(obj => obj.keySeq())
-)
-
 export const mostPopularNomineeIdsSelector = createSelector(
   currentCategorySelector,
   mostPopularByCategorySelector,
   (category, mostPopularByCategory) => mostPopularByCategory.get(category.id)
 )
 
-export const entryPeoplesChoiceScore = createSelector(
+export const entryPeoplesChoiceScoreSelector = createSelector(
+  categoriesSelector,
   currentEntrySelector,
   mostPopularByCategorySelector,
   currentGroupSelector,
-  (entry, answersByCategory, group) => {
-    return answersByCategory.reduce((acc, answers, category) => {
-      return answers.includes(entry.selections.get(category))
-        ? acc + group.values.get(category)
-        : acc
-    }, 0)
-  }
+  calculatePeoplesChoiceScore
 )
 
 const gameStarted = (categoriesSet, categories) => {

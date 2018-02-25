@@ -1,24 +1,18 @@
 import React, { PropTypes } from 'react'
 import './WinnerBanner.css'
-import { List } from'immutable';
-import UserAvatar from '../../users/userAvatar/UserAvatar';
+import { List } from 'immutable'
+import UserAvatar from '../../users/userAvatar/UserAvatar'
 
-const WinnerBanner = ({
-  winningEntries
-}) => {
+const WinnerBanner = ({ winningEntries }) => {
   return (
     <div>
-      <div
-        id='WinnerBanner'
-        className='WinnerBanner'
-      >
-        <div className='WinnerBanner--title'>{winningEntries.size > 1 ? 'Contratulations Oscar Champions!' : 'Congratulations Oscar Champion!'}</div>
+      <div id='WinnerBanner' className='WinnerBanner'>
+        <div className='WinnerBanner--title'>
+          {winningEntries.size > 1 ? 'Champions:' : 'Champion:'}
+        </div>
         {winningEntries.map((entry, i) => {
           return (
-            <div
-              key={i}
-              className='WinnerBanner--winner'
-            >
+            <div key={i} className='WinnerBanner--winner'>
               <UserAvatar
                 className='WinnerBanner--winner-avatar'
                 user={entry.user}
@@ -30,7 +24,7 @@ const WinnerBanner = ({
                 {entry.user.name}
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </div>

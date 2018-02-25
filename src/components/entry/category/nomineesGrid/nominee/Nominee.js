@@ -7,9 +7,6 @@ import { Record } from 'immutable'
 import { selectNominee } from '../../../../../actions/entry-actions'
 import { toggleCorrectNominee } from '../../../../../actions/category-actions'
 import { gameStartedSelector } from '../../../../../selectors/games-selector'
-import { showAlertBar } from '../../../../../actions/ui-actions'
-
-import CheckIcon from 'material-ui/svg-icons/action/check-circle'
 
 const Nominee = ({
   router,

@@ -16,7 +16,7 @@ export async function save (overwrite = false) {
   // don't overwrite existing game
   if (isDuplicate && !overwrite) return
 
-  Object.keys(data.categories).map(key => {
+  Object.keys(data.categories).forEach(key => {
     const categoryKey = database().ref().child('categories').push().key
     const updates = {
       [`/categories/${categoryKey}`]: new Category({
@@ -29,7 +29,7 @@ export async function save (overwrite = false) {
     }
     database().ref().update(updates)
 
-    data.categories[key].nominees.map(nominee => {
+    data.categories[key].nominees.forEach(nominee => {
       const nomineeKey = database().ref().child('nominees').push().key
       const updates = {
         [`/nominees/${nomineeKey}`]: new Nominee({

@@ -2,8 +2,6 @@
   margin-bottom: 32px;
   transition: all 0.3s ease !important;
   box-shadow: none !important;
-  margin-left: -16px;
-  margin-right: -16px;
 }
 
 .Category__status-icon {
@@ -11,4 +9,37 @@
   width: 30px !important;
   height: 30px !important;
   margin-right: 5px !important;
+}
+
+.Category__header {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.Category__header-content {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.Category--correct .Category__header-content {
+  color: #b7a261;
+}
+
+.Category--incorrect .Category__header-content {
+  color: red;
+}
+
+.Category__subheader {
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(0, 0, 0, .6);
+}
+
+.Category--correct .Category__subheader {
+  color: #b7a261;
+}
+
+.Category--incorrect .Category__subheader {
+  color: red;
 }
