@@ -40,6 +40,7 @@ export function * fetchGameAndDependents (gameId) {
 export function * fetchGame (action) {
   try {
     yield call(fetchGameAndDependents, action.payload.id)
+    yield action.payload.next()
   } catch (errors) {
     console.log(errors)
   }

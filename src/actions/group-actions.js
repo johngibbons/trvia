@@ -7,9 +7,9 @@ import {
   SET_GROUP_ATTR,
   SAVE_GROUP_VALUES,
   SAVE_GROUP_VALUES_SUCCESS
-} from './action-types';
+} from './action-types'
 
-export function createGroup(name, game) {
+export function createGroup (name, game) {
   return {
     type: CREATE_GROUP,
     payload: {
@@ -19,7 +19,7 @@ export function createGroup(name, game) {
   }
 }
 
-export function createGroupSuccess(id, group) {
+export function createGroupSuccess (id, group) {
   return {
     type: CREATE_GROUP_SUCCESS,
     payload: {
@@ -29,7 +29,7 @@ export function createGroupSuccess(id, group) {
   }
 }
 
-export function setGroup(group) {
+export function setGroup (group) {
   return {
     type: SET_GROUP,
     payload: {
@@ -38,7 +38,7 @@ export function setGroup(group) {
   }
 }
 
-export function setGroupAttr(response) {
+export function setGroupAttr (response) {
   return {
     type: SET_GROUP_ATTR,
     payload: {
@@ -47,16 +47,17 @@ export function setGroupAttr(response) {
   }
 }
 
-export function fetchGroup(id) {
+export function fetchGroup (id, next) {
   return {
     type: FETCH_GROUP,
     payload: {
-      id
+      id,
+      next
     }
   }
 }
 
-export function fetchUserGroups(userId) {
+export function fetchUserGroups (userId) {
   return {
     type: FETCH_USER_GROUPS,
     payload: {
@@ -65,7 +66,7 @@ export function fetchUserGroups(userId) {
   }
 }
 
-export function saveGroupValues(groupId) {
+export function saveGroupValues (groupId) {
   return {
     type: SAVE_GROUP_VALUES,
     payload: {
@@ -74,7 +75,7 @@ export function saveGroupValues(groupId) {
   }
 }
 
-export function saveGroupValuesSuccess(groupId, newValues) {
+export function saveGroupValuesSuccess (groupId, newValues) {
   return {
     type: SAVE_GROUP_VALUES_SUCCESS,
     payload: {

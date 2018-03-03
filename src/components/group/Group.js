@@ -72,7 +72,7 @@ const Group = ({
   ]
   return (
     <div className='Group'>
-      <h5 className='Group--game-name'>{game.name}</h5>
+      <h5 className='Group--game-name'>{game && game.name}</h5>
       <PageHeading text={group.name} />
       {!gameStarted &&
         <RaisedButton

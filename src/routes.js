@@ -35,25 +35,25 @@ export default (
   <Route path='/' component={PageContainer} onEnter={getCurrentUser}>
     <IndexRoute
       component={Home}
-      onEnter={() => {
-        store.dispatch(fetchGame(CURRENT_GAME))
+      onEnter={(nextState, replace, next) => {
+        store.dispatch(fetchGame(CURRENT_GAME, next))
       }}
     />
     <Route
       path='games/:id/edit'
       component={EditGame}
       onEnter={(nextState, replace, next) =>
-        requireAuth(nextState, replace, () =>
-          store.dispatch(fetchGame(nextState.params.id))
-        )}
+        requireAuth(nextState, replace, () => {
+          store.dispatch(fetchGame(nextState.params.id, next))
+        })}
     />
     <Route path='games/:id' component={Game} />
     <Route
       path='groups/:id'
       component={Group}
       onEnter={(nextState, replace, next) => {
-        return requireAuth(nextState, replace, () => {
-          return store.dispatch(fetchGroup(nextState.params.id))
+        return requireAuth(nextState, replace, async () => {
+          store.dispatch(fetchGroup(nextState.params.id, next))
         })
       }}
     />
@@ -61,17 +61,17 @@ export default (
       path='entries/:id'
       component={Entry}
       onEnter={(nextState, replace, next) =>
-        requireAuth(nextState, replace, () =>
-          store.dispatch(fetchEntry(nextState.params.id))
-        )}
+        requireAuth(nextState, replace, () => {
+          store.dispatch(fetchEntry(nextState.params.id, next))
+        })}
     />
     <Route
       path='users/:id/entries'
       component={UserEntries}
       onEnter={(nextState, replace, next) =>
-        requireAuth(nextState, replace, () =>
-          store.dispatch(fetchUserEntries(nextState.params.id))
-        )}
+        requireAuth(nextState, replace, () => {
+          store.dispatch(fetchUserEntries(nextState.params.id, next))
+        })}
     />
     <Route path='admin' component={Admin} onEnter={requireAuth}>
       <Route path='search' component={Search} />
@@ -79,9 +79,9 @@ export default (
         path='games/:id/master'
         component={MasterEntry}
         onEnter={(nextState, replace, next) => {
-          requireAuth(nextState, replace, () =>
-            store.dispatch(fetchGame(nextState.params.id))
-          )
+          requireAuth(nextState, replace, () => {
+            store.dispatch(fetchGame(nextState.params.id, next))
+          })
         }}
       />
     </Route>

@@ -21,11 +21,12 @@ export function createEntry (name, group, game, user) {
   }
 }
 
-export function fetchEntry (id) {
+export function fetchEntry (id, next) {
   return {
     type: FETCH_ENTRY,
     payload: {
-      id
+      id,
+      next
     }
   }
 }
@@ -87,11 +88,12 @@ export function selectNomineeSuccess (entryId, nominee) {
   }
 }
 
-export function fetchUserEntries (userId) {
+export function fetchUserEntries (userId, next) {
   return {
     type: FETCH_USER_ENTRIES,
     payload: {
-      userId
+      userId,
+      next
     }
   }
 }

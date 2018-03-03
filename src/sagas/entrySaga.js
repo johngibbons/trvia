@@ -37,11 +37,13 @@ export function * watchCreateEntry () {
 }
 
 export function * fetchEntry (action) {
+  console.log('3')
   try {
     const entry = yield call(get, 'entries', action.payload.id)
     yield put(setEntry(entry))
     yield call(fetchGameAndDependents, entry.game)
     yield call(syncCategories)
+    yield action.payload.next()
   } catch (errors) {
     console.log(errors)
   }
@@ -91,6 +93,7 @@ export function * fetchUserEntries (action) {
     const response = yield call([ref, ref.once], 'value')
     const entries = response.val()
     yield put(setEntries(entries))
+    yield action.payload.next()
     if (user.groups) {
       for (const key of Object.keys(user.groups)) {
         yield fork(getAndSetGroup, key)
