@@ -42,9 +42,11 @@ export const groupEntriesSelector = createSelector(
   entriesSelector,
   currentGroupSelector,
   (entries, currentGroup) =>
-    currentGroup
-      .get('entries')
-      .mapEntries(([key, val]) => [key, entries.get(key)])
+    (currentGroup
+      ? currentGroup
+          .get('entries')
+          .mapEntries(([key, val]) => [key, entries.get(key)])
+      : new Map())
 )
 
 export const peoplesChoicesSelector = createSelector(
@@ -52,7 +54,7 @@ export const peoplesChoicesSelector = createSelector(
   entries => {
     return entries
       .map(entry => {
-        return entry.peoplesChoiceSelections
+        return entry ? entry.peoplesChoiceSelections : new Map()
       })
       .toList()
       .reduce((acc, selections) => {

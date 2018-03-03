@@ -77,8 +77,8 @@ export function * fetchGroup (action) {
     const group = yield call(get, 'groups', id)
     yield put(setGroup(group))
     yield call(fetchGameAndDependents, group.game)
-    yield call(syncGroupAndDependents, null)
     yield next()
+    yield call(syncGroupAndDependents, null)
   } catch (errors) {
     console.log(errors)
   }

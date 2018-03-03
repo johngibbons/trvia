@@ -78,8 +78,7 @@ export const entryPossibleScoreSelector = createSelector(
 
 export const gameTotalPossibleSelector = createSelector(
   entryGroupSelector,
-  group =>
-    (group ? group.values.reduce((acc, value) => acc + value, 0) : new Group())
+  group => (group ? group.values.reduce((acc, value) => acc + value, 0) : 0)
 )
 
 export const groupCategoriesSelector = createSelector(

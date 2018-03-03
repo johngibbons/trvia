@@ -37,13 +37,12 @@ export function * watchCreateEntry () {
 }
 
 export function * fetchEntry (action) {
-  console.log('3')
   try {
     const entry = yield call(get, 'entries', action.payload.id)
     yield put(setEntry(entry))
     yield call(fetchGameAndDependents, entry.game)
-    yield call(syncCategories)
     yield action.payload.next()
+    yield call(syncCategories)
   } catch (errors) {
     console.log(errors)
   }
