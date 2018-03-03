@@ -42,7 +42,7 @@ export default (
     <Route
       path='games/:id/edit'
       component={EditGame}
-      onEnter={(nextState, replace) =>
+      onEnter={(nextState, replace, next) =>
         requireAuth(nextState, replace, () =>
           store.dispatch(fetchGame(nextState.params.id))
         )}
@@ -51,15 +51,16 @@ export default (
     <Route
       path='groups/:id'
       component={Group}
-      onEnter={(nextState, replace) =>
-        requireAuth(nextState, replace, () =>
-          store.dispatch(fetchGroup(nextState.params.id))
-        )}
+      onEnter={(nextState, replace, next) => {
+        return requireAuth(nextState, replace, () => {
+          return store.dispatch(fetchGroup(nextState.params.id))
+        })
+      }}
     />
     <Route
       path='entries/:id'
       component={Entry}
-      onEnter={(nextState, replace) =>
+      onEnter={(nextState, replace, next) =>
         requireAuth(nextState, replace, () =>
           store.dispatch(fetchEntry(nextState.params.id))
         )}
@@ -67,20 +68,17 @@ export default (
     <Route
       path='users/:id/entries'
       component={UserEntries}
-      onEnter={(nextState, replace) =>
+      onEnter={(nextState, replace, next) =>
         requireAuth(nextState, replace, () =>
           store.dispatch(fetchUserEntries(nextState.params.id))
         )}
     />
     <Route path='admin' component={Admin} onEnter={requireAuth}>
-      <Route
-        path='search'
-        component={Search}
-      />
+      <Route path='search' component={Search} />
       <Route
         path='games/:id/master'
         component={MasterEntry}
-        onEnter={(nextState, replace) => {
+        onEnter={(nextState, replace, next) => {
           requireAuth(nextState, replace, () =>
             store.dispatch(fetchGame(nextState.params.id))
           )

@@ -12,3 +12,5 @@ export const UI = Record({
   values: new Map(),
   nextLocation: ''
 })
+
+export default UI

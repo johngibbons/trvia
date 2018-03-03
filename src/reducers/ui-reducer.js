@@ -52,8 +52,9 @@ const ui = (state = new UI(), action) => {
       return state
         .delete('modal')
         .mergeIn(['values'], new Map(action.payload.newValues))
-    case SET_NEXT_LOCATION:
+    case SET_NEXT_LOCATION: {
       return state.set('nextLocation', action.payload.nextLocation)
+    }
     case SHOW_ALERT_BAR:
       return state.merge({
         isAlertBarOpen: true,
