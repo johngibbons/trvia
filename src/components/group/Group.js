@@ -8,7 +8,8 @@ import Game from '../../models/Game'
 import {
   rankedGroupEntriesSelector,
   rankedGroupPeoplesChoiceEntriesSelector,
-  winningEntriesSelector
+  winningEntriesSelector,
+  winningPeoplesChoiceSelector
 } from '../../selectors/entries-selector'
 import { currentGroupSelector } from '../../selectors/group-selector'
 import {
@@ -36,6 +37,7 @@ const Group = ({
   entries,
   peoplesChoiceEntries,
   winningEntries,
+  winningPeoplesChoice,
   params,
   gameStarted,
   gameEnded,
@@ -59,7 +61,7 @@ const Group = ({
       menuItem: "People's Choice Standings",
       pane: (
         <Tab.Pane key='peoplesChoice' className='Entry__tab' attached={false}>
-          {gameEnded && <WinnerBanner winningEntries={winningEntries} />}
+          {gameEnded && <WinnerBanner winningEntries={winningPeoplesChoice} />}
           <EntriesTable
             entries={peoplesChoiceEntries}
             categories={categories}
@@ -111,6 +113,7 @@ Group.propTypes = {
   group: PropTypes.instanceOf(GroupModel),
   entries: PropTypes.instanceOf(List),
   winningEntries: PropTypes.instanceOf(List),
+  winningPeoplesChoice: PropTypes.instanceOf(List),
   params: PropTypes.object,
   gameStarted: PropTypes.bool,
   gameEnded: PropTypes.bool,
@@ -127,7 +130,8 @@ const mapStateToProps = (state, props) => {
     gameStarted: groupGameStartedSelector(state, props),
     gameEnded: groupGameEndedSelector(state, props),
     game: groupGameSelector(state, props),
-    winningEntries: winningEntriesSelector(state, props)
+    winningEntries: winningEntriesSelector(state, props),
+    winningPeoplesChoice: winningPeoplesChoiceSelector(state, props)
   }
 }
 

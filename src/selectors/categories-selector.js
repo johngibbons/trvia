@@ -1,5 +1,4 @@
 import Category from '../models/Category'
-import Group from '../models/Group'
 import { createSelector } from 'reselect'
 import { currentGameSelector, entryGameSelector } from './games-selector.js'
 import {

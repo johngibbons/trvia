@@ -243,3 +243,8 @@ export const winningEntriesSelector = createSelector(
   rankedGroupEntriesSelector,
   entries => entries.filter(entry => entry.rank === 1)
 )
+
+export const winningPeoplesChoiceSelector = createSelector(
+  rankedGroupPeoplesChoiceEntriesSelector,
+  entries => entries.filter(entry => entry.rank === 1)
+)
