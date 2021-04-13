@@ -8,7 +8,7 @@ import { entryPossibleScoreSelector } from "../../../../selectors/categories-sel
 import {
   entryUserSelector,
   entryCompleteSelector,
-  entryPeoplesChoiceScore
+  entryPeoplesChoiceScore,
 } from "../../../../selectors/entries-selector";
 import { entryGameStartedSelector } from "../../../../selectors/games-selector";
 import classNames from "classnames";
@@ -27,7 +27,7 @@ const EntryRow = ({
   entryComplete,
   gameStarted,
   onClickEntry,
-  user
+  user,
 }) => {
   return (
     <tr
@@ -70,19 +70,19 @@ const EntryRow = ({
         categories
           .toList()
           .toJS()
-          .map(category => {
+          .map((category) => {
             const categoryClasses = classNames(
               "EntriesTable--col",
               "EntriesTable--col-category",
               {
                 "EntriesTable--col-correct":
                   category.correctAnswer &&
-                  category.correctAnswer === entry.selections[category.id]
+                  category.correctAnswer === entry.selections[category.id],
               },
               {
                 "EntriesTable--col-incorrect":
                   category.correctAnswer &&
-                  category.correctAnswer !== entry.selections[category.id]
+                  category.correctAnswer !== entry.selections[category.id],
               }
             );
             const selectedNomineeId = entry.selections[category.id];
@@ -102,7 +102,7 @@ EntryRow.propTypes = {
   possibleScore: PropTypes.number,
   entryComplete: PropTypes.bool,
   gameStarted: PropTypes.bool,
-  onClickEntry: PropTypes.func.isRequired
+  onClickEntry: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, props) => {
@@ -112,13 +112,10 @@ const mapStateToProps = (state, props) => {
     user: entryUserSelector(state, props),
     entryComplete: entryCompleteSelector(state, props),
     gameStarted: entryGameStartedSelector(state, props),
-    nominees: state.nominees.toJS()
+    nominees: state.nominees.toJS(),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onClickEntry: push
-  }
-)(EntryRow);
+export default connect(mapStateToProps, {
+  onClickEntry: push,
+})(EntryRow);

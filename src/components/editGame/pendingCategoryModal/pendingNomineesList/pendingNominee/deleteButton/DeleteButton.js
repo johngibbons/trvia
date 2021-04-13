@@ -1,28 +1,20 @@
-import React, { PropTypes } from 'react'
-import './DeleteButton.css'
+import React, { PropTypes } from "react";
+import "./DeleteButton.css";
 
-import IconButton from 'material-ui/IconButton';
-import DeleteIcon from 'material-ui/svg-icons/navigation/cancel';
-import { red50, red900 } from 'material-ui/styles/colors';
+import IconButton from "material-ui/IconButton";
+import DeleteIcon from "material-ui/svg-icons/navigation/cancel";
+import { red50, red900 } from "material-ui/styles/colors";
 
-const DeleteButton = ({
-  onClick
-}) => {
+const DeleteButton = ({ onClick }) => {
   return (
-    <IconButton
-      className='DeleteButton'
-      onClick={onClick}
-    >
-      <DeleteIcon
-        color={red50}
-        hoverColor={red900}
-      />
+    <IconButton className="DeleteButton" onClick={onClick}>
+      <DeleteIcon color={red50} hoverColor={red900} />
     </IconButton>
-  )
-}
+  );
+};
 
 DeleteButton.propTypes = {
-  onClick: PropTypes.func.isRequired
-}
+  onClick: PropTypes.func.isRequired,
+};
 
 export default DeleteButton;

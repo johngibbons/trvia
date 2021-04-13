@@ -1,13 +1,10 @@
-import React, { PropTypes } from 'react'
-import './Nominee.css'
-import { Record } from 'immutable'
+import React, { PropTypes } from "react";
+import "./Nominee.css";
+import { Record } from "immutable";
 
-import { ListItem } from 'material-ui/List'
+import { ListItem } from "material-ui/List";
 
-const Nominee = ({
-  nominee,
-  disabled
-}) => {
+const Nominee = ({ nominee, disabled }) => {
   return (
     <div>
       <ListItem
@@ -18,15 +15,15 @@ const Nominee = ({
       <img
         src={nominee.imageUrl}
         style={{
-          maxWidth: '100%'
+          maxWidth: "100%",
         }}
       />
     </div>
-  )
-}
+  );
+};
 
 Nominee.propTypes = {
-  nominee: PropTypes.instanceOf(Record)
-}
+  nominee: PropTypes.instanceOf(Record),
+};
 
-export default Nominee
+export default Nominee;

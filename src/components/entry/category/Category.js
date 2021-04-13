@@ -18,7 +18,7 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
   const categoryClasses = classNames("Category", {
     "Category--selected": !!selectedNomineeId,
     "Category--correct": correct,
-    "Category--incorrect": incorrect
+    "Category--incorrect": incorrect,
   });
   const doneColor = "rgb(56, 109, 159)";
 
@@ -51,7 +51,7 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
         title={category.name}
         subtitle={`${value} points`}
         titleStyle={{
-          fontSize: "18px"
+          fontSize: "18px",
         }}
         titleColor={
           category.correctAnswer
@@ -63,7 +63,7 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
             : "rgba(66, 66, 66, 0.87)"
         }
         subtitleStyle={{
-          fontSize: "15px"
+          fontSize: "15px",
         }}
         subtitleColor={
           category.correctAnswer
@@ -76,10 +76,10 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
         }
         style={{
           display: "flex",
-          alignItems: "center"
+          alignItems: "center",
         }}
         textStyle={{
-          paddingRight: 0
+          paddingRight: 0,
         }}
       />
       <NomineesGrid
@@ -98,7 +98,7 @@ Category.propTypes = {
   category: PropTypes.instanceOf(Record).isRequired,
   value: PropTypes.number,
   nominees: PropTypes.instanceOf(Seq).isRequired,
-  selectedNomineeId: PropTypes.string
+  selectedNomineeId: PropTypes.string,
 };
 
 const mapStateToProps = (state, props) => {
@@ -106,7 +106,7 @@ const mapStateToProps = (state, props) => {
     nominees: currentNomineesSelector(state, props),
     selectedNomineeId: props.entry
       ? props.entry.getIn(["selections", props.category.id])
-      : props.category.correctAnswer
+      : props.category.correctAnswer,
   };
 };
 export default connect(mapStateToProps)(Category);

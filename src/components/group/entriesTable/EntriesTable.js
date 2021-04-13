@@ -46,7 +46,7 @@ const EntriesTable = ({ entries, categories, gameStarted }) => {
               categories
                 .toList()
                 .toJS()
-                .map(category => {
+                .map((category) => {
                   return (
                     <th
                       key={category.id}
@@ -77,7 +77,7 @@ const EntriesTable = ({ entries, categories, gameStarted }) => {
 EntriesTable.propTypes = {
   entries: PropTypes.instanceOf(List),
   categories: PropTypes.instanceOf(Seq),
-  gameStarted: PropTypes.bool
+  gameStarted: PropTypes.bool,
 };
 
 export default EntriesTable;

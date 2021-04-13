@@ -26,7 +26,7 @@ const Home = ({ currentUser, nominees, onClickNewGroup }) => {
             primary
             label="Start a group"
             labelStyle={{
-              color: "#424242"
+              color: "#424242",
             }}
             onClick={() => {
               currentUser.id
@@ -43,13 +43,13 @@ const Home = ({ currentUser, nominees, onClickNewGroup }) => {
       </div>
       <div className="Home-movie-carousel">
         <div className="Home-movie-images">
-          {nominees.map(nominee => {
+          {nominees.map((nominee) => {
             return (
               <div
                 key={nominee.get("id")}
                 className="Home-nominee-poster"
                 style={{
-                  backgroundImage: `url(${nominee.get("imageUrl")})`
+                  backgroundImage: `url(${nominee.get("imageUrl")})`,
                 }}
               />
             );
@@ -64,19 +64,16 @@ const Home = ({ currentUser, nominees, onClickNewGroup }) => {
 Home.propTypes = {
   currentUser: PropTypes.instanceOf(User),
   nominees: PropTypes.instanceOf(Set),
-  onClickNewGroup: PropTypes.func.isRequired
+  onClickNewGroup: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     currentUser: state.currentUser,
-    nominees: gameNomineesSelector(state)
+    nominees: gameNomineesSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onClickNewGroup: openModal
-  }
-)(Home);
+export default connect(mapStateToProps, {
+  onClickNewGroup: openModal,
+})(Home);

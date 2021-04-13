@@ -1,9 +1,9 @@
-import React, { PropTypes } from 'react'
-import './AlertBar.css'
-import { connect } from 'react-redux'
-import { hideAlertBar } from '../../actions/ui-actions'
+import React, { PropTypes } from "react";
+import "./AlertBar.css";
+import { connect } from "react-redux";
+import { hideAlertBar } from "../../actions/ui-actions";
 
-import Snackbar from 'material-ui/Snackbar'
+import Snackbar from "material-ui/Snackbar";
 
 const AlertBar = ({ isOpen, message, onClose, isError }) => {
   return (
@@ -13,27 +13,27 @@ const AlertBar = ({ isOpen, message, onClose, isError }) => {
       autoHideDuration={3000}
       onRequestClose={onClose}
       bodyStyle={{
-        backgroundColor: isError ? 'rgb(220, 0, 0)' : '#b7a261'
+        backgroundColor: isError ? "rgb(220, 0, 0)" : "#b7a261",
       }}
       style={{
-        boxSizing: 'border-box',
+        boxSizing: "border-box",
         left: 0,
-        width: '100vw',
-        transform: isOpen ? 'translate(0, 0)' : 'translate(0, 48px)',
-        justifyContent: 'center'
+        width: "100vw",
+        transform: isOpen ? "translate(0, 0)" : "translate(0, 48px)",
+        justifyContent: "center",
       }}
     />
-  )
-}
+  );
+};
 
 const mapStateToProps = ({ ui }) => {
   return {
     isOpen: ui.isAlertBarOpen,
     message: ui.alertBarMessage,
-    isError: ui.isAlertBarError
-  }
-}
+    isError: ui.isAlertBarError,
+  };
+};
 
 export default connect(mapStateToProps, {
-  onClose: hideAlertBar
-})(AlertBar)
+  onClose: hideAlertBar,
+})(AlertBar);

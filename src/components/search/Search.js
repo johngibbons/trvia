@@ -8,11 +8,11 @@ import { updateSearchField } from "../../actions/ui-actions";
 import {
   submitSearch,
   saveTitle,
-  savePerson
+  savePerson,
 } from "../../actions/admin-actions";
 import {
   titleResultsSelector,
-  peopleResultsSelector
+  peopleResultsSelector,
 } from "../../selectors/admin-selector";
 
 const Search = ({
@@ -23,12 +23,12 @@ const Search = ({
   onChangeSearchInput,
   onSavePerson,
   onSaveTitle,
-  onSubmitSearch
+  onSubmitSearch,
 }) => {
   return (
     <div className="Search">
       <form
-        onSubmit={e => {
+        onSubmit={(e) => {
           e.preventDefault();
           onSubmitSearch(searchValue);
         }}
@@ -92,24 +92,21 @@ Search.propTypes = {
   onChangeSearchInput: PropTypes.func.isRequired,
   onSubmitSearch: PropTypes.func.isRequired,
   onSaveTitle: PropTypes.func.isRequired,
-  onSavePerson: PropTypes.func.isRequired
+  onSavePerson: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { ui } = state;
   return {
     searchValue: ui.searchValue,
     peopleResults: peopleResultsSelector(state),
-    titleResults: titleResultsSelector(state)
+    titleResults: titleResultsSelector(state),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  {
-    onChangeSearchInput: updateSearchField,
-    onSubmitSearch: submitSearch,
-    onSaveTitle: saveTitle,
-    onSavePerson: savePerson
-  }
-)(Search);
+export default connect(mapStateToProps, {
+  onChangeSearchInput: updateSearchField,
+  onSubmitSearch: submitSearch,
+  onSaveTitle: saveTitle,
+  onSavePerson: savePerson,
+})(Search);

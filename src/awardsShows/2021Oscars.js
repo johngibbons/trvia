@@ -12,7 +12,7 @@ export default {
         { text: "Promising Young Woman" },
         { text: "Sound of Metal" },
         { text: "The Trial of the Chicago 7" },
-      ]
+      ],
     },
     bestActor: {
       value: 8,
@@ -21,23 +21,26 @@ export default {
         { text: "Riz Ahmed", secondaryText: "Sound of Metal" },
         {
           text: "Chadwick Boseman",
-          secondaryText: "Ma Rainey’s Black Bottom"
+          secondaryText: "Ma Rainey's Black Bottom",
         },
         { text: "The Father", secondaryText: "The Father" },
         { text: "Gary Oldman", secondaryText: "Mank" },
-        { text: "Steven Yeun", secondaryText: "Minari" }
-      ]
+        { text: "Steven Yeun", secondaryText: "Minari" },
+      ],
     },
     bestActress: {
       value: 8,
       name: "Actress in a Leading Role",
       nominees: [
-        { text: "Viola Davis", secondaryText: "Ma Rainey’s Black Bottom" },
-        { text: "Andra Day", secondaryText: "The United States v. Billie Holiday" },
+        { text: "Viola Davis", secondaryText: "Ma Rainey's Black Bottom" },
+        {
+          text: "Andra Day",
+          secondaryText: "The United States v. Billie Holiday",
+        },
         { text: "Vanessa Kirby", secondaryText: "Pieces of a Woman" },
         { text: "Frances McDormand", secondaryText: "Nomadland" },
-        { text: "Carey Mulligan", secondaryText: "Promising Young Woman" }
-      ]
+        { text: "Carey Mulligan", secondaryText: "Promising Young Woman" },
+      ],
     },
     bestSupportingActor: {
       value: 4,
@@ -45,13 +48,19 @@ export default {
       nominees: [
         {
           text: "Sacha Baron Cohen",
-          secondaryText: "The Trial of the Chicago "
+          secondaryText: "The Trial of the Chicago ",
         },
-        { text: "Daniel Kaluuya", secondaryText: "Judas and the Black Messiah" },
+        {
+          text: "Daniel Kaluuya",
+          secondaryText: "Judas and the Black Messiah",
+        },
         { text: "Leslie Odom Jr.", secondaryText: "One Night in Miami" },
         { text: "Paul Raci", secondaryText: "Sound of Metal" },
-        { text: "Lakeith Stanfield", secondaryText: "Judas and the Black Messiah" }
-      ]
+        {
+          text: "Lakeith Stanfield",
+          secondaryText: "Judas and the Black Messiah",
+        },
+      ],
     },
     bestSupportingActress: {
       value: 4,
@@ -61,8 +70,8 @@ export default {
         { text: "Glenn Close", secondaryText: "Hillbilly Elegy" },
         { text: "Olivia Colman", secondaryText: "The Father" },
         { text: "Amanda Seyfried", secondaryText: "Mank" },
-        { text: "Yuh-jung Youn", secondaryText: "Minari" }
-      ]
+        { text: "Yuh-jung Youn", secondaryText: "Minari" },
+      ],
     },
     animatedFeature: {
       value: 4,
@@ -72,8 +81,8 @@ export default {
         { text: "Over the Moon" },
         { text: "A Shaun the Sheep Movie: Farmageddon" },
         { text: "Soul" },
-        { text: "Wolfwalkers" }
-      ]
+        { text: "Wolfwalkers" },
+      ],
     },
     cinematography: {
       value: 2,
@@ -83,19 +92,19 @@ export default {
         { text: "Mank" },
         { text: "News of the World" },
         { text: "Nomadland" },
-        { text: "The Trial of the Chicago 7" }
-      ]
+        { text: "The Trial of the Chicago 7" },
+      ],
     },
     costumeDesign: {
       value: 1,
       name: "Costume Design",
       nominees: [
-        { text: "Emma" },
+        { text: "Emma." },
         { text: "Mank" },
-        { text: "Ma Rainey’s Black Bottom" },
+        { text: "Ma Rainey's Black Bottom" },
         { text: "Mulan" },
-        { text: "Pinocchio" }
-      ]
+        { text: "Pinocchio" },
+      ],
     },
     directing: {
       value: 4,
@@ -106,10 +115,10 @@ export default {
         { text: "Minari", secondaryText: "Lee Isaac Chung" },
         {
           text: "Nomadland",
-          secondaryText: "Chloé Zhao"
+          secondaryText: "Chloé Zhao",
         },
-        { text: "Promising Young Woman", secondaryText: "Emerald Fennell" }
-      ]
+        { text: "Promising Young Woman", secondaryText: "Emerald Fennell" },
+      ],
     },
     documentaryFeature: {
       value: 4,
@@ -119,8 +128,8 @@ export default {
         { text: "Crip Camp" },
         { text: "The Mole Agent" },
         { text: "My Octopus Teacher" },
-        { text: "Time" }
-      ]
+        { text: "Time" },
+      ],
     },
     documentaryShort: {
       value: 2,
@@ -130,8 +139,8 @@ export default {
         { text: "A Concerto Is a Conversation" },
         { text: "Do Not Split" },
         { text: "Hunger Ward" },
-        { text: "A Love Song for Latasha" }
-      ]
+        { text: "A Love Song for Latasha" },
+      ],
     },
     filmEditing: {
       value: 1,
@@ -141,8 +150,8 @@ export default {
         { text: "Nomadland" },
         { text: "Promising Young Woman" },
         { text: "Sound of Metal" },
-        { text: "The Trial of the Chicago 7" }
-      ]
+        { text: "The Trial of the Chicago 7" },
+      ],
     },
     foreignLanguageFile: {
       value: 4,
@@ -152,19 +161,19 @@ export default {
         { text: "Better Days", secondaryText: "Hong Kong" },
         { text: "Collective", secondaryText: "Romania" },
         { text: "The Man Who Sold His Skin", secondaryText: "Tunisia" },
-        { text: "Quo Vadis, Aida?", secondaryText: "Bosnia and Herzegovina" }
-      ]
+        { text: "Quo Vadis, Aida?", secondaryText: "Bosnia and Herzegovina" },
+      ],
     },
     makeupAndHairstyling: {
       value: 1,
       name: "Makeup and Hairstyling",
       nominees: [
-        { text: "Emma" },
+        { text: "Emma." },
         { text: "Hillbilly Elegy" },
-        { text: "Ma Rainey’s Black Bottom" },
+        { text: "Ma Rainey's Black Bottom" },
         { text: "Mank" },
-        { text: "Pinocchio" }
-      ]
+        { text: "Pinocchio" },
+      ],
     },
     musicOriginalScore: {
       value: 1,
@@ -176,9 +185,9 @@ export default {
         { text: "News of the World", secondaryText: "James Newton Howard" },
         {
           text: "Soul",
-          secondaryText: "Trent Reznor, Atticus Ross, Jon Batiste"
-        }
-      ]
+          secondaryText: "Trent Reznor, Atticus Ross, Jon Batiste",
+        },
+      ],
     },
     musicOriginalSong: {
       value: 1,
@@ -186,24 +195,24 @@ export default {
       nominees: [
         {
           text: "Judas and the Black Messiah",
-          secondaryText: "Fight for You"
+          secondaryText: "Fight for You",
         },
         { text: "The Trial of the Chicago 7", secondaryText: "Hear My Voice" },
         { text: "Húsavík", secondaryText: "Eurovision Song Contest" },
         { text: "The Life Ahead", secondaryText: "Io Si (Seen)" },
-        { text: "One Night in Miami", secondaryText: "Speak Now" }
-      ]
+        { text: "One Night in Miami", secondaryText: "Speak Now" },
+      ],
     },
     productionDesign: {
       value: 1,
       name: "Production Design",
       nominees: [
         { text: "The Father" },
-        { text: "Ma Rainey’s Black Bottom" },
+        { text: "Ma Rainey's Black Bottom" },
         { text: "Mank" },
         { text: "News of the World" },
-        { text: "Tenet" }
-      ]
+        { text: "Tenet" },
+      ],
     },
     shortFilmAnimated: {
       value: 1,
@@ -213,8 +222,8 @@ export default {
         { text: "Genius Loci" },
         { text: "If Anything Happens I Love You" },
         { text: "Opera" },
-        { text: "Yes-People" }
-      ]
+        { text: "Yes-People" },
+      ],
     },
     shortFilmLiveAction: {
       value: 1,
@@ -224,8 +233,8 @@ export default {
         { text: "The Letter Room" },
         { text: "The Present" },
         { text: "Two Distant Strangers" },
-        { text: "White Eye" }
-      ]
+        { text: "White Eye" },
+      ],
     },
     sound: {
       value: 1,
@@ -235,8 +244,8 @@ export default {
         { text: "Mank" },
         { text: "News of the World" },
         { text: "Soul" },
-        { text: "Sound of Metal" }
-      ]
+        { text: "Sound of Metal" },
+      ],
     },
     visualEffects: {
       value: 1,
@@ -246,8 +255,8 @@ export default {
         { text: "The Midnight Sky" },
         { text: "Mulan" },
         { text: "The One and Only Ivan" },
-        { text: "Tenet" }
-      ]
+        { text: "Tenet" },
+      ],
     },
     writingAdaptedScreenplay: {
       value: 2,
@@ -258,7 +267,7 @@ export default {
         { text: "Nomadland" },
         { text: "One Night in Miami" },
         { text: "The White Tiger" },
-      ]
+      ],
     },
     writingOriginalScreenplay: {
       value: 2,
@@ -268,8 +277,8 @@ export default {
         { text: "Minari" },
         { text: "Promising Young Woman" },
         { text: "Sound of Metal" },
-        { text: "The Trial of the Chicago 7" }
-      ]
-    }
-  }
+        { text: "The Trial of the Chicago 7" },
+      ],
+    },
+  },
 };

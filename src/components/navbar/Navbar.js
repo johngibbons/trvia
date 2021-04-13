@@ -1,47 +1,47 @@
-import React, { PropTypes } from 'react'
-import { browserHistory } from 'react-router'
-import './Navbar.css'
-import { connect } from 'react-redux'
+import React, { PropTypes } from "react";
+import { browserHistory } from "react-router";
+import "./Navbar.css";
+import { connect } from "react-redux";
 
-import AppBar from 'material-ui/AppBar'
-import LoginButton from './loginButton/LoginButton'
-import AccountDropdown from './accountDropdown/AccountDropdown'
+import AppBar from "material-ui/AppBar";
+import LoginButton from "./loginButton/LoginButton";
+import AccountDropdown from "./accountDropdown/AccountDropdown";
 
 const Navbar = ({ loggedIn }) => {
   return (
     <AppBar
-      title='trvia'
+      title="trvia"
       titleStyle={{
-        cursor: 'pointer',
-        color: '#212121',
-        fontSize: '14px',
+        cursor: "pointer",
+        color: "#212121",
+        fontSize: "14px",
         fontWeight: 500,
-        textTransform: 'uppercase',
-        marginLeft: '24px'
+        textTransform: "uppercase",
+        marginLeft: "24px",
       }}
-      className='Navbar'
+      className="Navbar"
       iconElementRight={loggedIn ? <AccountDropdown /> : <LoginButton />}
       showMenuIconButton={false}
-      onTitleTouchTap={() => browserHistory.push('/')}
+      onTitleTouchTap={() => browserHistory.push("/")}
       iconStyleRight={{
         marginTop: 0,
-        marginRight: '12px'
+        marginRight: "12px",
       }}
       style={{
-        padding: 0
+        padding: 0,
       }}
     />
-  )
-}
+  );
+};
 
 Navbar.propTypes = {
-  loggedIn: PropTypes.bool
-}
+  loggedIn: PropTypes.bool,
+};
 
 const mapStateToProps = ({ currentUser }) => {
   return {
-    loggedIn: !!currentUser.email
-  }
-}
+    loggedIn: !!currentUser.email,
+  };
+};
 
-export default connect(mapStateToProps)(Navbar)
+export default connect(mapStateToProps)(Navbar);
