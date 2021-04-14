@@ -1,3 +1,31 @@
+## Local Development
+
+Start server:
+
+```
+npm start
+```
+
+Build for deployment:
+
+```
+npm run build
+```
+
+Deploy to firebase:
+
+```
+npx firebase login:ci //login with browser to get token
+npx firebase-tools deploy --token "$MY_TOKEN"
+```
+
+## Setting Up a New Game
+
+1. Create the json file with the game data
+2. Set the path to the new json data as the data source path
+3. Set the correct `CURRENT_GAME` and `CURRENT_TITLE` in constants file
+4. Set the `name` field in the game in firebase db
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
