@@ -4,35 +4,86 @@ import Category from "../models/Category";
 import data from "../awardsShows/2021Oscars";
 import { CURRENT_GAME } from "../constants";
 
-export async function save(overwrite = false) {
-  const dup = await database()
-    .ref("categories")
-    .orderByChild("game")
-    .equalTo(CURRENT_GAME)
-    .once("value");
+export async function healOldData(dbCategories) {
+  const localCategoriesWithKey = Object.keys(data.categories).map((key) => {
+    return {
+      key,
+      ...data.categories[key],
+    };
+  });
 
-  const isDuplicate = !!dup.val();
+  await Promise.all(
+    Object.values(dbCategories).map(async (dbCategory) => {
+      const localCategory = localCategoriesWithKey.filter(
+        (category) => category.name === dbCategory.name
+      )[0];
 
-  // don't overwrite existing game
-  if (isDuplicate && !overwrite) return;
+      const { key, value, order, presentationOrder, name } = localCategory;
 
-  console.log("overwriting");
+      const updates = {
+        [`/categories/${dbCategory.id}`]: new Category({
+          id: dbCategory.id,
+          key,
+          game: CURRENT_GAME,
+          value,
+          order,
+          presentationOrder: presentationOrder || 0,
+          name,
+        }).toJS(),
+      };
+      database().ref().update(updates);
 
+      const categoryNomineesFetch = await database()
+        .ref("nominees")
+        .orderByChild("category")
+        .equalTo(dbCategory.id)
+        .once("value");
+
+      const dbCategoryNominees = Object.values(categoryNomineesFetch.val());
+      const localCategoryNominees = localCategory.nominees;
+
+      localCategoryNominees.forEach((localNominee, index) => {
+        const matchingDbNominee = dbCategoryNominees.filter(
+          (dbNominee) => dbNominee.text === localNominee.text
+        )[0];
+        const updates = {
+          [`/nominees/${matchingDbNominee.id}`]: new Nominee({
+            ...localNominee,
+            id: matchingDbNominee.id,
+            category: matchingDbNominee.category,
+            game: matchingDbNominee.game,
+            key: index,
+          }).toJS(),
+          [`/categories/${dbCategory.id}/nominees/${matchingDbNominee.id}`]: true,
+        };
+        database().ref().update(updates);
+      });
+    })
+  );
+}
+
+export async function createNewGame() {
   Object.keys(data.categories).map((key) => {
     const categoryKey = database().ref().child("categories").push().key;
+    const { value, order, presentationOrder, name, nominees } = data.categories[
+      key
+    ];
     const updates = {
       [`/categories/${categoryKey}`]: new Category({
         id: categoryKey,
-        value: data.categories[key].value,
-        name: data.categories[key].name,
+        key,
         game: CURRENT_GAME,
+        value,
+        order,
+        presentationOrder: presentationOrder || 0,
+        name,
       }).toJS(),
       [`/games/${CURRENT_GAME}/categories/${categoryKey}`]: true,
       [`/games/${CURRENT_GAME}/id`]: CURRENT_GAME,
     };
     database().ref().update(updates);
 
-    data.categories[key].nominees.map((nominee) => {
+    nominees.map((nominee, index) => {
       const nomineeKey = database().ref().child("nominees").push().key;
       const updates = {
         [`/nominees/${nomineeKey}`]: new Nominee({
@@ -40,6 +91,7 @@ export async function save(overwrite = false) {
           id: nomineeKey,
           category: categoryKey,
           game: CURRENT_GAME,
+          key: index,
         }).toJS(),
         [`/categories/${categoryKey}/nominees/${nomineeKey}`]: true,
       };
@@ -48,7 +100,52 @@ export async function save(overwrite = false) {
   });
 }
 
-export async function saveImages(overwrite) {
+export async function syncCurrentGameWithJSONData() {
+  const currentGameCategoriesFetch = await database()
+    .ref("categories")
+    .orderByChild("game")
+    .equalTo(CURRENT_GAME)
+    .once("value");
+
+  const dbCategories = currentGameCategoriesFetch.val();
+
+  if (!dbCategories) {
+    createNewGame();
+  } else {
+    updateExistingGame(dbCategories);
+  }
+}
+
+async function updateExistingGame(dbCategories) {
+  await Promise.all(
+    Object.values(dbCategories).map(async (category) => {
+      const categoryNomineesFetch = await database()
+        .ref("nominees")
+        .orderByChild("category")
+        .equalTo(category.id)
+        .once("value");
+
+      const dbCategoryNominees = Object.values(categoryNomineesFetch.val());
+      const localCategoryNominees = data.categories[category.key].nominees;
+
+      dbCategoryNominees.forEach((dbNominee) => {
+        const localNominee = localCategoryNominees[dbNominee.key];
+        const updates = {
+          [`/nominees/${dbNominee.id}`]: new Nominee({
+            ...localNominee,
+            id: dbNominee.id,
+            category: dbNominee.category,
+            game: dbNominee.game,
+            key: dbNominee.key,
+          }).toJS(),
+        };
+        database().ref().update(updates);
+      });
+    })
+  );
+}
+
+export async function saveImages({ overwrite } = {}) {
   const titlesReq = await database().ref("/titles").once("value");
   const peopleReq = await database().ref("/people").once("value");
   const nomineesReq = await database().ref("/nominees").once("value");
@@ -67,7 +164,7 @@ export async function saveImages(overwrite) {
     const match = findMatch(all, nominee);
     if (!match) {
       if (!nominee.imageUrl) {
-        console.log("nominee without match:", nominee.text);
+        console.log("nominee without match:", JSON.stringify(nominee, null, 2));
       }
       return;
     }
@@ -131,9 +228,10 @@ export async function deleteGame(deleteGroups = false) {
   await database().ref(`games/${CURRENT_GAME}`).remove();
 }
 
+const toOptionalLowercaseText = (text) => (text ? text.toLowerCase() : "");
+
 function findMatch(titlesAndPeopleArray, nomineeToFind) {
   const matches = titlesAndPeopleArray.filter((titleOrPerson) => {
-    const toOptionalLowercaseText = (text) => (text ? text.toLowerCase() : "");
     const titleOrPersonStrings = [
       titleOrPerson.title,
       titleOrPerson.original_title,
@@ -142,6 +240,7 @@ function findMatch(titlesAndPeopleArray, nomineeToFind) {
     const nomineeToFindStrings = [
       nomineeToFind.text,
       nomineeToFind.secondaryText,
+      nomineeToFind.movieDBName,
     ].map(toOptionalLowercaseText);
 
     let hasMatch = false;

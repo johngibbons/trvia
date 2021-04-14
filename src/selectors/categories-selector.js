@@ -36,7 +36,7 @@ export const entryCategoriesSelector = createSelector(
       game.categories
         .keySeq()
         .map((id) => categories.get(id) || new Category())
-        .sort((c1, c2) => c1.presentationOrder - c2.presentationOrder)
+        .sort((c1, c2) => c1.order - c2.order)
     );
   }
 );
