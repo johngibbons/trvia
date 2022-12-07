@@ -4,7 +4,7 @@
   "private": true,
   "devDependencies": {
     "prettier": "2.2.1",
-    "react-scripts": "0.8.5"
+    "react-scripts": "5.0.1"
   },
   "dependencies": {
     "blueimp-md5": "^2.7.0",
