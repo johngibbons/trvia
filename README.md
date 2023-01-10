@@ -24,7 +24,9 @@ npx firebase-tools deploy --token "$MY_TOKEN"
 1. Create the json file with the game data
 2. Set the path to the new json data as the data source path
 3. Set the correct `CURRENT_GAME` and `CURRENT_TITLE` in constants file
-4. Set the `name` field in the game in firebase db
+4. Run `npm run build` to build the deployable
+5. Run `firebase deploy` to deploy
+6. Set the `name` field in the game in firebase db
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
@@ -33,19 +35,26 @@ You can find the most recent version of this guide [here](https://github.com/fac
 
 ## Table of Contents
 
+- [Local Development](#local-development)
+- [Setting Up a New Game](#setting-up-a-new-game)
+- [Table of Contents](#table-of-contents)
 - [Updating to New Releases](#updating-to-new-releases)
 - [Sending Feedback](#sending-feedback)
 - [Folder Structure](#folder-structure)
 - [Available Scripts](#available-scripts)
-  - [npm start](#npm-start)
-  - [npm test](#npm-test)
-  - [npm run build](#npm-run-build)
-  - [npm run eject](#npm-run-eject)
+  - [`npm start`](#npm-start)
+  - [`npm test`](#npm-test)
+  - [`npm run build`](#npm-run-build)
+  - [`npm run eject`](#npm-run-eject)
 - [Syntax Highlighting in the Editor](#syntax-highlighting-in-the-editor)
 - [Displaying Lint Output in the Editor](#displaying-lint-output-in-the-editor)
 - [Installing a Dependency](#installing-a-dependency)
 - [Importing a Component](#importing-a-component)
+  - [`Button.js`](#buttonjs)
+  - [`DangerButton.js`](#dangerbuttonjs)
 - [Adding a Stylesheet](#adding-a-stylesheet)
+  - [`Button.css`](#buttoncss)
+  - [`Button.js`](#buttonjs-1)
 - [Post-Processing CSS](#post-processing-css)
 - [Adding Images and Fonts](#adding-images-and-fonts)
 - [Using the `public` Folder](#using-the-public-folder)
@@ -53,10 +62,16 @@ You can find the most recent version of this guide [here](https://github.com/fac
 - [Adding Bootstrap](#adding-bootstrap)
 - [Adding Flow](#adding-flow)
 - [Adding Custom Environment Variables](#adding-custom-environment-variables)
+  - [Adding Temporary Environment Variables In Your Shell](#adding-temporary-environment-variables-in-your-shell)
+    - [Windows (cmd.exe)](#windows-cmdexe)
+    - [Linux, OS X (Bash)](#linux-os-x-bash)
+  - [Adding Development Environment Variables In `.env`](#adding-development-environment-variables-in-env)
 - [Can I Use Decorators?](#can-i-use-decorators)
 - [Integrating with a Node Backend](#integrating-with-a-node-backend)
 - [Proxying API Requests in Development](#proxying-api-requests-in-development)
 - [Using HTTPS in Development](#using-https-in-development)
+    - [Windows (cmd.exe)](#windows-cmdexe-1)
+    - [Linux, OS X (Bash)](#linux-os-x-bash-1)
 - [Generating Dynamic `<meta>` Tags on the Server](#generating-dynamic-meta-tags-on-the-server)
 - [Running Tests](#running-tests)
   - [Filename Conventions](#filename-conventions)
@@ -66,9 +81,15 @@ You can find the most recent version of this guide [here](https://github.com/fac
   - [Testing Components](#testing-components)
   - [Using Third Party Assertion Libraries](#using-third-party-assertion-libraries)
   - [Initializing Test Environment](#initializing-test-environment)
+    - [`src/setupTests.js`](#srcsetuptestsjs)
   - [Focusing and Excluding Tests](#focusing-and-excluding-tests)
   - [Coverage Reporting](#coverage-reporting)
   - [Continuous Integration](#continuous-integration)
+  - [On CI servers](#on-ci-servers)
+    - [Travis CI](#travis-ci)
+  - [On your own environment](#on-your-own-environment)
+      - [Windows (cmd.exe)](#windows-cmdexe-2)
+      - [Linux, OS X (Bash)](#linux-os-x-bash-2)
   - [Disabling jsdom](#disabling-jsdom)
   - [Experimental Snapshot Testing](#experimental-snapshot-testing)
   - [Editor Integration](#editor-integration)
@@ -79,9 +100,15 @@ You can find the most recent version of this guide [here](https://github.com/fac
   - [Building for Relative Paths](#building-for-relative-paths)
   - [Firebase](#firebase)
   - [GitHub Pages](#github-pages)
+    - [Step 1: Add `homepage` to `package.json`](#step-1-add-homepage-to-packagejson)
+    - [Step 2: Install `gh-pages` and add `deploy` to `scripts` in `package.json`](#step-2-install-gh-pages-and-add-deploy-to-scripts-in-packagejson)
+    - [Step 3: Deploy the site by running `npm run deploy`](#step-3-deploy-the-site-by-running-npm-run-deploy)
+    - [Step 4: Ensure your project's settings use `gh-pages`](#step-4-ensure-your-projects-settings-use-gh-pages)
+    - [Step 5: Optionally, configure the domain](#step-5-optionally-configure-the-domain)
+    - [Notes on client-side routing](#notes-on-client-side-routing)
   - [Heroku](#heroku)
   - [Modulus](#modulus)
-  - [Netlify](#netlify)
+- [Netlify](#netlify)
   - [Now](#now)
   - [S3 and CloudFront](#s3-and-cloudfront)
   - [Surge](#surge)
