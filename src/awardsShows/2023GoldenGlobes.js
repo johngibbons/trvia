@@ -127,7 +127,7 @@ export default {
       value: 8,
       name: "Best Television Actress – Drama Series",
       nominees: [
-        { text: "Emma D’Arcy", secondaryText: "House of the Dragon" },
+        { text: "Emma D'Arcy", secondaryText: "House of the Dragon" },
         { text: "Laura Linney", secondaryText: "Ozark" },
         { text: "Imelda Staunton", secondaryText: "The Crown" },
         { text: "Hilary Swank", secondaryText: "Alaska Daily" },
@@ -295,7 +295,7 @@ export default {
         {
           text: "Niecy Nash-Betts",
           secondaryText: "Monster: The Jeffrey Dahmer Story",
-          movieDBName: "Dahmer – Monster: The Jeffrey Dahmer Story",
+          movieDBName: "Niecy Nash",
         },
         { text: "Aubrey Plaza", secondaryText: "The White Lotus" },
       ],
