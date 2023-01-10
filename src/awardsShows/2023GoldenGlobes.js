@@ -53,7 +53,10 @@ export default {
       name: "Best Television Motion Picture",
       nominees: [
         { text: "Black Bird" },
-        { text: "Monster: The Jeffrey Dahmer Story" },
+        {
+          text: "Monster: The Jeffrey Dahmer Story",
+          movieDBName: "Dahmer – Monster: The Jeffrey Dahmer Story",
+        },
         { text: "The Dropout" },
         { text: "Pam & Tommy" },
         { text: "The White Lotus" },
@@ -181,6 +184,7 @@ export default {
         {
           text: "Evan Peters",
           secondaryText: "Monster: The Jeffrey Dahmer Story",
+          movieDBName: "Dahmer – Monster: The Jeffrey Dahmer Story",
         },
         { text: "Sebastian Stan", secondaryText: "Pam & Tommy" },
       ],
@@ -259,6 +263,7 @@ export default {
         {
           text: "Richard Jenkins",
           secondaryText: "Monster: The Jeffrey Dahmer Story",
+          movieDBName: "Dahmer – Monster: The Jeffrey Dahmer Story",
         },
         { text: "Seth Rogen", secondaryText: "Pam & Tommy" },
       ],
@@ -290,6 +295,7 @@ export default {
         {
           text: "Niecy Nash-Betts",
           secondaryText: "Monster: The Jeffrey Dahmer Story",
+          movieDBName: "Dahmer – Monster: The Jeffrey Dahmer Story",
         },
         { text: "Aubrey Plaza", secondaryText: "The White Lotus" },
       ],
@@ -299,7 +305,7 @@ export default {
       value: 4,
       name: "Best Picture – Animated",
       nominees: [
-        { text: "Guillermo del Toro’s Pinocchio" },
+        { text: "Guillermo del Toro's Pinocchio" },
         { text: "Inu-Oh" },
         { text: "Marcel the Shell With Shoes On" },
         { text: "Puss in Boots: The Last Wish" },
@@ -340,7 +346,7 @@ export default {
       nominees: [
         { text: "The Banshees of Inisherin", secondaryText: "Carter Burwell" },
         {
-          text: "Guillermo del Toro’s Pinocchio",
+          text: "Guillermo del Toro's Pinocchio",
           secondaryText: "Alexandre Desplat",
         },
         { text: "Women Talking", secondaryText: "Hildur Guðnadóttir" },
@@ -354,7 +360,7 @@ export default {
       name: "Best Original Song in a Motion Picture",
       nominees: [
         { text: "Where the Crawdads Sing", secondaryText: "Carolina" },
-        { text: "Guillermo del Toro’s Pinocchio", secondaryText: "Ciao Papa" },
+        { text: "Guillermo del Toro's Pinocchio", secondaryText: "Ciao Papa" },
         { text: "Top Gun: Maverick", secondaryText: "Hold My Hand" },
         { text: "Black Panther: Wakanda Forever", secondaryText: "Lift Me Up" },
         { text: "RRR", secondaryText: "Naatu Naatu" },
