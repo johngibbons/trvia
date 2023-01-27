@@ -37,7 +37,7 @@ export default {
       name: "Actress in a Leading Role",
       nominees: [
         { text: "Cate Blanchett", secondaryText: "Tár" },
-        { text: "Ana de Arma", secondaryText: "Blonde" },
+        { text: "Ana de Armas", secondaryText: "Blonde" },
         { text: "Andrea Riseborough", secondaryText: "To Leslie" },
         { text: "Michelle Williams", secondaryText: "The Fabelmans" },
         {
