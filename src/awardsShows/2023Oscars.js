@@ -126,7 +126,7 @@ export default {
       value: 4,
       name: "Animated Feature Film",
       nominees: [
-        { text: "Guillermo del Toro’s Pinocchio" },
+        { text: "Guillermo del Toro's Pinocchio" },
         { text: "Marcel the Shell With Shoes On" },
         { text: "Puss in Boots: The Last Wish" },
         { text: "The Sea Beast" },
