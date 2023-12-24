@@ -46,10 +46,16 @@ export default {
         { text: "Barbie" },
         { text: "Guardians of the Galaxy Vol. 3" },
         { text: "John Wick: Chapter 4" },
-        { text: "Mission: Impossible - Dead Reckoning Part 1" },
+        {
+          text: "Mission: Impossible - Dead Reckoning Part 1",
+          movieDBName: "Mission: Impossible - Dead Reckoning Part One",
+        },
         { text: "Oppenheimer" },
         { text: "Spider-Man: Across the Spider-Verse" },
-        { text: "Taylor Swift: The Eras Tour" },
+        {
+          text: "Taylor Swift: The Eras Tour",
+          movieDBName: "TAYLOR SWIFT | THE ERAS TOUR",
+        },
         { text: "The Super Mario Bros. Movie" },
       ],
       order: 19,
@@ -414,7 +420,10 @@ export default {
       nominees: [
         { text: "All the Light We Cannot See" },
         { text: "Beef" },
-        { text: "Daisy Jones and the Six" },
+        {
+          text: "Daisy Jones and the Six",
+          movieDBName: "Daisy Jones & the Six",
+        },
         { text: "Fargo" },
         { text: "Fellow Travelers" },
         { text: "Lessons in Chemistry" },
@@ -695,7 +704,7 @@ export default {
           text: "Trevor Noah: Where Was I",
         },
         {
-          text: "Wanda Sykes: I’m an Entertainer",
+          text: "Wanda Sykes: I'm an Entertainer",
         },
       ],
       order: 19,
