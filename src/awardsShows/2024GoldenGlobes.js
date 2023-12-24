@@ -209,7 +209,7 @@ export default {
           secondaryText: "The Color Purple (2023)",
         },
         {
-          text: "Da’Vine Joy Randolph",
+          text: "Da'Vine Joy Randolph",
           secondaryText: "The Holdovers",
         },
         {
@@ -670,7 +670,7 @@ export default {
           secondaryText: "The Morning Show",
         },
         {
-          text: "Ebon Moss–Bachrach",
+          text: "Ebon Moss-Bachrach",
           secondaryText: "The Bear",
         },
         {
