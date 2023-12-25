@@ -499,7 +499,7 @@ export default {
       nominees: [
         {
           text: "Ayo Edebiri",
-          secondaryText: "Bear, The",
+          secondaryText: "The Bear",
         },
         {
           text: "Elle Fanning",
