@@ -99,7 +99,7 @@ export default {
         { text: "Io Capitano", secondaryText: "Italy" },
         { text: "Perfect Days", secondaryText: "Japan" },
         { text: "Society of the Snow", secondaryText: "Spain" },
-        { text: "The Teachers' Lounge", secondaryText: "Germany" },
+        { text: "The Teachers’ Lounge", secondaryText: "Germany" },
         { text: "The Zone of Interest", secondaryText: "United Kingdom" },
       ],
       order: 7,
@@ -224,7 +224,7 @@ export default {
         { text: "Our Uniform" },
         { text: "Pachyderme" },
         {
-          text: "WAR IS OVER! Inspired by the Music of John & Yoko",
+          text: "WAR IS OVER! Inspired by the Music of John and Yoko",
         },
       ],
       order: 16,
