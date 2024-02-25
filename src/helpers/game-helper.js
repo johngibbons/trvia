@@ -1,7 +1,7 @@
 import { database } from "firebase";
 import Nominee from "../models/Nominee";
 import Category from "../models/Category";
-import data from "../awardsShows/2024GoldenGlobes";
+import data from "../awardsShows/2024Oscars";
 import { CURRENT_GAME } from "../constants";
 
 export async function healOldData(dbCategories) {
