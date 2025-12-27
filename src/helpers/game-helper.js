@@ -1,8 +1,11 @@
 import { database } from "firebase";
+import { Map, fromJS } from "immutable";
 import Nominee from "../models/Nominee";
 import Category from "../models/Category";
-import data from "../awardsShows/2025Oscars";
+import data from "../awardsShows/2025GoldenGlobes";
 import { CURRENT_GAME } from "../constants";
+import MovieDB from "../moviedb";
+import API from "../api";
 
 export async function healOldData(dbCategories) {
   const localCategoriesWithKey = Object.keys(data.categories).map((key) => {
@@ -53,6 +56,8 @@ export async function healOldData(dbCategories) {
             category: matchingDbNominee.category,
             game: matchingDbNominee.game,
             key: index,
+            // Preserve existing imageUrl if it exists
+            imageUrl: matchingDbNominee.imageUrl || localNominee.imageUrl || "",
           }).toJS(),
           [`/categories/${dbCategory.id}/nominees/${matchingDbNominee.id}`]: true,
         };
@@ -63,41 +68,49 @@ export async function healOldData(dbCategories) {
 }
 
 export async function createNewGame() {
-  Object.keys(data.categories).map((key) => {
-    const categoryKey = database().ref().child("categories").push().key;
-    const { value, order, presentationOrder, name, nominees } = data.categories[
-      key
-    ];
-    const updates = {
-      [`/categories/${categoryKey}`]: new Category({
-        id: categoryKey,
-        key,
-        game: CURRENT_GAME,
+  await Promise.all(
+    Object.keys(data.categories).map(async (key) => {
+      const categoryKey = database().ref().child("categories").push().key;
+      const {
         value,
         order,
-        presentationOrder: presentationOrder || 0,
+        presentationOrder,
         name,
-      }).toJS(),
-      [`/games/${CURRENT_GAME}/categories/${categoryKey}`]: true,
-      [`/games/${CURRENT_GAME}/id`]: CURRENT_GAME,
-    };
-    database().ref().update(updates);
-
-    nominees.map((nominee, index) => {
-      const nomineeKey = database().ref().child("nominees").push().key;
+        nominees,
+      } = data.categories[key];
       const updates = {
-        [`/nominees/${nomineeKey}`]: new Nominee({
-          ...nominee,
-          id: nomineeKey,
-          category: categoryKey,
+        [`/categories/${categoryKey}`]: new Category({
+          id: categoryKey,
+          key,
           game: CURRENT_GAME,
-          key: index,
+          value,
+          order,
+          presentationOrder: presentationOrder || 0,
+          name,
         }).toJS(),
-        [`/categories/${categoryKey}/nominees/${nomineeKey}`]: true,
+        [`/games/${CURRENT_GAME}/categories/${categoryKey}`]: true,
+        [`/games/${CURRENT_GAME}/id`]: CURRENT_GAME,
       };
-      database().ref().update(updates);
-    });
-  });
+      await database().ref().update(updates);
+
+      await Promise.all(
+        nominees.map(async (nominee, index) => {
+          const nomineeKey = database().ref().child("nominees").push().key;
+          const updates = {
+            [`/nominees/${nomineeKey}`]: new Nominee({
+              ...nominee,
+              id: nomineeKey,
+              category: categoryKey,
+              game: CURRENT_GAME,
+              key: index,
+            }).toJS(),
+            [`/categories/${categoryKey}/nominees/${nomineeKey}`]: true,
+          };
+          await database().ref().update(updates);
+        })
+      );
+    })
+  );
 }
 
 export async function syncCurrentGameWithJSONData() {
@@ -110,9 +123,9 @@ export async function syncCurrentGameWithJSONData() {
   const dbCategories = currentGameCategoriesFetch.val();
 
   if (!dbCategories) {
-    createNewGame();
+    await createNewGame();
   } else {
-    updateExistingGame(dbCategories);
+    await updateExistingGame(dbCategories);
   }
 }
 
@@ -137,6 +150,8 @@ async function updateExistingGame(dbCategories) {
             category: dbNominee.category,
             game: dbNominee.game,
             key: dbNominee.key,
+            // Preserve existing imageUrl if it exists
+            imageUrl: dbNominee.imageUrl || localNominee.imageUrl || "",
           }).toJS(),
         };
         database().ref().update(updates);
@@ -275,4 +290,270 @@ function setImage(nominee, image) {
     .update({
       [`/nominees/${nominee.id}/imageUrl`]: `https://image.tmdb.org/t/p/w500${image}`,
     });
+}
+
+function determineNomineeType(nominee, categoryName) {
+  // If nominee has secondaryText, it's likely a person (text = person name, secondaryText = movie)
+  if (nominee.secondaryText) {
+    return "person";
+  }
+
+  // Check category name for hints
+  const categoryLower = (categoryName || "").toLowerCase();
+  if (
+    categoryLower.includes("performance") ||
+    categoryLower.includes("actor") ||
+    categoryLower.includes("actress") ||
+    categoryLower.includes("director") ||
+    categoryLower.includes("screenplay")
+  ) {
+    return "person";
+  }
+
+  // Default to title for categories like "Best Motion Picture", "Animated", etc.
+  return "title";
+}
+
+function isExactMatch(result, nominee) {
+  const resultName = (result.name || result.title || "").toLowerCase().trim();
+  const nomineeText = (nominee.text || "").toLowerCase().trim();
+  const nomineeMovieDBName = (nominee.movieDBName || "").toLowerCase().trim();
+
+  return resultName === nomineeText || resultName === nomineeMovieDBName;
+}
+
+function selectBestMatch(searchResults, nominee, nomineeType) {
+  if (
+    !searchResults ||
+    !searchResults.results ||
+    searchResults.results.length === 0
+  ) {
+    return null;
+  }
+
+  const results = searchResults.results;
+
+  // Filter results by type and ensure they have images
+  const filteredResults = results.filter((result) => {
+    if (nomineeType === "person") {
+      return result.media_type === "person" && result.profile_path;
+    } else {
+      return (
+        (result.media_type === "movie" || result.media_type === "tv") &&
+        result.poster_path
+      );
+    }
+  });
+
+  if (filteredResults.length === 0) {
+    return null;
+  }
+
+  // Prefer exact matches
+  const exactMatches = filteredResults.filter((result) =>
+    isExactMatch(result, nominee)
+  );
+
+  if (exactMatches.length > 0) {
+    return exactMatches[0];
+  }
+
+  // If no exact match, prefer results that match nominee text or secondaryText
+  const textMatches = filteredResults.filter((result) => {
+    const resultName = (result.name || result.title || "").toLowerCase();
+    const nomineeText = (nominee.text || "").toLowerCase();
+    const nomineeSecondaryText = (nominee.secondaryText || "").toLowerCase();
+    const nomineeMovieDBName = (nominee.movieDBName || "").toLowerCase();
+
+    return (
+      resultName.includes(nomineeText) ||
+      nomineeText.includes(resultName) ||
+      resultName.includes(nomineeMovieDBName) ||
+      nomineeMovieDBName.includes(resultName) ||
+      (nomineeSecondaryText &&
+        (resultName.includes(nomineeSecondaryText) ||
+          nomineeSecondaryText.includes(resultName)))
+    );
+  });
+
+  if (textMatches.length > 0) {
+    return textMatches[0];
+  }
+
+  // Return first result if no better match found
+  return filteredResults[0];
+}
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function autoFetchNomineeImages({ overwrite } = {}) {
+  console.log("Starting auto-fetch of nominee images...");
+
+  // Fetch all nominees for the current game
+  const nomineesReq = await database()
+    .ref("nominees")
+    .orderByChild("game")
+    .equalTo(CURRENT_GAME)
+    .once("value");
+
+  const nominees = nomineesReq.val();
+
+  if (!nominees) {
+    console.log("No nominees found for current game");
+    return;
+  }
+
+  // Fetch categories to get category names
+  const categoriesReq = await database()
+    .ref("categories")
+    .orderByChild("game")
+    .equalTo(CURRENT_GAME)
+    .once("value");
+
+  const categories = categoriesReq.val() || {};
+  const categoryMap = Object.values(categories).reduce((acc, cat) => {
+    acc[cat.id] = cat.name;
+    return acc;
+  }, {});
+
+  const nomineesArr = Object.values(nominees);
+
+  // Debug: Check a few sample nominees to see their structure
+  if (nomineesArr.length > 0) {
+    const sampleNominee = nomineesArr[0];
+    console.log("Sample nominee structure:", {
+      id: sampleNominee.id,
+      text: sampleNominee.text,
+      imageUrl: sampleNominee.imageUrl,
+      imageUrlType: typeof sampleNominee.imageUrl,
+      imageUrlLength: sampleNominee.imageUrl
+        ? sampleNominee.imageUrl.length
+        : 0,
+      allKeys: Object.keys(sampleNominee),
+    });
+  }
+
+  // Check for nominees with images - handle empty strings, null, undefined
+  const nomineesWithImages = nomineesArr.filter(
+    (nominee) => nominee.imageUrl && nominee.imageUrl.trim() !== ""
+  );
+
+  const nomineesWithoutImages = nomineesArr.filter((nominee) => {
+    const hasImage = nominee.imageUrl && nominee.imageUrl.trim() !== "";
+    return overwrite || !hasImage;
+  });
+
+  console.log(
+    `Found ${nomineesWithoutImages.length} nominees without images (out of ${nomineesArr.length} total)`
+  );
+  console.log(
+    `Nominees with images: ${nomineesWithImages.length}, Sample imageUrl: ${
+      (nomineesWithImages[0] && nomineesWithImages[0].imageUrl) || "N/A"
+    }`
+  );
+
+  // Early exit if all nominees already have images
+  if (nomineesWithoutImages.length === 0) {
+    console.log("All nominees already have images. Skipping auto-fetch.");
+    return;
+  }
+
+  let savedCount = 0;
+  let skippedCount = 0;
+  let errorCount = 0;
+
+  // Process nominees sequentially to avoid rate limiting
+  for (let i = 0; i < nomineesWithoutImages.length; i++) {
+    const nominee = nomineesWithoutImages[i];
+
+    // Double-check that nominee doesn't have an image (skip if it does)
+    const hasImage = nominee.imageUrl && nominee.imageUrl.trim() !== "";
+    if (!overwrite && hasImage) {
+      console.log(
+        `Skipping nominee ${nominee.text} (ID: ${nominee.id}): already has image`
+      );
+      skippedCount++;
+      continue;
+    }
+
+    const categoryName = categoryMap[nominee.category] || "";
+
+    try {
+      // Determine search query
+      const searchQuery = nominee.movieDBName || nominee.text;
+      if (!searchQuery) {
+        console.log(
+          `Skipping nominee ${nominee.id}: no search query available`
+        );
+        skippedCount++;
+        continue;
+      }
+
+      // Determine nominee type
+      const nomineeType = determineNomineeType(nominee, categoryName);
+
+      // Search MovieDB
+      console.log(
+        `Searching for: "${searchQuery}" (type: ${nomineeType}) [${i + 1}/${
+          nomineesWithoutImages.length
+        }]`
+      );
+      const searchResults = await MovieDB.searchMulti(searchQuery);
+
+      // Select best match
+      const bestMatch = selectBestMatch(searchResults, nominee, nomineeType);
+
+      if (!bestMatch) {
+        console.log(
+          `No match found for nominee: ${nominee.text} (ID: ${nominee.id})`
+        );
+        skippedCount++;
+        // Add delay even when no match to avoid rate limiting
+        await delay(250);
+        continue;
+      }
+
+      // Convert to Immutable Map for API
+      const matchMap = fromJS(bestMatch);
+
+      // Save to Firebase
+      if (nomineeType === "person") {
+        await API.savePerson(matchMap);
+        console.log(
+          `Saved person: ${bestMatch.name} (ID: ${bestMatch.id}) for nominee: ${nominee.text}`
+        );
+      } else {
+        await API.saveTitle(matchMap);
+        console.log(
+          `Saved title: ${bestMatch.title || bestMatch.name} (ID: ${
+            bestMatch.id
+          }) for nominee: ${nominee.text}`
+        );
+      }
+
+      savedCount++;
+
+      // Add delay between API calls to avoid rate limiting (250ms = ~4 requests/second)
+      await delay(250);
+    } catch (error) {
+      console.error(
+        `Error processing nominee ${nominee.text} (ID: ${nominee.id}):`,
+        error
+      );
+      errorCount++;
+      // Add delay even on error
+      await delay(250);
+    }
+  }
+
+  console.log(
+    `Auto-fetch complete. Saved: ${savedCount}, Skipped: ${skippedCount}, Errors: ${errorCount}`
+  );
+
+  // After all nominees are processed, call saveImages to update nominee imageUrls
+  if (savedCount > 0) {
+    console.log("Updating nominee imageUrls...");
+    await saveImages({ overwrite });
+    console.log("Nominee imageUrls updated");
+  }
 }
