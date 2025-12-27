@@ -56,6 +56,8 @@ export async function healOldData(dbCategories) {
             category: matchingDbNominee.category,
             game: matchingDbNominee.game,
             key: index,
+            // Preserve existing imageUrl if it exists
+            imageUrl: matchingDbNominee.imageUrl || localNominee.imageUrl || "",
           }).toJS(),
           [`/categories/${dbCategory.id}/nominees/${matchingDbNominee.id}`]: true,
         };
@@ -148,6 +150,8 @@ async function updateExistingGame(dbCategories) {
             category: dbNominee.category,
             game: dbNominee.game,
             key: dbNominee.key,
+            // Preserve existing imageUrl if it exists
+            imageUrl: dbNominee.imageUrl || localNominee.imageUrl || "",
           }).toJS(),
         };
         database().ref().update(updates);
@@ -413,12 +417,39 @@ export async function autoFetchNomineeImages({ overwrite } = {}) {
   }, {});
 
   const nomineesArr = Object.values(nominees);
-  const nomineesWithoutImages = nomineesArr.filter(
-    (nominee) => overwrite || !nominee.imageUrl
+
+  // Debug: Check a few sample nominees to see their structure
+  if (nomineesArr.length > 0) {
+    const sampleNominee = nomineesArr[0];
+    console.log("Sample nominee structure:", {
+      id: sampleNominee.id,
+      text: sampleNominee.text,
+      imageUrl: sampleNominee.imageUrl,
+      imageUrlType: typeof sampleNominee.imageUrl,
+      imageUrlLength: sampleNominee.imageUrl
+        ? sampleNominee.imageUrl.length
+        : 0,
+      allKeys: Object.keys(sampleNominee),
+    });
+  }
+
+  // Check for nominees with images - handle empty strings, null, undefined
+  const nomineesWithImages = nomineesArr.filter(
+    (nominee) => nominee.imageUrl && nominee.imageUrl.trim() !== ""
   );
+
+  const nomineesWithoutImages = nomineesArr.filter((nominee) => {
+    const hasImage = nominee.imageUrl && nominee.imageUrl.trim() !== "";
+    return overwrite || !hasImage;
+  });
 
   console.log(
     `Found ${nomineesWithoutImages.length} nominees without images (out of ${nomineesArr.length} total)`
+  );
+  console.log(
+    `Nominees with images: ${nomineesWithImages.length}, Sample imageUrl: ${
+      (nomineesWithImages[0] && nomineesWithImages[0].imageUrl) || "N/A"
+    }`
   );
 
   // Early exit if all nominees already have images
@@ -436,7 +467,8 @@ export async function autoFetchNomineeImages({ overwrite } = {}) {
     const nominee = nomineesWithoutImages[i];
 
     // Double-check that nominee doesn't have an image (skip if it does)
-    if (!overwrite && nominee.imageUrl) {
+    const hasImage = nominee.imageUrl && nominee.imageUrl.trim() !== "";
+    if (!overwrite && hasImage) {
       console.log(
         `Skipping nominee ${nominee.text} (ID: ${nominee.id}): already has image`
       );

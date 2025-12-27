@@ -15,10 +15,13 @@ import {
 import { STAGING_DATABASE, PROD_DATABASE } from "./constants";
 injectTapEventPlugin();
 startFirebase(PROD_DATABASE);
-syncCurrentGameWithJSONData().then(() => {
-  autoFetchNomineeImages({ overwrite: false });
-});
-saveImages({ overwrite: true });
+syncCurrentGameWithJSONData()
+  .then(() => {
+    return autoFetchNomineeImages({ overwrite: false });
+  })
+  .then(() => {
+    saveImages({ overwrite: true });
+  });
 // deleteGame(true);
 export const ui = new firebaseui.auth.AuthUI(firebase.auth());
 
