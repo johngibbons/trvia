@@ -108,7 +108,7 @@ export default {
         { text: "The Secret Agent", secondaryText: "Brazil" },
         { text: "It Was Just an Accident", secondaryText: "France" },
         { text: "Sentimental Value", secondaryText: "Norway" },
-        { text: "Sirât", secondaryText: "Spain" },
+        { text: "Sirât", secondaryText: "Spain", movieDBName: "Sirât" },
         { text: "The Voice of Hind Rajab", secondaryText: "Tunisia" },
       ],
       order: 7,
@@ -119,7 +119,7 @@ export default {
       nominees: [
         { text: "Arco" },
         { text: "Elio" },
-        { text: "K-Pop: Demon Hunters" },
+        { text: "K-Pop: Demon Hunters", movieDBName: "KPop Demon Hunters" },
         { text: "Little Amélie or The Character of Rain" },
         { text: "Zootopia 2" },
       ],
@@ -213,6 +213,7 @@ export default {
         {
           text: "Golden",
           secondaryText: "K-Pop: Demon Hunters",
+          movieDBName: "KPop Demon Hunters",
         },
         {
           text: "I Lied To You",
@@ -261,7 +262,7 @@ export default {
         { text: "Frankenstein" },
         { text: "One Battle After Another" },
         { text: "Sinners" },
-        { text: "Sirât" },
+        { text: "Sirât", movieDBName: "Sirât" },
       ],
       order: 18,
     },
