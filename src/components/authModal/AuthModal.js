@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./AuthModal.css";
 import { connect } from "react-redux";
 import { closeModal } from "../../actions/ui-actions";

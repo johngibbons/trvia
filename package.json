@@ -4,7 +4,7 @@
   "private": true,
   "devDependencies": {
     "prettier": "2.2.1",
-    "react-scripts": "5.0.1"
+    "react-scripts": "1.1.5"
   },
   "dependencies": {
     "blueimp-md5": "^2.7.0",
@@ -15,6 +15,7 @@
     "immutable": "^3.8.1",
     "material-ui": "^0.16.7",
     "moviedb": "^0.2.7",
+    "prop-types": "^15.8.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.2",

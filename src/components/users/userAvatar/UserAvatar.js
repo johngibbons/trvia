@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./UserAvatar.css";
 import { gravatar } from "../../../helpers/user-helper";
 import User from "../../../models/User";
