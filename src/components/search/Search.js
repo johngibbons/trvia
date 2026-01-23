@@ -38,10 +38,11 @@ const Search = ({
           id="search"
           type="text"
           autoFocus
+          fullWidth
           className="Search__input"
-          floatingLabelText="Search for movies, tv, actors"
+          label="Search for movies, tv, actors"
           value={searchValue}
-          onChange={(e, val) => onChangeSearchInput(val)}
+          onChange={(e) => onChangeSearchInput(e.target.value)}
         />
       </form>
       <div className="Search__results-container">

@@ -32,7 +32,7 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
             incorrect ? (
               <CancelIcon
                 className="Category__status-icon Category__status-icon--incorrect"
-                color="rgb(255, 0, 0)"
+                sx={{ color: "rgb(255, 0, 0)" }}
               />
             ) : (
               <div className="Category__status-icon Category__status-icon--correct">
@@ -44,7 +44,7 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
           ) : selectedNomineeId ? (
             <CheckCircleIcon
               className="Category__status-icon Category__selection-icon Category__complete-icon"
-              color={doneColor}
+              sx={{ color: doneColor }}
             />
           ) : (
             <div className="Category__status-icon Category__selection-icon Category__incomplete-icon" />
@@ -55,9 +55,9 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
         sx={{
           display: "flex",
           alignItems: "center",
-        }}
-        textStyle={{
-          paddingRight: 0,
+          "& .MuiCardHeader-content": {
+            paddingRight: 0,
+          },
         }}
       />
       <NomineesGrid

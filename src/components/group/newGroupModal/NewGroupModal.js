@@ -8,35 +8,44 @@ import { createGroup } from "../../../actions/group-actions";
 import { CURRENT_GAME } from "../../../constants";
 
 import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
-import RaisedButton from "@mui/material/Button";
+import Button from "@mui/material/Button";
 
 const NewGroupModal = ({ open, name, onChange, onClose, onClickCreate }) => {
   return (
-    <Dialog open={open} title="Create New Group" onRequestClose={onClose}>
-      <form>
-        <TextField
-          type="text"
-          autoFocus
-          className="NewGroupModal-name"
-          value={name}
-          floatingLabelText="Name"
-          hintText="Name your group"
-          onChange={(e, val) => onChange(val)}
-        />
-        <div>
-          <RaisedButton
-            primary
-            type="submit"
-            label="create"
-            disabled={!name}
-            onClick={(e) => {
-              e.preventDefault();
-              onClickCreate(name, CURRENT_GAME);
-            }}
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Create New Group</DialogTitle>
+      <DialogContent>
+        <form>
+          <TextField
+            type="text"
+            autoFocus
+            fullWidth
+            margin="dense"
+            className="NewGroupModal-name"
+            value={name}
+            label="Name"
+            placeholder="Name your group"
+            onChange={(e) => onChange(e.target.value)}
           />
-        </div>
-      </form>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={!name}
+              onClick={(e) => {
+                e.preventDefault();
+                onClickCreate(name, CURRENT_GAME);
+              }}
+            >
+              create
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 };

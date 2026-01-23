@@ -43,16 +43,12 @@ const EntryRow = ({
         ) : entryComplete ? (
           <CheckIcon
             className="EntriesTable__status-icon"
-            height="20px"
-            width="20px"
-            color="#689F38"
+            sx={{ height: "20px", width: "20px", color: "#689F38" }}
           />
         ) : (
           <WarningIcon
             className="EntriesTable__status-icon"
-            height="20px"
-            width="20px"
-            color="#D32F2F"
+            sx={{ height: "20px", width: "20px", color: "#D32F2F" }}
           />
         )}
       </td>
@@ -90,7 +86,7 @@ const EntryRow = ({
             const selectedNomineeId = entry.selections[category.id];
             const nominee = nominees[selectedNomineeId];
             return (
-              nominee && <td className={categoryClasses}>{nominee.text}</td>
+              nominee && <td key={category.id} className={categoryClasses}>{nominee.text}</td>
             );
           })}
     </tr>

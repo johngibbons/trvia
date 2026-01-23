@@ -20,8 +20,8 @@ export function getCurrentUser() {
 
 export function* checkAuthStatus(action) {
   try {
-    const { nextState } = action.payload;
-    const nextLocation = nextState && nextState.location.pathname;
+    const { nextState } = action.payload || {};
+    const nextLocation = nextState && nextState.location && nextState.location.pathname;
     const user = yield call(getCurrentUser, null);
 
     if (user) {

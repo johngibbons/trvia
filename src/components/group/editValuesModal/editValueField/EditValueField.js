@@ -13,7 +13,9 @@ const EditValueField = ({ value, category, onChange }) => {
       id={category.id}
       type="number"
       defaultValue={category.value}
-      floatingLabelText={category.name}
+      label={category.name}
+      fullWidth
+      margin="dense"
       className="EditValueField"
       value={value}
       onChange={(e) => onChange(category.id, parseInt(e.target.value, 10))}

@@ -16,7 +16,7 @@ const Navbar = ({ loggedIn }) => {
 
   return (
     <AppBar position="static" className="Navbar" sx={{ padding: 0 }}>
-      <Toolbar>
+      <Toolbar sx={{ justifyContent: "space-between", width: "100%" }}>
         <Typography
           variant="h6"
           component="div"
@@ -27,13 +27,11 @@ const Navbar = ({ loggedIn }) => {
             fontSize: "14px",
             fontWeight: 500,
             textTransform: "uppercase",
-            marginLeft: "24px",
-            flexGrow: 1,
           }}
         >
           trvia
         </Typography>
-        <Box sx={{ marginTop: 0, marginRight: "12px" }}>
+        <Box>
           {loggedIn ? <AccountDropdown /> : <LoginButton />}
         </Box>
       </Toolbar>

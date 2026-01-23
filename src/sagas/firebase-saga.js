@@ -103,11 +103,16 @@ export function* create(path, fn) {
   const payload = yield call(fn, key);
   const opts = newOpts("error");
   const dbRef = ref(database);
-  const [_, { error }] = yield [
-    call(firebaseUpdate, dbRef, payload).then(
+
+  // Create a wrapper function that returns a promise
+  const updatePromise = () =>
+    firebaseUpdate(dbRef, payload).then(
       () => opts.handler(undefined),
       (err) => opts.handler(err)
-    ),
+    );
+
+  const [_, { error }] = yield [
+    call(updatePromise),
     take(opts),
   ];
   return error;
@@ -130,11 +135,16 @@ export function* update(path, key, payload) {
   }
   const opts = newOpts("error");
   const dbRef = ref(database, `${path}/${key}`);
-  const [_, { error }] = yield [
-    call(firebaseUpdate, dbRef, payload).then(
+
+  // Create a wrapper function that returns a promise
+  const updatePromise = () =>
+    firebaseUpdate(dbRef, payload).then(
       () => opts.handler(undefined),
       (err) => opts.handler(err)
-    ),
+    );
+
+  const [_, { error }] = yield [
+    call(updatePromise),
     take(opts),
   ];
   return error;
@@ -161,11 +171,16 @@ export function* push(path, fn, getKey = false) {
   const payload = yield call(fn, key);
   const opts = newOpts("error");
   const dbRef = ref(database, path);
-  const [_, { error }] = yield [
-    call(firebaseSet, child(dbRef, key), payload).then(
+
+  // Create a wrapper function that returns a promise
+  const setPromise = () =>
+    firebaseSet(child(dbRef, key), payload).then(
       () => opts.handler(undefined),
       (err) => opts.handler(err)
-    ),
+    );
+
+  const [_, { error }] = yield [
+    call(setPromise),
     take(opts),
   ];
 
@@ -206,11 +221,16 @@ export function* push(path, fn, getKey = false) {
 export function* remove(path, key) {
   const opts = newOpts("error");
   const dbRef = ref(database, `${path}/${key}`);
-  const [_, { error }] = yield [
-    call(firebaseRemove, dbRef).then(
+
+  // Create a wrapper function that returns a promise
+  const removePromise = () =>
+    firebaseRemove(dbRef).then(
       () => opts.handler(undefined),
       (err) => opts.handler(err)
-    ),
+    );
+
+  const [_, { error }] = yield [
+    call(removePromise),
     take(opts),
   ];
   return error;

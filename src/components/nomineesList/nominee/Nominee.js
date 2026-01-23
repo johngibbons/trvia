@@ -3,16 +3,17 @@ import PropTypes from "prop-types";
 import "./Nominee.css";
 import { Record } from "immutable";
 
-import { ListItem } from "@mui/material";
+import { ListItem, ListItemText } from "@mui/material";
 
 const Nominee = ({ nominee, disabled }) => {
   return (
     <div>
-      <ListItem
-        disabled={disabled}
-        primaryText={nominee.text}
-        secondaryText={nominee.secondaryText}
-      />
+      <ListItem disabled={disabled}>
+        <ListItemText
+          primary={nominee.text}
+          secondary={nominee.secondaryText}
+        />
+      </ListItem>
       <img
         src={nominee.imageUrl}
         style={{

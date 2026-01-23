@@ -78,7 +78,7 @@ const Nominee = ({
           (isCorrect ? (
             <OscarIcon width="200px" height="200px" fill="hsl(45, 37%, 75%)" />
           ) : (
-            <XIcon style={{ width: 200, height: 200 }} color="rgb(255, 0, 0)" />
+            <XIcon sx={{ width: 200, height: 200, color: "rgb(255, 0, 0)" }} />
           ))}
       </div>
       <div className={nomineeImageClasses} style={{ backgroundImage }} />

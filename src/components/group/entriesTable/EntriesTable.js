@@ -15,18 +15,14 @@ const EntriesTable = ({ entries, categories, gameStarted }) => {
           <span className="EntriesTable--legend-icon EntriesTable--legend-icon-complete">
             <CheckIcon
               className="EntriesTable__status-icon"
-              height="20px"
-              width="20px"
-              color="#689F38"
+              sx={{ height: "20px", width: "20px", color: "#689F38" }}
             />
             Complete
           </span>
           <span className="EntriesTable--legend-icon EntriesTable--legend-icon-incomplete">
             <WarningIcon
               className="EntriesTable__status-icon"
-              height="20px"
-              width="20px"
-              color="#D32F2F"
+              sx={{ height: "20px", width: "20px", color: "#D32F2F" }}
             />
             Incomplete
           </span>

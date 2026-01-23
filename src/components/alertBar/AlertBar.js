@@ -12,11 +12,13 @@ const AlertBar = ({ isOpen, message, onClose, isError }) => {
       open={isOpen}
       message={message}
       autoHideDuration={3000}
-      onRequestClose={onClose}
-      bodyStyle={{
-        backgroundColor: isError ? "rgb(220, 0, 0)" : "#b7a261",
+      onClose={onClose}
+      ContentProps={{
+        sx: {
+          backgroundColor: isError ? "rgb(220, 0, 0)" : "#b7a261",
+        },
       }}
-      style={{
+      sx={{
         boxSizing: "border-box",
         left: 0,
         width: "100vw",

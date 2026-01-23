@@ -97,8 +97,6 @@ export const currentGroupCategoriesSelector = createSelector(
       ? group.values
           .toKeyedSeq()
           .map((val, key) => {
-            const category = categories.get(key);
-            console.log("category", category);
             return categories.get(key).set("value", val);
           })
           .sort((catA, catB) => catA.presentationOrder - catB.presentationOrder)

@@ -8,7 +8,7 @@ import { Record } from "immutable";
 
 import { deleteNominee } from "../../../../../actions/pending-game-actions";
 
-import { ListItem } from "@mui/material";
+import { ListItem, ListItemText } from "@mui/material";
 import DeleteButton from "./deleteButton/DeleteButton";
 
 const PendingNominee = ({ nominee, onDelete }) => {
@@ -16,10 +16,13 @@ const PendingNominee = ({ nominee, onDelete }) => {
     <ListItem
       disabled
       className="PendingNominee"
-      primaryText={nominee.text}
-      secondaryText={nominee.secondaryText}
-      rightIconButton={<DeleteButton onClick={() => onDelete(nominee)} />}
-    />
+      secondaryAction={<DeleteButton onClick={() => onDelete(nominee)} />}
+    >
+      <ListItemText
+        primary={nominee.text}
+        secondary={nominee.secondaryText}
+      />
+    </ListItem>
   );
 };
 
