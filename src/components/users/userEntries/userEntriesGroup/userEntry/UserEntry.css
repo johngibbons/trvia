@@ -1,11 +1,15 @@
 .UserEntry {
-  color: #424242;
+  color: #555;
   text-decoration: none;
-  line-height: 2;
   font-size: 14px;
   display: block;
+  padding: 8px 12px;
+  margin: 0 -12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
 }
 
 .UserEntry:hover {
-  color: #757575;
+  background-color: rgba(183, 162, 97, 0.08);
+  color: #333;
 }

@@ -1,10 +1,17 @@
 .UserEntries--entries-container {
-  margin: 0 -10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 @media (min-width: 668px) {
   .UserEntries--entries-container {
-    display: flex;
-    flex-wrap: wrap;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .UserEntries--entries-container {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

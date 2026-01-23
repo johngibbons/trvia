@@ -9,6 +9,10 @@ import { useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import ListIcon from "@mui/icons-material/FormatListBulleted";
+import LogoutIcon from "@mui/icons-material/Logout";
 import UserAvatar from "../../users/userAvatar/UserAvatar";
 
 const AccountDropdown = ({ currentUser, onClickSignOut }) => {
@@ -58,9 +62,47 @@ const AccountDropdown = ({ currentUser, onClickSignOut }) => {
           vertical: "top",
           horizontal: "right",
         }}
+        PaperProps={{
+          sx: {
+            borderRadius: "10px",
+            minWidth: "180px",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
+            mt: 1,
+          },
+        }}
       >
-        <MenuItem onClick={handleMyEntries}>My Entries</MenuItem>
-        <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
+        <MenuItem
+          onClick={handleMyEntries}
+          sx={{
+            padding: "10px 16px",
+            fontSize: "14px",
+            "&:hover": {
+              backgroundColor: "rgba(183, 162, 97, 0.08)",
+            },
+          }}
+        >
+          <ListItemIcon>
+            <ListIcon sx={{ fontSize: 20, color: "#666" }} />
+          </ListItemIcon>
+          My Entries
+        </MenuItem>
+        <Divider sx={{ margin: "4px 0" }} />
+        <MenuItem
+          onClick={handleSignOut}
+          sx={{
+            padding: "10px 16px",
+            fontSize: "14px",
+            color: "#666",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+            },
+          }}
+        >
+          <ListItemIcon>
+            <LogoutIcon sx={{ fontSize: 20, color: "#666" }} />
+          </ListItemIcon>
+          Sign out
+        </MenuItem>
       </Menu>
     </>
   );
