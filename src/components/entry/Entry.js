@@ -44,6 +44,11 @@ const Entry = ({
   hasStarted,
   totalPossible,
 }) => {
+  // Show loading state if data isn't loaded yet
+  if (!entry || !game || !group) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <div

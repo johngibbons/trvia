@@ -4,6 +4,10 @@ import { connect } from "react-redux";
 import GameModel from "../../models/Game";
 
 const Game = ({ game }) => {
+  if (!game) {
+    return <div>Loading...</div>;
+  }
+
   return <h1>{game.name}</h1>;
 };
 

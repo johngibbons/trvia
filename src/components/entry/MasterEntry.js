@@ -13,6 +13,10 @@ import Category from "./category/Category";
 import CategoryModel from "../../models/Category";
 
 const MasterEntry = ({ game, categories }) => {
+  if (!game || !categories) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <PageHeading text="Master Entry">{game.name}</PageHeading>

@@ -10,6 +10,10 @@ import PageHeading from ".././../pageHeading/PageHeading";
 import UserEntriesGroup from "./userEntriesGroup/UserEntriesGroup";
 
 const UserEntries = ({ entriesByGroup }) => {
+  if (!entriesByGroup) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="UserEntries">
       <PageHeading text="My Entries" />

@@ -13,6 +13,10 @@ import SavePendingGameButton from "./savePendingGameButton/SavePendingGameButton
 import EditCategoriesList from "./editCategoriesList/EditCategoriesList";
 
 const EditGame = ({ game, categories, onChange }) => {
+  if (!game || !categories) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="EditGame">
       <PageHeading text={game.name}>

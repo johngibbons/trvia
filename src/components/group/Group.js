@@ -32,11 +32,16 @@ const Group = ({
   game,
   entries,
   winningEntries,
-  params,
+  routeParams,
   gameStarted,
   gameEnded,
   onClickNewEntry,
 }) => {
+  // Show loading state if data isn't loaded yet
+  if (!group || !game) {
+    return <div className="Group">Loading...</div>;
+  }
+
   return (
     <div className="Group">
       <h5 className="Group--game-name">{game.name}</h5>
@@ -67,7 +72,7 @@ const Group = ({
         categories={categories}
         gameStarted={gameStarted}
       />
-      {group.id && <NewEntryModal groupId={params.id} gameId={group.game} />}
+      {group.id && <NewEntryModal groupId={routeParams.id} gameId={group.game} />}
       {currentUser.id === group.admin && <EditValuesModal group={group} />}
     </div>
   );
@@ -80,7 +85,7 @@ Group.propTypes = {
   group: PropTypes.instanceOf(GroupModel),
   entries: PropTypes.instanceOf(List),
   winningEntries: PropTypes.instanceOf(List),
-  params: PropTypes.object,
+  routeParams: PropTypes.object,
   gameStarted: PropTypes.bool,
   gameEnded: PropTypes.bool,
   onClickNewEntry: PropTypes.func.isRequired,
