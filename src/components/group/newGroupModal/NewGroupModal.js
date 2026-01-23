@@ -15,9 +15,27 @@ import Button from "@mui/material/Button";
 
 const NewGroupModal = ({ open, name, onChange, onClose, onClickCreate }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Create New Group</DialogTitle>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          borderRadius: "12px",
+          minWidth: "400px",
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          fontSize: "20px",
+          fontWeight: 600,
+          color: "#333",
+          padding: "24px 24px 16px",
+        }}
+      >
+        Create New Group
+      </DialogTitle>
+      <DialogContent sx={{ padding: "0 24px 24px" }}>
         <form>
           <TextField
             type="text"
@@ -29,21 +47,33 @@ const NewGroupModal = ({ open, name, onChange, onClose, onClickCreate }) => {
             label="Name"
             placeholder="Name your group"
             onChange={(e) => onChange(e.target.value)}
+            sx={{
+              marginBottom: "20px",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+            }}
           />
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={!name}
-              onClick={(e) => {
-                e.preventDefault();
-                onClickCreate(name, CURRENT_GAME);
-              }}
-            >
-              create
-            </Button>
-          </div>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            disabled={!name}
+            onClick={(e) => {
+              e.preventDefault();
+              onClickCreate(name, CURRENT_GAME);
+            }}
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              padding: "12px 24px",
+              borderRadius: "8px",
+              fontSize: "15px",
+            }}
+          >
+            Create Group
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

@@ -10,15 +10,21 @@ import TextField from "@mui/material/TextField";
 const EditValueField = ({ value, category, onChange }) => {
   return (
     <TextField
-      id={category.id}
       type="number"
-      defaultValue={category.value}
       label={category.name}
       fullWidth
-      margin="dense"
+      size="small"
       className="EditValueField"
-      value={value}
+      value={value !== undefined ? value : category.value}
       onChange={(e) => onChange(category.id, parseInt(e.target.value, 10))}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "8px",
+        },
+        "& .MuiInputLabel-root": {
+          fontSize: "14px",
+        },
+      }}
     />
   );
 };

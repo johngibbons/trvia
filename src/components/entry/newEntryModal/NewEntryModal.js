@@ -23,9 +23,27 @@ const NewEntryModal = ({
   onClickCreate,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Create Your Entry</DialogTitle>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          borderRadius: "12px",
+          minWidth: "400px",
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          fontSize: "20px",
+          fontWeight: 600,
+          color: "#333",
+          padding: "24px 24px 16px",
+        }}
+      >
+        Create Your Entry
+      </DialogTitle>
+      <DialogContent sx={{ padding: "0 24px 24px" }}>
         <form>
           <TextField
             type="text"
@@ -37,23 +55,35 @@ const NewEntryModal = ({
             label="Name"
             placeholder="What do you want to call your entry?"
             onChange={(e) => onChange(e.target.value)}
+            sx={{
+              marginBottom: "20px",
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+              },
+            }}
           />
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={!name}
-              onClick={(e) => {
-                e.preventDefault();
-                onClose();
-                onChange("");
-                onClickCreate(name, groupId, gameId, currentUser.id);
-              }}
-            >
-              create
-            </Button>
-          </div>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            disabled={!name}
+            onClick={(e) => {
+              e.preventDefault();
+              onClose();
+              onChange("");
+              onClickCreate(name, groupId, gameId, currentUser.id);
+            }}
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              padding: "12px 24px",
+              borderRadius: "8px",
+              fontSize: "15px",
+            }}
+          >
+            Create Entry
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

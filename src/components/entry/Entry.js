@@ -25,7 +25,6 @@ import {
 } from "../../selectors/categories-selector";
 import { Seq } from "immutable";
 
-import PageHeading from "../pageHeading/PageHeading";
 import Category from "./category/Category";
 import { Link } from "react-router-dom";
 import WarningIcon from "@mui/icons-material/Warning";
@@ -65,11 +64,12 @@ const Entry = ({
       />
       <h5 className="Entry--game-name">{game.name}</h5>
       <div className="Entry--title-container">
-        <PageHeading text={entry.name}>
+        <div className="Entry--title-left">
+          <h1 className="Entry--entry-name">{entry.name}</h1>
           <Link to={`/groups/${entry.group}`} className={"Entry--group-link"}>
             {group.name}
           </Link>
-        </PageHeading>
+        </div>
         <div className="Entry--score-container">
           {hasStarted ? (
             <h3 className="Entry--score">{`${score}/${possible} points`}</h3>
@@ -82,9 +82,9 @@ const Entry = ({
               <div className="Entry__status Entry__status--incomplete">
                 <WarningIcon
                   className="Entry__status--icon Entry__status--warning-icon"
-                  sx={{ width: 50, height: 50, color: "#D32F2F" }}
+                  sx={{ width: 24, height: 24, color: "#D32F2F" }}
                 />
-                Entry incomplete. Scroll down to complete your selections
+                Entry incomplete
               </div>
             )
           )}
@@ -104,24 +104,27 @@ const Entry = ({
       ) : (
         <h5>Entry not visible until game starts</h5>
       )}
-      <div>End of entry</div>
-      {!hasStarted &&
-        (isComplete ? (
-          <div className="Entry__status Entry__status--complete">
-            Entry complete
-          </div>
-        ) : (
-          <div className="Entry__status Entry__status--incomplete">
-            <WarningIcon
-              className="Entry__status--icon Entry__status--warning-icon"
-              sx={{ width: 50, height: 50, color: "#D32F2F" }}
-            />
-            Entry incomplete. Scroll up to complete your selections
-          </div>
-        ))}
-      <Link to={`/groups/${entry.group}`} className={"Entry--group-link"}>
-        &#8592; Back to&nbsp;<b>{group.name}</b>
-      </Link>
+      <div className="Entry--footer">
+        <div className="Entry--footer-divider" />
+        {!hasStarted &&
+          (isComplete ? (
+            <div className="Entry__status Entry__status--complete Entry__status--footer">
+              Entry complete
+            </div>
+          ) : (
+            <div className="Entry__status Entry__status--incomplete Entry__status--footer">
+              <WarningIcon
+                className="Entry__status--icon Entry__status--warning-icon"
+                sx={{ width: 20, height: 20, color: "#D32F2F" }}
+              />
+              Entry incomplete
+            </div>
+          ))}
+        <Link to={`/groups/${entry.group}`} className="Entry--back-link">
+          <BackArrowIcon sx={{ fontSize: 18, marginRight: "6px" }} />
+          Back to <span className="Entry--back-link-group">{group.name}</span>
+        </Link>
+      </div>
     </div>
   );
 };

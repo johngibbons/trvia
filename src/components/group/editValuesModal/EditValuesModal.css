@@ -1,7 +1,18 @@
 .EditValuesModal--form-container {
-  margin-right: -25px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+@media (min-width: 680px) {
+  .EditValuesModal--form-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
 }
 
 .EditValuesModal--save {
-  margin-top: 25px;
+  grid-column: 1 / -1;
+  margin-top: 8px;
 }

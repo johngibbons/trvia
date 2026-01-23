@@ -11,9 +11,27 @@ import FirebaseContainer from "./FirebaseContainer";
 
 const AuthModal = ({ open, onClose }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Log In</DialogTitle>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          borderRadius: "12px",
+          minWidth: "400px",
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          fontSize: "20px",
+          fontWeight: 600,
+          color: "#333",
+          padding: "24px 24px 16px",
+        }}
+      >
+        Log In
+      </DialogTitle>
+      <DialogContent sx={{ padding: "0 24px 24px" }}>
         <FirebaseContainer />
       </DialogContent>
     </Dialog>

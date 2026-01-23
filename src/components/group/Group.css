@@ -3,13 +3,20 @@
   margin-bottom: 0;
 }
 
+.Group--actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
 .Group--create-entry-button {
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 @media (min-width: 680px) {
   .Group--create-entry-button {
     margin-top: 0;
-    margin-right: 25px;
+    margin-right: 0;
   }
 }

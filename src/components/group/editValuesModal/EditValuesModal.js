@@ -16,24 +16,55 @@ import EditValueField from "./editValueField/EditValueField";
 
 const EditValuesModal = ({ open, group, categories, onClickSave, onClose }) => {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Edit Category Values</DialogTitle>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: "12px",
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          fontSize: "20px",
+          fontWeight: 600,
+          color: "#333",
+          padding: "24px 24px 16px",
+        }}
+      >
+        Edit Category Values
+      </DialogTitle>
+      <DialogContent sx={{ padding: "8px 24px 24px" }}>
         <form className="EditValuesModal--form-container">
-          {categories.map((category, i) => {
-            return <EditValueField key={i} category={category} group={group} />;
-          })}
+          {categories
+            .valueSeq()
+            .sort((a, b) => (b.value || 0) - (a.value || 0))
+            .map((category) => (
+              <EditValueField key={category.id} category={category} group={group} />
+            ))}
           <Button
             variant="contained"
             color="primary"
             className="EditValuesModal--save"
             type="submit"
+            fullWidth
             onClick={(e) => {
               e.preventDefault();
               onClickSave(group.id);
             }}
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              padding: "12px 24px",
+              borderRadius: "8px",
+              fontSize: "15px",
+              marginTop: "16px",
+            }}
           >
-            save
+            Save Changes
           </Button>
         </form>
       </DialogContent>
