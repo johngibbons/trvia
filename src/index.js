@@ -11,7 +11,14 @@ import {
   autoFetchNomineeImages,
 } from "./helpers/game-helper";
 import { STAGING_DATABASE, PROD_DATABASE } from "./constants";
-startFirebase(PROD_DATABASE);
+
+// Use environment variable to choose database (defaults to staging for safety)
+const database = process.env.REACT_APP_ENVIRONMENT === 'production'
+  ? PROD_DATABASE
+  : STAGING_DATABASE;
+
+console.log(`🔥 Firebase Environment: ${process.env.REACT_APP_ENVIRONMENT || 'staging'}`);
+startFirebase(database);
 syncCurrentGameWithJSONData()
   .then(() => {
     return autoFetchNomineeImages({ overwrite: false });
