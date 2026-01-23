@@ -47,27 +47,42 @@ const Group = ({
       <h5 className="Group--game-name">{game.name}</h5>
       <PageHeading text={group.name} />
       {!gameStarted && (
-        <Button
-          className="Group--create-entry-button"
-          variant="contained"
-          sx={{
-            color: "#212121",
-          }}
-          onClick={() => onClickNewEntry("NEW_ENTRY")}
-        >
-          Create your entry
-        </Button>
-      )}
-      {!gameStarted && currentUser.id === group.admin && (
-        <Button
-          variant="contained"
-          sx={{
-            color: "#212121",
-          }}
-          onClick={() => onClickNewEntry("EDIT_VALUES")}
-        >
-          Edit Category Values
-        </Button>
+        <div className="Group--actions">
+          <Button
+            className="Group--create-entry-button"
+            variant="contained"
+            sx={{
+              color: "#212121",
+              textTransform: "none",
+              fontWeight: 600,
+              padding: "10px 24px",
+              borderRadius: "8px",
+            }}
+            onClick={() => onClickNewEntry("NEW_ENTRY")}
+          >
+            Create your entry
+          </Button>
+          {currentUser.id === group.admin && (
+            <Button
+              variant="outlined"
+              sx={{
+                color: "#b7a261",
+                borderColor: "#b7a261",
+                textTransform: "none",
+                fontWeight: 600,
+                padding: "10px 24px",
+                borderRadius: "8px",
+                "&:hover": {
+                  borderColor: "#9a8a52",
+                  backgroundColor: "rgba(183, 162, 97, 0.08)",
+                },
+              }}
+              onClick={() => onClickNewEntry("EDIT_VALUES")}
+            >
+              Edit Category Values
+            </Button>
+          )}
+        </div>
       )}
       {gameEnded && <WinnerBanner winningEntries={winningEntries} />}
       <EntriesTable

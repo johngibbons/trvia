@@ -1,6 +1,10 @@
 .EntriesTable {
-  padding-top: 80px;
+  padding-top: 16px;
   overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 24px;
 }
 
 .EntriesTable--table {
@@ -9,59 +13,60 @@
   border-spacing: 0;
   table-layout: fixed;
   width: 100%;
-  padding-top: 97px;
   overflow-x: auto;
 }
 
 .EntriesTable--table-header {
-  font-size: 16px;
+  font-size: 12px;
   display: table-header-group;
   vertical-align: middle;
 }
 
 .EntriesTable--table-header-row {
   display: table-row;
-  border-bottom: 3px solid rgba(245, 245, 245, 0.9);
+  border-bottom: 2px solid #eee;
 }
 
 .EntriesTable--headerCol {
   display: table-cell;
-  font-weight: bold;
-  color: rgb(158, 158, 158);
+  font-weight: 600;
+  color: #888;
   white-space: nowrap;
   text-overflow: ellipsis;
   text-align: left;
-  padding-right: 30px;
-  padding-bottom: 10px;
+  padding: 12px 16px 12px 0;
   vertical-align: bottom;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .EntriesTable--headerCol-diagonal {
   text-align: left;
-  width: 150px;
-  transform-origin: 30px 31px;
+  width: 130px;
   vertical-align: bottom;
   overflow: hidden;
   white-space: normal;
+  line-height: 1.4;
 }
 
 .EntriesTable--headerCol-avatar {
-  width: 40px;
-  padding-right: 10px;
+  width: 48px;
+  padding-right: 12px;
 }
 
 .EntriesTable--headerCol-entry-name {
-  width: 125px;
+  width: 140px;
+  padding-left: 8px;
 }
 
 .EntriesTable--headerCol-rank {
-  width: 35px;
-  padding-right: 10px;
+  width: 40px;
+  padding-right: 8px;
 }
 
 .EntriesTable--headerCol-score {
-  width: 90px;
-  padding-right: 10px;
+  width: 70px;
+  padding-right: 16px;
 }
 
 .EntriesTable--table-body {
@@ -73,68 +78,82 @@
 .EntriesTable--row {
   display: table-row;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-bottom: 1px solid rgba(245, 245, 245, 0.9);
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .EntriesTable--row:hover {
-  background-color: rgba(245, 245, 245, 0.9);
+  background-color: #fafafa;
 }
 
 .EntriesTable--col {
   display: table-cell;
-  height: 48px;
-  font-size: 16px;
+  height: 64px;
+  font-size: 14px;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 10px 30px 10px 0;
+  padding: 16px 16px 16px 0;
+  vertical-align: middle;
+  color: #444;
 }
 
 .EntriesTable--col-score {
-  padding-right: 10px;
+  padding-right: 16px;
+  font-weight: 500;
+  color: #666;
 }
 
 .EntriesTable--col-category {
   text-align: left;
   white-space: normal;
+  line-height: 1.4;
+  font-size: 13px;
 }
 
 .EntriesTable--col-correct {
   color: #b7a261;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .EntriesTable--col-incorrect {
-  color: #ef9a9a;
+  color: #d32f2f;
   text-decoration: line-through;
+  opacity: 0.7;
 }
 
 .EntriesTable--col-avatar {
-  padding-right: 10px;
+  padding-right: 12px;
 }
 
 .EntriesTable--avatar {
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 .EntriesTable--col-entry-name {
+  padding-left: 8px;
 }
 
 .EntriesTable--entry-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 2px;
 }
 
 .EntriesTable--user-name {
   font-size: 12px;
-  color: rgb(158, 158, 158);
+  color: #999;
 }
 
 .EntriesTable--col-rank {
-  text-align: right;
-  padding-right: 10px;
-  font-weight: bold;
+  text-align: center;
+  padding-right: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #666;
 }
 
 .EntriesTable--legend {
