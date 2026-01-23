@@ -3,13 +3,17 @@ import PropTypes from "prop-types";
 import "./DeleteButton.css";
 
 import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Cancel";
-import { red50, red900 } from "@mui/material/colors";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { red } from "@mui/material/colors";
 
 const DeleteButton = ({ onClick }) => {
   return (
-    <IconButton className="DeleteButton" onClick={onClick}>
-      <DeleteIcon color={red50} hoverColor={red900} />
+    <IconButton
+      className="DeleteButton"
+      onClick={onClick}
+      sx={{ color: red[50], '&:hover': { color: red[900] } }}
+    >
+      <CancelIcon />
     </IconButton>
   );
 };
