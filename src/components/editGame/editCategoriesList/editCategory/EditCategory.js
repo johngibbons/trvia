@@ -5,13 +5,14 @@ import { Record, Seq } from "immutable";
 import { connect } from "react-redux";
 import { currentNomineesSelector } from "../../../../selectors/nominees-selector";
 
-import { Card, CardHeader } from "material-ui/Card";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
 import NomineesList from "../../../nomineesList/NomineesList";
 
 const EditCategory = ({ category, nominees }) => {
   return (
     <Card className="EditCategory">
-      <CardHeader title={category.text} subtitle={`${category.value} points`} />
+      <CardHeader title={category.text} subheader={`${category.value} points`} />
       <NomineesList nominees={nominees} />
     </Card>
   );

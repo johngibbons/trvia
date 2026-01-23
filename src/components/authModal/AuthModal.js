@@ -4,7 +4,7 @@ import "./AuthModal.css";
 import { connect } from "react-redux";
 import { closeModal } from "../../actions/ui-actions";
 
-import Dialog from "material-ui/Dialog";
+import Dialog from "@mui/material/Dialog";
 import FirebaseContainer from "./FirebaseContainer";
 
 const AuthModal = ({ open, onClose }) => {

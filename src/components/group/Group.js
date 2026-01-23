@@ -18,7 +18,7 @@ import {
 } from "../../selectors/games-selector";
 import { openModal } from "../../actions/ui-actions";
 
-import RaisedButton from "material-ui/RaisedButton";
+import Button from "@mui/material/Button";
 import NewEntryModal from "../../components/entry/newEntryModal/NewEntryModal";
 import PageHeading from "../pageHeading/PageHeading";
 import EntriesTable from "./entriesTable/EntriesTable";
@@ -47,24 +47,27 @@ const Group = ({
       <h5 className="Group--game-name">{game.name}</h5>
       <PageHeading text={group.name} />
       {!gameStarted && (
-        <RaisedButton
+        <Button
           className="Group--create-entry-button"
-          primary
-          label="Create your entry"
-          labelStyle={{
+          variant="contained"
+          sx={{
             color: "#212121",
           }}
           onClick={() => onClickNewEntry("NEW_ENTRY")}
-        />
+        >
+          Create your entry
+        </Button>
       )}
       {!gameStarted && currentUser.id === group.admin && (
-        <RaisedButton
-          label="Edit Category Values"
-          labelStyle={{
+        <Button
+          variant="contained"
+          sx={{
             color: "#212121",
           }}
           onClick={() => onClickNewEntry("EDIT_VALUES")}
-        />
+        >
+          Edit Category Values
+        </Button>
       )}
       {gameEnded && <WinnerBanner winningEntries={winningEntries} />}
       <EntriesTable

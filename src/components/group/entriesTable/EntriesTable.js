@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./EntriesTable.css";
 import { List, Seq } from "immutable";
-import WarningIcon from "material-ui/svg-icons/alert/warning";
-import CheckIcon from "material-ui/svg-icons/action/check-circle";
+import WarningIcon from "@mui/icons-material/Warning";
+import CheckIcon from "@mui/icons-material/CheckCircle";
 
 import EntryRow from "./entryRow/EntryRow";
 

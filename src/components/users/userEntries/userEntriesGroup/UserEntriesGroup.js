@@ -9,7 +9,7 @@ import Game from "../../../../models/Game";
 import { groupFromPropsSelector } from "../../../../selectors/group-selector";
 import { entriesGameSelector } from "../../../../selectors/games-selector";
 
-import Paper from "material-ui/Paper";
+import Paper from "@mui/material/Paper";
 import UserEntry from "./userEntry/UserEntry";
 import { Link } from "react-router-dom";
 

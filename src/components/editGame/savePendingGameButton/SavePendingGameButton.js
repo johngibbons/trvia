@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./SavePendingGameButton.css";
 
-import RaisedButton from "material-ui/RaisedButton";
+import RaisedButton from "@mui/material/Button";
 import { Link } from "react-router-dom";
 
 const SavePendingGameButton = ({ id, disabled }) => (

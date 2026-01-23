@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 import { openModal } from "../../actions/ui-actions";
 
-import RaisedButton from "material-ui/RaisedButton";
+import Button from "@mui/material/Button";
 import NewGroupModal from "../group/newGroupModal/NewGroupModal";
 import { gameNomineesSelector } from "../../selectors/nominees-selector";
 
@@ -25,10 +25,9 @@ const Home = ({ currentUser, nominees, onClickNewGroup }) => {
           friends.
         </h2>
         {true ? (
-          <RaisedButton
-            primary
-            label="Start a group"
-            labelStyle={{
+          <Button
+            variant="contained"
+            sx={{
               color: "#424242",
             }}
             onClick={() => {
@@ -36,7 +35,9 @@ const Home = ({ currentUser, nominees, onClickNewGroup }) => {
                 ? onClickNewGroup("NEW_GROUP")
                 : navigate("/login");
             }}
-          />
+          >
+            Start a group
+          </Button>
         ) : (
           <div className="Home-game-complete-message">
             Note: The 2018 Oscars are complete! Please check back for the next

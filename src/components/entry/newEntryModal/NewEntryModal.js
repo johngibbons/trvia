@@ -2,9 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "./NewEntryModal.css";
-import Dialog from "material-ui/Dialog";
-import TextField from "material-ui/TextField";
-import RaisedButton from "material-ui/RaisedButton";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
+import RaisedButton from "@mui/material/Button";
 import User from "../../../models/User";
 
 import { closeModal, updateNewEntryName } from "../../../actions/ui-actions";

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import "./Nominee.css";
 import { Record } from "immutable";
 
-import { ListItem } from "material-ui/List";
+import { ListItem } from "@mui/material";
 
 const Nominee = ({ nominee, disabled }) => {
   return (

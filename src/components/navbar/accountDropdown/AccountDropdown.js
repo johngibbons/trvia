@@ -6,9 +6,9 @@ import { Record } from "immutable";
 import { signOut } from "../../../actions/user-actions";
 import { useNavigate } from "react-router-dom";
 
-import IconMenu from "material-ui/IconMenu";
-import IconButton from "material-ui/IconButton";
-import MenuItem from "material-ui/MenuItem";
+import IconMenu from "@mui/material/Menu";
+import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
 import UserAvatar from "../../users/userAvatar/UserAvatar";
 
 const AccountDropdown = ({ currentUser, onClickSignOut }) => {

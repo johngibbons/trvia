@@ -4,16 +4,16 @@ import "./PendingNomineesList.css";
 
 import { Seq } from "immutable";
 
-import MuiList from "material-ui/List";
+import { List } from "@mui/material";
 import PendingNominee from "./pendingNominee/PendingNominee";
 
 const PendingNomineesList = ({ nominees }) => {
   return (
-    <MuiList>
+    <List>
       {nominees.map((nominee, i) => (
         <PendingNominee key={i} nominee={nominee} index={i} />
       ))}
-    </MuiList>
+    </List>
   );
 };
 

@@ -4,7 +4,7 @@ import "./AlertBar.css";
 import { connect } from "react-redux";
 import { hideAlertBar } from "../../actions/ui-actions";
 
-import Snackbar from "material-ui/Snackbar";
+import Snackbar from "@mui/material/Snackbar";
 
 const AlertBar = ({ isOpen, message, onClose, isError }) => {
   return (

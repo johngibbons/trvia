@@ -8,7 +8,7 @@ import { Record } from "immutable";
 
 import { deleteNominee } from "../../../../../actions/pending-game-actions";
 
-import { ListItem } from "material-ui/List";
+import { ListItem } from "@mui/material";
 import DeleteButton from "./deleteButton/DeleteButton";
 
 const PendingNominee = ({ nominee, onDelete }) => {

@@ -7,9 +7,9 @@ import { closeModal, updateNewGroupName } from "../../../actions/ui-actions";
 import { createGroup } from "../../../actions/group-actions";
 import { CURRENT_GAME } from "../../../constants";
 
-import Dialog from "material-ui/Dialog";
-import TextField from "material-ui/TextField";
-import RaisedButton from "material-ui/RaisedButton";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
+import RaisedButton from "@mui/material/Button";
 
 const NewGroupModal = ({ open, name, onChange, onClose, onClickCreate }) => {
   return (

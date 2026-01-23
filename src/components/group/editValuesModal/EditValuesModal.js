@@ -8,8 +8,8 @@ import Group from "../../../models/Group";
 import { groupCategoriesSelector } from "../../../selectors/categories-selector";
 import { Seq } from "immutable";
 
-import Dialog from "material-ui/Dialog";
-import RaisedButton from "material-ui/RaisedButton";
+import Dialog from "@mui/material/Dialog";
+import RaisedButton from "@mui/material/Button";
 import EditValueField from "./editValueField/EditValueField";
 
 const EditValuesModal = ({ open, group, categories, onClickSave, onClose }) => {

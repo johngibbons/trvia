@@ -2,9 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./DeleteButton.css";
 
-import IconButton from "material-ui/IconButton";
-import DeleteIcon from "material-ui/svg-icons/navigation/cancel";
-import { red50, red900 } from "material-ui/styles/colors";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Cancel";
+import { red50, red900 } from "@mui/material/colors";
 
 const DeleteButton = ({ onClick }) => {
   return (

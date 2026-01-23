@@ -16,9 +16,9 @@ import {
 
 import { closeModal } from "../../../actions/ui-actions";
 
-import Dialog from "material-ui/Dialog";
-import TextField from "material-ui/TextField";
-import RaisedButton from "material-ui/RaisedButton";
+import Dialog from "@mui/material/Dialog";
+import TextField from "@mui/material/TextField";
+import RaisedButton from "@mui/material/Button";
 import PendingNomineesList from "./pendingNomineesList/PendingNomineesList";
 
 const PendingCategoryModal = ({

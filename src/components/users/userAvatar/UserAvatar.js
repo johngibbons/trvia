@@ -4,7 +4,7 @@ import "./UserAvatar.css";
 import { gravatar } from "../../../helpers/user-helper";
 import User from "../../../models/User";
 
-import Avatar from "material-ui/Avatar";
+import Avatar from "@mui/material/Avatar";
 
 const UserAvatar = ({ user, className }) => {
   return (

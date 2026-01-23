@@ -28,8 +28,8 @@ import { Seq } from "immutable";
 import PageHeading from "../pageHeading/PageHeading";
 import Category from "./category/Category";
 import { Link } from "react-router-dom";
-import WarningIcon from "material-ui/svg-icons/alert/warning";
-import BackArrowIcon from "material-ui/svg-icons/navigation/arrow-back";
+import WarningIcon from "@mui/icons-material/Warning";
+import BackArrowIcon from "@mui/icons-material/ArrowBack";
 
 const Entry = ({
   entry,
@@ -82,9 +82,7 @@ const Entry = ({
               <div className="Entry__status Entry__status--incomplete">
                 <WarningIcon
                   className="Entry__status--icon Entry__status--warning-icon"
-                  width={50}
-                  height={50}
-                  color="#D32F2F"
+                  sx={{ width: 50, height: 50, color: "#D32F2F" }}
                 />
                 Entry incomplete. Scroll down to complete your selections
               </div>
@@ -116,9 +114,7 @@ const Entry = ({
           <div className="Entry__status Entry__status--incomplete">
             <WarningIcon
               className="Entry__status--icon Entry__status--warning-icon"
-              width={50}
-              height={50}
-              color="#D32F2F"
+              sx={{ width: 50, height: 50, color: "#D32F2F" }}
             />
             Entry incomplete. Scroll up to complete your selections
           </div>

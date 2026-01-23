@@ -5,17 +5,19 @@ import { connect } from "react-redux";
 import { openModal } from "../../../actions/ui-actions";
 import { useNavigate } from "react-router-dom";
 
-import FlatButton from "material-ui/FlatButton";
+import Button from "@mui/material/Button";
 
 const LoginButton = () => {
   const navigate = useNavigate();
 
   return (
-    <FlatButton
-      label="login"
+    <Button
+      variant="text"
       className="LoginButton"
       onClick={() => navigate("/login")}
-    />
+    >
+      login
+    </Button>
   );
 };
 

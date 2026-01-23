@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { updateValueField } from "../../../../actions/ui-actions";
 
 import Category from "../../../../models/Category";
-import TextField from "material-ui/TextField";
+import TextField from "@mui/material/TextField";
 
 const EditValueField = ({ value, category, onChange }) => {
   return (

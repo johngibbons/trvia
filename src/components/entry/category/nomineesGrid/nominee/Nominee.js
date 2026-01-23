@@ -10,8 +10,8 @@ import { toggleCorrectNominee } from "../../../../../actions/category-actions";
 import { gameStartedSelector } from "../../../../../selectors/games-selector";
 import { showAlertBar } from "../../../../../actions/ui-actions";
 
-import CheckIcon from "material-ui/svg-icons/navigation/check";
-import XIcon from "material-ui/svg-icons/navigation/close";
+import CheckIcon from "@mui/icons-material/Check";
+import XIcon from "@mui/icons-material/Close";
 import OscarIcon from "../../../../OscarIcon";
 
 const Nominee = ({
