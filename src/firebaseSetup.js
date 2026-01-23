@@ -4,7 +4,6 @@ import { getAuth, GoogleAuthProvider, FacebookAuthProvider, EmailAuthProvider } 
 import { getDatabase } from "firebase/database";
 import store from "./store";
 import { browserHistory } from "react-router";
-import { ui } from "./index";
 
 let firebaseApp;
 export let auth;
@@ -16,10 +15,11 @@ export function startFirebase(config) {
   database = getDatabase(firebaseApp);
 }
 
-export function startFirebaseUI() {
+export function startFirebaseUI(ui) {
   const uiConfig = {
     callbacks: {
-      signInSuccess(currentUser) {
+      signInSuccessWithAuthResult(authResult) {
+        const currentUser = authResult.user;
         store.dispatch(signInSuccess(currentUser));
         store.dispatch(fetchOrCreateUser(currentUser));
         const nextLocation = store.getState().ui.nextLocation;

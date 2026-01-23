@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
 import { startFirebase, auth } from "./firebaseSetup";
-import firebaseui from "firebaseui";
+import * as firebaseui from "firebaseui";
 import {
   saveImages,
   deleteGame,

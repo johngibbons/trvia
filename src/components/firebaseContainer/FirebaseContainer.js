@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { startFirebaseUI } from "../../firebaseSetup";
+import { ui } from "../../index";
 
 class FirebaseContainer extends Component {
   constructor() {
@@ -8,7 +9,7 @@ class FirebaseContainer extends Component {
   }
 
   componentDidMount() {
-    this.setState({ ui: startFirebaseUI() });
+    this.setState({ ui: startFirebaseUI(ui) });
   }
 
   render() {
