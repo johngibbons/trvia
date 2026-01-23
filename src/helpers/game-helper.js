@@ -1,4 +1,16 @@
-import { database } from "firebase";
+import {
+  ref,
+  update,
+  push,
+  child,
+  get as firebaseGet,
+  query,
+  orderByChild,
+  equalTo,
+  remove as firebaseRemove,
+  set,
+} from "firebase/database";
+import { database } from "../firebaseSetup";
 import { Map, fromJS } from "immutable";
 import Nominee from "../models/Nominee";
 import Category from "../models/Category";
@@ -34,13 +46,9 @@ export async function healOldData(dbCategories) {
           name,
         }).toJS(),
       };
-      database().ref().update(updates);
+      update(ref(database), updates);
 
-      const categoryNomineesFetch = await database()
-        .ref("nominees")
-        .orderByChild("category")
-        .equalTo(dbCategory.id)
-        .once("value");
+      const categoryNomineesFetch = await firebaseGet(query(ref(database, "nominees"), orderByChild("category"), equalTo(dbCategory.id)));
 
       const dbCategoryNominees = Object.values(categoryNomineesFetch.val());
       const localCategoryNominees = localCategory.nominees;
@@ -61,7 +69,7 @@ export async function healOldData(dbCategories) {
           }).toJS(),
           [`/categories/${dbCategory.id}/nominees/${matchingDbNominee.id}`]: true,
         };
-        database().ref().update(updates);
+        update(ref(database), updates);
       });
     })
   );
@@ -70,7 +78,7 @@ export async function healOldData(dbCategories) {
 export async function createNewGame() {
   await Promise.all(
     Object.keys(data.categories).map(async (key) => {
-      const categoryKey = database().ref().child("categories").push().key;
+      const categoryKey = push(child(ref(database), "categories")).key;
       const {
         value,
         order,
@@ -92,11 +100,11 @@ export async function createNewGame() {
         [`/games/${CURRENT_GAME}/id`]: CURRENT_GAME,
         [`/games/${CURRENT_GAME}/name`]: CURRENT_TITLE,
       };
-      await database().ref().update(updates);
+      await update(ref(database), updates);
 
       await Promise.all(
         nominees.map(async (nominee, index) => {
-          const nomineeKey = database().ref().child("nominees").push().key;
+          const nomineeKey = push(child(ref(database), "nominees")).key;
           const updates = {
             [`/nominees/${nomineeKey}`]: new Nominee({
               ...nominee,
@@ -107,7 +115,7 @@ export async function createNewGame() {
             }).toJS(),
             [`/categories/${categoryKey}/nominees/${nomineeKey}`]: true,
           };
-          await database().ref().update(updates);
+          await update(ref(database), updates);
         })
       );
     })
@@ -115,11 +123,7 @@ export async function createNewGame() {
 }
 
 export async function syncCurrentGameWithJSONData() {
-  const currentGameCategoriesFetch = await database()
-    .ref("categories")
-    .orderByChild("game")
-    .equalTo(CURRENT_GAME)
-    .once("value");
+  const currentGameCategoriesFetch = await firebaseGet(query(ref(database, "categories"), orderByChild("game"), equalTo(CURRENT_GAME)));
 
   const dbCategories = currentGameCategoriesFetch.val();
 
@@ -133,11 +137,7 @@ export async function syncCurrentGameWithJSONData() {
 async function updateExistingGame(dbCategories) {
   await Promise.all(
     Object.values(dbCategories).map(async (category) => {
-      const categoryNomineesFetch = await database()
-        .ref("nominees")
-        .orderByChild("category")
-        .equalTo(category.id)
-        .once("value");
+      const categoryNomineesFetch = await firebaseGet(query(ref(database, "nominees"), orderByChild("category"), equalTo(category.id)));
 
       const dbCategoryNominees = Object.values(categoryNomineesFetch.val());
       const localCategoryNominees = data.categories[category.key].nominees;
@@ -155,16 +155,16 @@ async function updateExistingGame(dbCategories) {
             imageUrl: dbNominee.imageUrl || localNominee.imageUrl || "",
           }).toJS(),
         };
-        database().ref().update(updates);
+        update(ref(database), updates);
       });
     })
   );
 }
 
 export async function saveImages({ overwrite } = {}) {
-  const titlesReq = await database().ref("/titles").once("value");
-  const peopleReq = await database().ref("/people").once("value");
-  const nomineesReq = await database().ref("/nominees").once("value");
+  const titlesReq = await firebaseGet(ref(database, "/titles"));
+  const peopleReq = await firebaseGet(ref(database, "/people"));
+  const nomineesReq = await firebaseGet(ref(database, "/nominees"));
 
   const titles = titlesReq.val();
   const people = peopleReq.val();
@@ -241,7 +241,7 @@ export async function deleteGame(deleteGroups = false) {
     await groupsToDelete.ref.remove();
   }
 
-  await database().ref(`games/${CURRENT_GAME}`).remove();
+  await firebaseRemove(ref(database, `games/${CURRENT_GAME}`));
 }
 
 const toOptionalLowercaseText = (text) => (text ? text.toLowerCase() : "");
@@ -391,11 +391,7 @@ export async function autoFetchNomineeImages({ overwrite } = {}) {
   console.log("Starting auto-fetch of nominee images...");
 
   // Fetch all nominees for the current game
-  const nomineesReq = await database()
-    .ref("nominees")
-    .orderByChild("game")
-    .equalTo(CURRENT_GAME)
-    .once("value");
+  const nomineesReq = await firebaseGet(query(ref(database, "nominees"), orderByChild("game"), equalTo(CURRENT_GAME)));
 
   const nominees = nomineesReq.val();
 
@@ -405,11 +401,7 @@ export async function autoFetchNomineeImages({ overwrite } = {}) {
   }
 
   // Fetch categories to get category names
-  const categoriesReq = await database()
-    .ref("categories")
-    .orderByChild("game")
-    .equalTo(CURRENT_GAME)
-    .once("value");
+  const categoriesReq = await firebaseGet(query(ref(database, "categories"), orderByChild("game"), equalTo(CURRENT_GAME)));
 
   const categories = categoriesReq.val() || {};
   const categoryMap = Object.values(categories).reduce((acc, cat) => {

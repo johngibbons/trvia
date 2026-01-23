@@ -2,8 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
-import { startFirebase } from "./firebaseSetup";
-import firebase from "firebase";
+import { startFirebase, auth } from "./firebaseSetup";
 import firebaseui from "firebaseui";
 import {
   saveImages,
@@ -21,6 +20,6 @@ syncCurrentGameWithJSONData()
     saveImages({ overwrite: true });
   });
 // deleteGame(true);
-export const ui = new firebaseui.auth.AuthUI(firebase.auth());
+export const ui = new firebaseui.auth.AuthUI(auth);
 
 ReactDOM.render(<App />, document.getElementById("root"));

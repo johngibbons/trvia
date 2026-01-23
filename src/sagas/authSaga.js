@@ -1,4 +1,5 @@
-import firebase from "firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebaseSetup";
 import { CHECK_AUTH_STATUS, SIGN_OUT } from "../actions/action-types";
 import { signInSuccess, signOutSuccess } from "../actions/user-actions";
 import { setNextLocation } from "../actions/ui-actions";
@@ -10,7 +11,8 @@ import API from "../api";
 
 export function getCurrentUser() {
   return new Promise((resolve, reject) => {
-    firebase.auth().onAuthStateChanged(
+    onAuthStateChanged(
+      auth,
       (user) => resolve(user),
       (error) => reject(error)
     );

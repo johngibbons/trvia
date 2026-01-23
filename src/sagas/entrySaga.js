@@ -19,7 +19,8 @@ import { push } from "react-router-redux";
 import { get } from "./firebase-saga";
 import { fetchGameAndDependents, syncCategories } from "./gameSaga";
 import { showAlertBar } from "../actions/ui-actions";
-import { database } from "firebase";
+import { ref, query, orderByChild, equalTo, get as firebaseGet } from "firebase/database";
+import { database } from "../firebaseSetup";
 
 export function* createEntry(action) {
   try {
@@ -86,8 +87,12 @@ function* getAndSetGroup(id) {
 export function* fetchUserEntries(action) {
   try {
     const user = yield call(get, "users", action.payload.userId);
-    const ref = database().ref("entries").orderByChild("user").equalTo(user.id);
-    const response = yield call([ref, ref.once], "value");
+    const dbQuery = query(
+      ref(database, "entries"),
+      orderByChild("user"),
+      equalTo(user.id)
+    );
+    const response = yield call(firebaseGet, dbQuery);
     const entries = response.val();
     yield put(setEntries(entries));
     if (user.groups) {

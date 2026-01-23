@@ -25,7 +25,8 @@ import {
   CHILD_ADDED,
   CHILD_REMOVED,
 } from "./firebase-saga";
-import { database } from "firebase";
+import { ref, query, orderByChild, equalTo, get as firebaseGet } from "firebase/database";
+import { database } from "../firebaseSetup";
 import { Map } from "immutable";
 import Group from "../models/Group";
 
@@ -33,11 +34,12 @@ export function* createGroup(action) {
   try {
     const currentUser = yield select(currentUserSelector);
     const newGroupId = yield call(API.createGroupId, null);
-    const ref = database()
-      .ref("categories")
-      .orderByChild("game")
-      .equalTo(action.payload.game);
-    const response = yield call([ref, ref.once], "value");
+    const categoriesQuery = query(
+      ref(database, "categories"),
+      orderByChild("game"),
+      equalTo(action.payload.game)
+    );
+    const response = yield call(firebaseGet, categoriesQuery);
     const categories = response.val();
     const categoryValues = Object.keys(categories).reduce(
       (acc, key) => ({ ...acc, [key]: categories[key].value }),
