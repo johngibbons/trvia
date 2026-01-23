@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./AccountDropdown.css";
 import { connect } from "react-redux";
@@ -6,36 +6,63 @@ import { Record } from "immutable";
 import { signOut } from "../../../actions/user-actions";
 import { useNavigate } from "react-router-dom";
 
-import IconMenu from "@mui/material/Menu";
+import Menu from "@mui/material/Menu";
 import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import UserAvatar from "../../users/userAvatar/UserAvatar";
 
 const AccountDropdown = ({ currentUser, onClickSignOut }) => {
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMyEntries = () => {
+    navigate(`/users/${currentUser.id}/entries`);
+    handleClose();
+  };
+
+  const handleSignOut = () => {
+    onClickSignOut();
+    handleClose();
+  };
 
   return (
-    <IconMenu
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      targetOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      iconButtonElement={
-        <IconButton className="AccountDropdown-icon">
-          <UserAvatar user={currentUser} />
-        </IconButton>
-      }
-    >
-      <MenuItem
-        primaryText="My Entries"
-        onClick={() => navigate(`/users/${currentUser.id}/entries`)}
-      />
-      <MenuItem primaryText="Sign out" onClick={onClickSignOut} />
-    </IconMenu>
+    <>
+      <IconButton
+        className="AccountDropdown-icon"
+        onClick={handleClick}
+        aria-controls={open ? 'account-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+      >
+        <UserAvatar user={currentUser} />
+      </IconButton>
+      <Menu
+        id="account-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <MenuItem onClick={handleMyEntries}>My Entries</MenuItem>
+        <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
+      </Menu>
+    </>
   );
 };
 
