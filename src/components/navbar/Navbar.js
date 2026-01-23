@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { browserHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { connect } from "react-redux";
 
@@ -9,6 +9,8 @@ import LoginButton from "./loginButton/LoginButton";
 import AccountDropdown from "./accountDropdown/AccountDropdown";
 
 const Navbar = ({ loggedIn }) => {
+  const navigate = useNavigate();
+
   return (
     <AppBar
       title="trvia"
@@ -23,7 +25,7 @@ const Navbar = ({ loggedIn }) => {
       className="Navbar"
       iconElementRight={loggedIn ? <AccountDropdown /> : <LoginButton />}
       showMenuIconButton={false}
-      onTitleTouchTap={() => browserHistory.push("/")}
+      onTitleTouchTap={() => navigate("/")}
       iconStyleRight={{
         marginTop: 0,
         marginRight: "12px",

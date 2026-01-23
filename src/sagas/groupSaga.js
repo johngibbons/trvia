@@ -15,7 +15,6 @@ import { syncUser } from "../actions/user-actions";
 import API from "../api";
 import { currentUserSelector } from "../selectors/current-user-selector";
 import { pendingValuesSelector } from "../selectors/ui-selector.js";
-import { push } from "react-router-redux";
 import { fetchGameAndDependents, syncCategories } from "./gameSaga";
 import {
   get,
@@ -63,7 +62,7 @@ export function* createGroup(action) {
         }).toJS()
       )
     );
-    yield put(push(`/groups/${newGroupId}`));
+    window.location.href = `/groups/${newGroupId}`;
   } catch (errors) {
     console.log(errors);
   }

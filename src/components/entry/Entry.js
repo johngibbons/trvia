@@ -27,7 +27,7 @@ import { Seq } from "immutable";
 
 import PageHeading from "../pageHeading/PageHeading";
 import Category from "./category/Category";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import WarningIcon from "material-ui/svg-icons/alert/warning";
 import BackArrowIcon from "material-ui/svg-icons/navigation/arrow-back";
 

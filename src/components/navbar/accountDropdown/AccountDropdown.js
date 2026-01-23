@@ -4,14 +4,16 @@ import "./AccountDropdown.css";
 import { connect } from "react-redux";
 import { Record } from "immutable";
 import { signOut } from "../../../actions/user-actions";
-import { push } from "react-router-redux";
+import { useNavigate } from "react-router-dom";
 
 import IconMenu from "material-ui/IconMenu";
 import IconButton from "material-ui/IconButton";
 import MenuItem from "material-ui/MenuItem";
 import UserAvatar from "../../users/userAvatar/UserAvatar";
 
-const AccountDropdown = ({ currentUser, onClickSignOut, onClickMyGroups }) => {
+const AccountDropdown = ({ currentUser, onClickSignOut }) => {
+  const navigate = useNavigate();
+
   return (
     <IconMenu
       anchorOrigin={{
@@ -30,7 +32,7 @@ const AccountDropdown = ({ currentUser, onClickSignOut, onClickMyGroups }) => {
     >
       <MenuItem
         primaryText="My Entries"
-        onClick={() => onClickMyGroups(currentUser.id)}
+        onClick={() => navigate(`/users/${currentUser.id}/entries`)}
       />
       <MenuItem primaryText="Sign out" onClick={onClickSignOut} />
     </IconMenu>
@@ -40,7 +42,6 @@ const AccountDropdown = ({ currentUser, onClickSignOut, onClickMyGroups }) => {
 AccountDropdown.propTypes = {
   currentUser: PropTypes.instanceOf(Record),
   onClickSignOut: PropTypes.func.isRequired,
-  onClickMyGroups: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ currentUser }) => {
@@ -51,5 +52,4 @@ const mapStateToProps = ({ currentUser }) => {
 
 export default connect(mapStateToProps, {
   onClickSignOut: signOut,
-  onClickMyGroups: (id) => push(`/users/${id}/entries`),
 })(AccountDropdown);

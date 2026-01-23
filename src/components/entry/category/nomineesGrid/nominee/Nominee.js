@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { withRouter } from "react-router";
+import { useParams } from "react-router-dom";
 import classNames from "classnames";
 import "./Nominee.css";
 import { Record } from "immutable";
@@ -15,7 +15,7 @@ import XIcon from "material-ui/svg-icons/navigation/close";
 import OscarIcon from "../../../../OscarIcon";
 
 const Nominee = ({
-  router,
+  routeParams,
   nominee,
   selectedNomineeId,
   correctId,
@@ -69,7 +69,7 @@ const Nominee = ({
     <div
       className={nomineeClasses}
       onClick={() =>
-        (!hasStarted || isMaster) && onClickNominee(router.params.id, nominee)
+        (!hasStarted || isMaster) && onClickNominee(routeParams.id, nominee)
       }
     >
       <div className="Nominee__icon-overlay">
@@ -97,7 +97,7 @@ const Nominee = ({
 };
 
 Nominee.propTypes = {
-  router: PropTypes.object,
+  routeParams: PropTypes.object,
   nominee: PropTypes.instanceOf(Record),
   selectedNomineeId: PropTypes.string,
   correctId: PropTypes.string,
@@ -109,14 +109,14 @@ Nominee.propTypes = {
 const mapStateToProps = (state, props) => {
   return {
     hasStarted: gameStartedSelector(state, props),
-    isMaster: props.nominee.game === props.router.params.id,
+    isMaster: props.nominee.game === props.routeParams.id,
   };
 };
 
 const mapDispatchToProps = (dispatch, props) => {
   return {
     onClickNominee:
-      props.nominee.game === props.router.params.id
+      props.nominee.game === props.routeParams.id
         ? (_, nominee) => dispatch(toggleCorrectNominee(nominee))
         : (entryId, nominee) => {
             dispatch(selectNominee(entryId, nominee));
@@ -124,6 +124,12 @@ const mapDispatchToProps = (dispatch, props) => {
   };
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(Nominee)
-);
+const ConnectedNominee = connect(mapStateToProps, mapDispatchToProps)(Nominee);
+
+// Wrapper component to inject params
+const NomineeWithParams = (props) => {
+  const params = useParams();
+  return <ConnectedNominee {...props} routeParams={params} />;
+};
+
+export default NomineeWithParams;

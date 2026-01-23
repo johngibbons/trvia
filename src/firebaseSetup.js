@@ -3,7 +3,6 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, FacebookAuthProvider, EmailAuthProvider } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import store from "./store";
-import { browserHistory } from "react-router";
 
 let firebaseApp;
 export let auth;
@@ -23,9 +22,7 @@ export function startFirebaseUI(ui) {
         store.dispatch(signInSuccess(currentUser));
         store.dispatch(fetchOrCreateUser(currentUser));
         const nextLocation = store.getState().ui.nextLocation;
-        nextLocation
-          ? browserHistory.push(nextLocation)
-          : browserHistory.push("/");
+        window.location.href = nextLocation || "/";
         return false;
       },
     },

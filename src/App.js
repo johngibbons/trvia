@@ -3,10 +3,7 @@ import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import Root from "./Root";
 import store from "./store";
-import { browserHistory } from "react-router";
-import { syncHistoryWithStore } from "react-router-redux";
 
-const history = syncHistoryWithStore(browserHistory, store);
 const muiTheme = getMuiTheme({
   palette: {
     primary1Color: "#b7a261",
@@ -19,7 +16,7 @@ const muiTheme = getMuiTheme({
 const App = () => {
   return (
     <MuiThemeProvider muiTheme={muiTheme}>
-      <Root store={store} history={history} />
+      <Root store={store} />
     </MuiThemeProvider>
   );
 };

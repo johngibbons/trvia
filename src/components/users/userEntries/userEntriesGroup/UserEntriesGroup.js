@@ -11,7 +11,7 @@ import { entriesGameSelector } from "../../../../selectors/games-selector";
 
 import Paper from "material-ui/Paper";
 import UserEntry from "./userEntry/UserEntry";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 const UserEntriesGroup = ({ group, groupObject, game }) => {
   return (

@@ -8,7 +8,6 @@ import { createGameSuccess, setGame } from "../actions/game-actions";
 import { setCategories, setCategory } from "../actions/category-actions";
 import { setNominees } from "../actions/nominee-actions";
 import API from "../api";
-import { push } from "react-router-redux";
 import { ref, query, orderByChild, equalTo, get as firebaseGet } from "firebase/database";
 import { database } from "../firebaseSetup";
 import { get, sync, remove, CHILD_CHANGED } from "./firebase-saga";
@@ -17,7 +16,7 @@ export function* createGame(action) {
   const newGameId = yield call(API.createGameId, null);
   yield call(API.createGame, newGameId, action.payload);
   yield put(createGameSuccess(newGameId, action.payload));
-  yield put(push(`/games/${newGameId}/edit`));
+  window.location.href = `/games/${newGameId}/edit`;
 }
 
 export function* watchCreateGame() {

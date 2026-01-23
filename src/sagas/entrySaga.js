@@ -15,7 +15,6 @@ import { setGame } from "../actions/game-actions";
 import { currentUserSelector } from "../selectors/current-user-selector";
 import API from "../api";
 import { fork, put, call, takeLatest, select } from "redux-saga/effects";
-import { push } from "react-router-redux";
 import { get } from "./firebase-saga";
 import { fetchGameAndDependents, syncCategories } from "./gameSaga";
 import { showAlertBar } from "../actions/ui-actions";
@@ -27,7 +26,7 @@ export function* createEntry(action) {
     const currentUser = yield select(currentUserSelector);
     const newEntryId = yield call(API.createEntryId, null);
     yield call(API.createEntry, newEntryId, action.payload, currentUser);
-    yield put(push(`/entries/${newEntryId}`));
+    window.location.href = `/entries/${newEntryId}`;
   } catch (errors) {
     console.log(errors);
   }

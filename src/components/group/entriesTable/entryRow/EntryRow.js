@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./EntryRow.css";
 import Entry from "../../../../models/Entry";
 import User from "../../../../models/User";
-import { push } from "react-router-redux";
 import { entryPossibleScoreSelector } from "../../../../selectors/categories-selector";
 import {
   entryUserSelector,
@@ -27,14 +27,15 @@ const EntryRow = ({
   nominees,
   entryComplete,
   gameStarted,
-  onClickEntry,
   user,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <tr
       key={entry.id}
       className={"EntriesTable--row"}
-      onClick={() => onClickEntry(`/entries/${entry.id}`)}
+      onClick={() => navigate(`/entries/${entry.id}`)}
     >
       <td className={"EntriesTable--col EntriesTable--col-rank"}>
         {gameStarted ? (
@@ -103,7 +104,6 @@ EntryRow.propTypes = {
   possibleScore: PropTypes.number,
   entryComplete: PropTypes.bool,
   gameStarted: PropTypes.bool,
-  onClickEntry: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, props) => {
@@ -117,6 +117,4 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  onClickEntry: push,
-})(EntryRow);
+export default connect(mapStateToProps)(EntryRow);

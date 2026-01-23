@@ -1,11 +1,13 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { Router } from "react-router";
-import routes from "./routes";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes";
 
-const Root = ({ store, history }) => (
+const Root = ({ store }) => (
   <Provider store={store}>
-    <Router history={history} routes={routes} />
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   </Provider>
 );
 

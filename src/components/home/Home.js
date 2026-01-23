@@ -5,15 +5,17 @@ import { connect } from "react-redux";
 import { Set } from "immutable";
 import User from "../../models/User";
 import { CURRENT_TITLE } from "../../constants";
+import { useNavigate } from "react-router-dom";
 
 import { openModal } from "../../actions/ui-actions";
 
 import RaisedButton from "material-ui/RaisedButton";
 import NewGroupModal from "../group/newGroupModal/NewGroupModal";
 import { gameNomineesSelector } from "../../selectors/nominees-selector";
-import { browserHistory } from "react-router";
 
 const Home = ({ currentUser, nominees, onClickNewGroup }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="Home">
       <div className="Home-header">
@@ -32,7 +34,7 @@ const Home = ({ currentUser, nominees, onClickNewGroup }) => {
             onClick={() => {
               currentUser.id
                 ? onClickNewGroup("NEW_GROUP")
-                : browserHistory.push("/login");
+                : navigate("/login");
             }}
           />
         ) : (
