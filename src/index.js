@@ -13,11 +13,14 @@ import {
 import { STAGING_DATABASE, PROD_DATABASE } from "./constants";
 
 // Use environment variable to choose database (defaults to staging for safety)
-const database = process.env.REACT_APP_ENVIRONMENT === 'production'
-  ? PROD_DATABASE
-  : STAGING_DATABASE;
+const database =
+  process.env.REACT_APP_ENVIRONMENT === "production"
+    ? PROD_DATABASE
+    : STAGING_DATABASE;
 
-console.log(`🔥 Firebase Environment: ${process.env.REACT_APP_ENVIRONMENT || 'staging'}`);
+console.log(
+  `🔥 Firebase Environment: ${process.env.REACT_APP_ENVIRONMENT || "staging"}`
+);
 startFirebase(database);
 
 // Comment out automatic game sync for now - it requires write permissions
