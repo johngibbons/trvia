@@ -2,8 +2,8 @@ import { database } from "firebase";
 import { Map, fromJS } from "immutable";
 import Nominee from "../models/Nominee";
 import Category from "../models/Category";
-import data from "../awardsShows/2025GoldenGlobes";
-import { CURRENT_GAME } from "../constants";
+import data from "../awardsShows/2026Oscars";
+import { CURRENT_GAME, CURRENT_TITLE } from "../constants";
 import MovieDB from "../moviedb";
 import API from "../api";
 
@@ -90,6 +90,7 @@ export async function createNewGame() {
         }).toJS(),
         [`/games/${CURRENT_GAME}/categories/${categoryKey}`]: true,
         [`/games/${CURRENT_GAME}/id`]: CURRENT_GAME,
+        [`/games/${CURRENT_GAME}/name`]: CURRENT_TITLE,
       };
       await database().ref().update(updates);
 

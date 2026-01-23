@@ -1,5 +1,5 @@
-export const CURRENT_GAME = "2025GoldenGlobes";
-export const CURRENT_TITLE = "The 2025 Golden Globes";
+export const CURRENT_GAME = "2026Oscars";
+export const CURRENT_TITLE = "The 2026 Academy Awards";
 export const PROD_DATABASE = {
   apiKey: "AIzaSyDGkgi0mqNXArVXeP2X9kF421JGP9Yi4bY",
   authDomain: "awards-season.firebaseapp.com",
