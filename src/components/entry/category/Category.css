@@ -3,6 +3,7 @@
   box-shadow: none !important;
   margin-left: -16px;
   margin-right: -16px;
+  margin-bottom: 8px;
 }
 
 .Category__status-icon {
@@ -11,9 +12,9 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  width: 30px !important;
-  height: 30px !important;
-  margin-right: 5px !important;
+  width: 28px !important;
+  height: 28px !important;
+  margin-right: 8px !important;
 }
 
 .Category__status-icon--correct {
@@ -25,8 +26,8 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   background-color: #b7a261;
   border-radius: 100%;
   border: 2px solid #fff;

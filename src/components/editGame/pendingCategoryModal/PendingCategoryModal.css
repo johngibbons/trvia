@@ -1,9 +1,15 @@
 .PendingCategoryModal-section {
-  padding: 20px 0;
+  padding: 16px 0;
 }
 
 .PendingCategoryModal-section-title {
-  margin-bottom: 0;
+  margin-bottom: 12px;
+  margin-top: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .PendingCategoryModal-input {
@@ -30,5 +36,5 @@
 }
 
 .PendingCategoryModal-cancel-button {
-  margin-left: 20px;
+  margin-left: 0;
 }

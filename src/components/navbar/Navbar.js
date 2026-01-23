@@ -15,7 +15,7 @@ const Navbar = ({ loggedIn }) => {
   const navigate = useNavigate();
 
   return (
-    <AppBar position="static" className="Navbar" sx={{ padding: 0 }}>
+    <AppBar position="static" className="Navbar" sx={{ padding: 0, boxShadow: "none", borderBottom: "1px solid #e0e0e0" }}>
       <Toolbar sx={{ justifyContent: "space-between", width: "100%" }}>
         <Typography
           variant="h6"

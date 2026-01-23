@@ -55,8 +55,18 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
         sx={{
           display: "flex",
           alignItems: "center",
+          padding: "16px",
           "& .MuiCardHeader-content": {
             paddingRight: 0,
+          },
+          "& .MuiCardHeader-title": {
+            fontSize: "16px",
+            fontWeight: 600,
+            color: "#333",
+          },
+          "& .MuiCardHeader-subheader": {
+            fontSize: "13px",
+            color: "#666",
           },
         }}
       />
