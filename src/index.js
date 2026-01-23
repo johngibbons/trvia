@@ -19,14 +19,18 @@ const database = process.env.REACT_APP_ENVIRONMENT === 'production'
 
 console.log(`🔥 Firebase Environment: ${process.env.REACT_APP_ENVIRONMENT || 'staging'}`);
 startFirebase(database);
-syncCurrentGameWithJSONData()
-  .then(() => {
-    return autoFetchNomineeImages({ overwrite: false });
-  })
-  .then(() => {
-    saveImages({ overwrite: true });
-  });
+
+// Comment out automatic game sync for now - it requires write permissions
+// Uncomment these when you need to set up a new game in the database
+// syncCurrentGameWithJSONData()
+//   .then(() => {
+//     return autoFetchNomineeImages({ overwrite: false });
+//   })
+//   .then(() => {
+//     saveImages({ overwrite: true });
+//   });
 // deleteGame(true);
+
 export const ui = new firebaseui.auth.AuthUI(auth);
 
 ReactDOM.render(<App />, document.getElementById("root"));
