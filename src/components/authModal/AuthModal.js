@@ -1,15 +1,21 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./AuthModal.css";
 import { connect } from "react-redux";
 import { closeModal } from "../../actions/ui-actions";
 
-import Dialog from "material-ui/Dialog";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
 import FirebaseContainer from "./FirebaseContainer";
 
 const AuthModal = ({ open, onClose }) => {
   return (
-    <Dialog open={open} title="Log In" onRequestClose={onClose}>
-      <FirebaseContainer />
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Log In</DialogTitle>
+      <DialogContent>
+        <FirebaseContainer />
+      </DialogContent>
     </Dialog>
   );
 };

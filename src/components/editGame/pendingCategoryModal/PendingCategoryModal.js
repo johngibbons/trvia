@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./PendingCategoryModal.css";
 import { connect } from "react-redux";
 import { Record, Seq } from "immutable";
@@ -15,9 +16,11 @@ import {
 
 import { closeModal } from "../../../actions/ui-actions";
 
-import Dialog from "material-ui/Dialog";
-import TextField from "material-ui/TextField";
-import RaisedButton from "material-ui/RaisedButton";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import PendingNomineesList from "./pendingNomineesList/PendingNomineesList";
 
 const PendingCategoryModal = ({
@@ -32,101 +35,110 @@ const PendingCategoryModal = ({
   onClose,
 }) => {
   return (
-    <Dialog
-      open={open}
-      title="Create New Category"
-      autoScrollBodyContent
-      onRequestClose={onClose}
-    >
-      <form>
-        <section className="PendingCategoryModal-section">
-          <h5 className="PendingCategoryModal-section-title">Category</h5>
-          <TextField
-            type="text"
-            autoFocus
-            className="PendingCategoryModal-text PendingCategoryModal-input"
-            value={pendingCategory.name}
-            floatingLabelText="Category"
-            hintText="What's the category?"
-            onChange={(e, val) => onChangeCategory({ name: val })}
-          />
-          <TextField
-            type="number"
-            className="PendingCategoryModal-point-value
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>Create New Category</DialogTitle>
+      <DialogContent>
+        <form>
+          <section className="PendingCategoryModal-section">
+            <h5 className="PendingCategoryModal-section-title">Category</h5>
+            <TextField
+              type="text"
+              autoFocus
+              fullWidth
+              margin="dense"
+              className="PendingCategoryModal-text PendingCategoryModal-input"
+              value={pendingCategory.name}
+              label="Category"
+              placeholder="What's the category?"
+              onChange={(e) => onChangeCategory({ name: e.target.value })}
+            />
+            <TextField
+              type="number"
+              fullWidth
+              margin="dense"
+              className="PendingCategoryModal-point-value
               PendingCategoryModal-input"
-            value={pendingCategory.value}
-            floatingLabelText="Point Value"
-            hintText="How much is this Category worth?"
-            onChange={(e, val) => onChangeCategory({ value: val })}
-          />
-        </section>
-        <section className="PendingCategoryModal-section">
-          <h5 className="PendingCategoryModal-section-title">Nominees</h5>
-          <TextField
-            type="text"
-            id="PendingCategoryModal-nominee-input"
-            className="PendingCategoryModal-nominee-input
+              value={pendingCategory.value}
+              label="Point Value"
+              placeholder="How much is this Category worth?"
+              onChange={(e) => onChangeCategory({ value: e.target.value })}
+            />
+          </section>
+          <section className="PendingCategoryModal-section">
+            <h5 className="PendingCategoryModal-section-title">Nominees</h5>
+            <TextField
+              type="text"
+              fullWidth
+              margin="dense"
+              id="PendingCategoryModal-nominee-input"
+              className="PendingCategoryModal-nominee-input
               PendingCategoryModal-input"
-            value={pendingNominee.text}
-            floatingLabelText="Nominee"
-            hintText="Enter a nominee and hit return to save"
-            onChange={(e, val) => onChangeNominee({ text: val })}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                pendingNominee.text &&
-                  onSaveNominee(pendingNominee.set("id", shortid.generate()));
+              value={pendingNominee.text}
+              label="Nominee"
+              placeholder="Enter a nominee and hit return to save"
+              onChange={(e) => onChangeNominee({ text: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  pendingNominee.text &&
+                    onSaveNominee(pendingNominee.set("id", shortid.generate()));
+                }
+              }}
+            />
+            <TextField
+              type="text"
+              fullWidth
+              margin="dense"
+              className="PendingCategoryModal-nominee-secondary-input
+              PendingCategoryModal-input"
+              value={pendingNominee.secondaryText}
+              label="Secondary Text (Optional)"
+              placeholder="Enter any secondary text, like a subtitle or hint"
+              onChange={(e) => onChangeNominee({ secondaryText: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  pendingNominee.text &&
+                    onSaveNominee(pendingNominee.set("id", shortid.generate()));
+                  document
+                    .getElementById("PendingCategoryModal-nominee-input")
+                    .focus();
+                }
+              }}
+            />
+            <PendingNomineesList
+              nominees={pendingCategory.nominees.toIndexedSeq()}
+            />
+          </section>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={
+                !pendingCategory.name ||
+                !pendingCategory.nominees.size ||
+                !pendingCategory.value
               }
-            }}
-          />
-          <TextField
-            type="text"
-            className="PendingCategoryModal-nominee-secondary-input
-              PendingCategoryModal-input"
-            value={pendingNominee.secondaryText}
-            floatingLabelText="Secondary Text (Optional)"
-            hintText="Enter any secondary text, like a subtitle or hint"
-            onChange={(e, val) => onChangeNominee({ secondaryText: val })}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              onClick={(e) => {
                 e.preventDefault();
-                pendingNominee.text &&
-                  onSaveNominee(pendingNominee.set("id", shortid.generate()));
-                document
-                  .getElementById("PendingCategoryModal-nominee-input")
-                  .focus();
-              }
-            }}
-          />
-          <PendingNomineesList
-            nominees={pendingCategory.nominees.toIndexedSeq()}
-          />
-        </section>
-        <div>
-          <RaisedButton
-            primary
-            type="submit"
-            label="save"
-            disabled={
-              !pendingCategory.name ||
-              !pendingCategory.nominees.size ||
-              !pendingCategory.value
-            }
-            onClick={(e) => {
-              e.preventDefault();
-              onClickSave(
-                pendingCategory.set("id", shortid.generate()),
-                game.id
-              );
-            }}
-          />
-          <RaisedButton
-            label="cancel"
-            className="PendingCategoryModal-cancel-button"
-            onClick={onClose}
-          />
-        </div>
-      </form>
+                onClickSave(
+                  pendingCategory.set("id", shortid.generate()),
+                  game.id
+                );
+              }}
+            >
+              save
+            </Button>
+            <Button
+              className="PendingCategoryModal-cancel-button"
+              onClick={onClose}
+            >
+              cancel
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 };

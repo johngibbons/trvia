@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./UserEntries.css";
 import { connect } from "react-redux";
 import { List } from "immutable";
@@ -9,6 +10,10 @@ import PageHeading from ".././../pageHeading/PageHeading";
 import UserEntriesGroup from "./userEntriesGroup/UserEntriesGroup";
 
 const UserEntries = ({ entriesByGroup }) => {
+  if (!entriesByGroup) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="UserEntries">
       <PageHeading text="My Entries" />

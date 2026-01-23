@@ -1,8 +1,9 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./EntriesTable.css";
 import { List, Seq } from "immutable";
-import WarningIcon from "material-ui/svg-icons/alert/warning";
-import CheckIcon from "material-ui/svg-icons/action/check-circle";
+import WarningIcon from "@mui/icons-material/Warning";
+import CheckIcon from "@mui/icons-material/CheckCircle";
 
 import EntryRow from "./entryRow/EntryRow";
 
@@ -14,18 +15,14 @@ const EntriesTable = ({ entries, categories, gameStarted }) => {
           <span className="EntriesTable--legend-icon EntriesTable--legend-icon-complete">
             <CheckIcon
               className="EntriesTable__status-icon"
-              height="20px"
-              width="20px"
-              color="#689F38"
+              sx={{ height: "20px", width: "20px", color: "#689F38" }}
             />
             Complete
           </span>
           <span className="EntriesTable--legend-icon EntriesTable--legend-icon-incomplete">
             <WarningIcon
               className="EntriesTable__status-icon"
-              height="20px"
-              width="20px"
-              color="#D32F2F"
+              sx={{ height: "20px", width: "20px", color: "#D32F2F" }}
             />
             Incomplete
           </span>

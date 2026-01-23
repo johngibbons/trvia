@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./EditGame.css";
 import { Record, Seq } from "immutable";
 import { connect } from "react-redux";
@@ -12,6 +13,10 @@ import SavePendingGameButton from "./savePendingGameButton/SavePendingGameButton
 import EditCategoriesList from "./editCategoriesList/EditCategoriesList";
 
 const EditGame = ({ game, categories, onChange }) => {
+  if (!game || !categories) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="EditGame">
       <PageHeading text={game.name}>

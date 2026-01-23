@@ -1,9 +1,10 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./EntryRow.css";
 import Entry from "../../../../models/Entry";
 import User from "../../../../models/User";
-import { push } from "react-router-redux";
 import { entryPossibleScoreSelector } from "../../../../selectors/categories-selector";
 import {
   entryUserSelector,
@@ -13,8 +14,8 @@ import {
 import { entryGameStartedSelector } from "../../../../selectors/games-selector";
 import classNames from "classnames";
 import { Seq } from "immutable";
-import WarningIcon from "material-ui/svg-icons/alert/warning";
-import CheckIcon from "material-ui/svg-icons/action/check-circle";
+import WarningIcon from "@mui/icons-material/Warning";
+import CheckIcon from "@mui/icons-material/CheckCircle";
 
 import UserAvatar from "../../../users/userAvatar/UserAvatar";
 
@@ -26,14 +27,15 @@ const EntryRow = ({
   nominees,
   entryComplete,
   gameStarted,
-  onClickEntry,
   user,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <tr
       key={entry.id}
       className={"EntriesTable--row"}
-      onClick={() => onClickEntry(`/entries/${entry.id}`)}
+      onClick={() => navigate(`/entries/${entry.id}`)}
     >
       <td className={"EntriesTable--col EntriesTable--col-rank"}>
         {gameStarted ? (
@@ -41,16 +43,12 @@ const EntryRow = ({
         ) : entryComplete ? (
           <CheckIcon
             className="EntriesTable__status-icon"
-            height="20px"
-            width="20px"
-            color="#689F38"
+            sx={{ height: "20px", width: "20px", color: "#689F38" }}
           />
         ) : (
           <WarningIcon
             className="EntriesTable__status-icon"
-            height="20px"
-            width="20px"
-            color="#D32F2F"
+            sx={{ height: "20px", width: "20px", color: "#D32F2F" }}
           />
         )}
       </td>
@@ -88,7 +86,7 @@ const EntryRow = ({
             const selectedNomineeId = entry.selections[category.id];
             const nominee = nominees[selectedNomineeId];
             return (
-              nominee && <td className={categoryClasses}>{nominee.text}</td>
+              nominee && <td key={category.id} className={categoryClasses}>{nominee.text}</td>
             );
           })}
     </tr>
@@ -102,7 +100,6 @@ EntryRow.propTypes = {
   possibleScore: PropTypes.number,
   entryComplete: PropTypes.bool,
   gameStarted: PropTypes.bool,
-  onClickEntry: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state, props) => {
@@ -116,6 +113,4 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  onClickEntry: push,
-})(EntryRow);
+export default connect(mapStateToProps)(EntryRow);

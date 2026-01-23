@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./PendingNominee.css";
 
 import { connect } from "react-redux";
@@ -7,7 +8,7 @@ import { Record } from "immutable";
 
 import { deleteNominee } from "../../../../../actions/pending-game-actions";
 
-import { ListItem } from "material-ui/List";
+import { ListItem, ListItemText } from "@mui/material";
 import DeleteButton from "./deleteButton/DeleteButton";
 
 const PendingNominee = ({ nominee, onDelete }) => {
@@ -15,10 +16,13 @@ const PendingNominee = ({ nominee, onDelete }) => {
     <ListItem
       disabled
       className="PendingNominee"
-      primaryText={nominee.text}
-      secondaryText={nominee.secondaryText}
-      rightIconButton={<DeleteButton onClick={() => onDelete(nominee)} />}
-    />
+      secondaryAction={<DeleteButton onClick={() => onDelete(nominee)} />}
+    >
+      <ListItemText
+        primary={nominee.text}
+        secondary={nominee.secondaryText}
+      />
+    </ListItem>
   );
 };
 

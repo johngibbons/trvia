@@ -1,14 +1,16 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./Category.css";
 import { Record, Seq } from "immutable";
 import { connect } from "react-redux";
 import classNames from "classnames";
 import { currentNomineesSelector } from "../../../selectors/nominees-selector";
 
-import { Card, CardHeader } from "material-ui/Card";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
 import NomineesGrid from "./nomineesGrid/NomineesGrid";
-import IncorrectIcon from "material-ui/svg-icons/navigation/cancel";
-import CheckIcon from "material-ui/svg-icons/action/check-circle";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import OscarIcon from "../../OscarIcon";
 
 const Category = ({ category, value, nominees, selectedNomineeId }) => {
@@ -28,9 +30,9 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
         avatar={
           category.correctAnswer ? (
             incorrect ? (
-              <IncorrectIcon
+              <CancelIcon
                 className="Category__status-icon Category__status-icon--incorrect"
-                color="rgb(255, 0, 0)"
+                sx={{ color: "rgb(255, 0, 0)" }}
               />
             ) : (
               <div className="Category__status-icon Category__status-icon--correct">
@@ -40,46 +42,22 @@ const Category = ({ category, value, nominees, selectedNomineeId }) => {
               </div>
             )
           ) : selectedNomineeId ? (
-            <CheckIcon
+            <CheckCircleIcon
               className="Category__status-icon Category__selection-icon Category__complete-icon"
-              color={doneColor}
+              sx={{ color: doneColor }}
             />
           ) : (
             <div className="Category__status-icon Category__selection-icon Category__incomplete-icon" />
           )
         }
         title={category.name}
-        subtitle={`${value} points`}
-        titleStyle={{
-          fontSize: "18px",
-        }}
-        titleColor={
-          category.correctAnswer
-            ? correct
-              ? "#b7a261"
-              : "rgb(255, 0, 0)"
-            : selectedNomineeId
-            ? doneColor
-            : "rgba(66, 66, 66, 0.87)"
-        }
-        subtitleStyle={{
-          fontSize: "15px",
-        }}
-        subtitleColor={
-          category.correctAnswer
-            ? correct
-              ? "#b7a261"
-              : "rgb(255, 0, 0)"
-            : selectedNomineeId
-            ? doneColor
-            : "rgba(66, 66, 66, 0.54)"
-        }
-        style={{
+        subheader={`${value} points`}
+        sx={{
           display: "flex",
           alignItems: "center",
-        }}
-        textStyle={{
-          paddingRight: 0,
+          "& .MuiCardHeader-content": {
+            paddingRight: 0,
+          },
         }}
       />
       <NomineesGrid

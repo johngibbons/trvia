@@ -1,6 +1,5 @@
 // import * as ActionTypes from '../actions/action-types'
 import { combineReducers } from "redux";
-import { routerReducer as routing } from "react-router-redux";
 import users from "../reducers/users-reducer";
 import entries from "../reducers/entries-reducer";
 import games from "../reducers/games-reducer";
@@ -26,7 +25,6 @@ const appReducer = combineReducers({
   pendingCategory,
   pendingNominee,
   categories,
-  routing,
   ui,
   users,
 });

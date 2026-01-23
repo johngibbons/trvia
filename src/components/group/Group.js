@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "./Group.css";
 import { List, Seq } from "immutable";
@@ -17,7 +18,7 @@ import {
 } from "../../selectors/games-selector";
 import { openModal } from "../../actions/ui-actions";
 
-import RaisedButton from "material-ui/RaisedButton";
+import Button from "@mui/material/Button";
 import NewEntryModal from "../../components/entry/newEntryModal/NewEntryModal";
 import PageHeading from "../pageHeading/PageHeading";
 import EntriesTable from "./entriesTable/EntriesTable";
@@ -31,34 +32,42 @@ const Group = ({
   game,
   entries,
   winningEntries,
-  params,
+  routeParams,
   gameStarted,
   gameEnded,
   onClickNewEntry,
 }) => {
+  // Show loading state if data isn't loaded yet
+  if (!group || !game) {
+    return <div className="Group">Loading...</div>;
+  }
+
   return (
     <div className="Group">
       <h5 className="Group--game-name">{game.name}</h5>
       <PageHeading text={group.name} />
       {!gameStarted && (
-        <RaisedButton
+        <Button
           className="Group--create-entry-button"
-          primary
-          label="Create your entry"
-          labelStyle={{
+          variant="contained"
+          sx={{
             color: "#212121",
           }}
           onClick={() => onClickNewEntry("NEW_ENTRY")}
-        />
+        >
+          Create your entry
+        </Button>
       )}
       {!gameStarted && currentUser.id === group.admin && (
-        <RaisedButton
-          label="Edit Category Values"
-          labelStyle={{
+        <Button
+          variant="contained"
+          sx={{
             color: "#212121",
           }}
           onClick={() => onClickNewEntry("EDIT_VALUES")}
-        />
+        >
+          Edit Category Values
+        </Button>
       )}
       {gameEnded && <WinnerBanner winningEntries={winningEntries} />}
       <EntriesTable
@@ -66,7 +75,7 @@ const Group = ({
         categories={categories}
         gameStarted={gameStarted}
       />
-      {group.id && <NewEntryModal groupId={params.id} gameId={group.game} />}
+      {group.id && <NewEntryModal groupId={routeParams.id} gameId={group.game} />}
       {currentUser.id === group.admin && <EditValuesModal group={group} />}
     </div>
   );
@@ -79,7 +88,7 @@ Group.propTypes = {
   group: PropTypes.instanceOf(GroupModel),
   entries: PropTypes.instanceOf(List),
   winningEntries: PropTypes.instanceOf(List),
-  params: PropTypes.object,
+  routeParams: PropTypes.object,
   gameStarted: PropTypes.bool,
   gameEnded: PropTypes.bool,
   onClickNewEntry: PropTypes.func.isRequired,

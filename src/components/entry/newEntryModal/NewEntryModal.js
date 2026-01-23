@@ -1,9 +1,12 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "./NewEntryModal.css";
-import Dialog from "material-ui/Dialog";
-import TextField from "material-ui/TextField";
-import RaisedButton from "material-ui/RaisedButton";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import User from "../../../models/User";
 
 import { closeModal, updateNewEntryName } from "../../../actions/ui-actions";
@@ -20,32 +23,39 @@ const NewEntryModal = ({
   onClickCreate,
 }) => {
   return (
-    <Dialog open={open} title="Create Your Entry" onRequestClose={onClose}>
-      <form>
-        <TextField
-          type="text"
-          autoFocus
-          className="NewEntryModal-name"
-          value={name}
-          floatingLabelText="Name"
-          hintText="What do you want to call your entry?"
-          onChange={(e, val) => onChange(val)}
-        />
-        <div>
-          <RaisedButton
-            primary
-            type="submit"
-            label="create"
-            disabled={!name}
-            onClick={(e) => {
-              e.preventDefault();
-              onClose();
-              onChange("");
-              onClickCreate(name, groupId, gameId, currentUser.id);
-            }}
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Create Your Entry</DialogTitle>
+      <DialogContent>
+        <form>
+          <TextField
+            type="text"
+            autoFocus
+            fullWidth
+            margin="dense"
+            className="NewEntryModal-name"
+            value={name}
+            label="Name"
+            placeholder="What do you want to call your entry?"
+            onChange={(e) => onChange(e.target.value)}
           />
-        </div>
-      </form>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={!name}
+              onClick={(e) => {
+                e.preventDefault();
+                onClose();
+                onChange("");
+                onClickCreate(name, groupId, gameId, currentUser.id);
+              }}
+            >
+              create
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 };

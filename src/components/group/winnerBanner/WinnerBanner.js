@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./WinnerBanner.css";
 import { List } from "immutable";
 import UserAvatar from "../../users/userAvatar/UserAvatar";

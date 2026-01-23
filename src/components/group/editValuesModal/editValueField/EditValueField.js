@@ -1,10 +1,11 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./EditValueField.css";
 import { connect } from "react-redux";
 import { updateValueField } from "../../../../actions/ui-actions";
 
 import Category from "../../../../models/Category";
-import TextField from "material-ui/TextField";
+import TextField from "@mui/material/TextField";
 
 const EditValueField = ({ value, category, onChange }) => {
   return (
@@ -12,7 +13,9 @@ const EditValueField = ({ value, category, onChange }) => {
       id={category.id}
       type="number"
       defaultValue={category.value}
-      floatingLabelText={category.name}
+      label={category.name}
+      fullWidth
+      margin="dense"
       className="EditValueField"
       value={value}
       onChange={(e) => onChange(category.id, parseInt(e.target.value, 10))}

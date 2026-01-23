@@ -1,7 +1,5 @@
 import { createStore, applyMiddleware, compose } from "redux";
 import createSagaMiddleware from "redux-saga";
-import { routerMiddleware } from "react-router-redux";
-import { browserHistory } from "react-router";
 import rootReducer from "./reducers";
 import rootSaga from "./sagas/index";
 import persistState from "redux-localstorage";
@@ -14,12 +12,11 @@ import Category from "./models/Category";
 import User from "./models/User";
 
 const sagaMiddleware = createSagaMiddleware();
-const routingMiddleware = routerMiddleware(browserHistory);
 
 const store = createStore(
   rootReducer,
   compose(
-    applyMiddleware(sagaMiddleware, routingMiddleware),
+    applyMiddleware(sagaMiddleware),
     persistState(
       ["nominees", "entries", "games", "groups", "categories", "users"],
       {

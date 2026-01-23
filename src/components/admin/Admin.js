@@ -1,12 +1,13 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import { Outlet } from "react-router-dom";
 import "./Admin.css";
 
-const Admin = ({ children }) => {
-  return <div className="Admin">{children}</div>;
-};
-
-Admin.propTypes = {
-  children: PropTypes.node,
+const Admin = () => {
+  return (
+    <div className="Admin">
+      <Outlet />
+    </div>
+  );
 };
 
 export default Admin;

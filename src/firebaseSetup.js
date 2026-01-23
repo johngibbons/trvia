@@ -1,31 +1,36 @@
 import { signInSuccess, fetchOrCreateUser } from "./actions/user-actions";
-import firebase from "firebase";
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, EmailAuthProvider } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 import store from "./store";
-import { browserHistory } from "react-router";
-import { ui } from "./index";
+
+let firebaseApp;
+export let auth;
+export let database;
 
 export function startFirebase(config) {
-  firebase.initializeApp(config);
+  firebaseApp = initializeApp(config);
+  auth = getAuth(firebaseApp);
+  database = getDatabase(firebaseApp);
 }
 
-export function startFirebaseUI() {
+export function startFirebaseUI(ui) {
   const uiConfig = {
     callbacks: {
-      signInSuccess(currentUser) {
+      signInSuccessWithAuthResult(authResult) {
+        const currentUser = authResult.user;
         store.dispatch(signInSuccess(currentUser));
         store.dispatch(fetchOrCreateUser(currentUser));
         const nextLocation = store.getState().ui.nextLocation;
-        nextLocation
-          ? browserHistory.push(nextLocation)
-          : browserHistory.push("/");
+        window.location.href = nextLocation || "/";
         return false;
       },
     },
     signInFlow: "popup",
     signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      firebase.auth.EmailAuthProvider.PROVIDER_ID,
+      GoogleAuthProvider.PROVIDER_ID,
+      FacebookAuthProvider.PROVIDER_ID,
+      EmailAuthProvider.PROVIDER_ID,
     ],
   };
   ui.start("#firebase-auth-container", uiConfig);

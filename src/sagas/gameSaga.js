@@ -8,15 +8,15 @@ import { createGameSuccess, setGame } from "../actions/game-actions";
 import { setCategories, setCategory } from "../actions/category-actions";
 import { setNominees } from "../actions/nominee-actions";
 import API from "../api";
-import { push } from "react-router-redux";
-import { database } from "firebase";
+import { ref, query, orderByChild, equalTo, get as firebaseGet } from "firebase/database";
+import { database } from "../firebaseSetup";
 import { get, sync, remove, CHILD_CHANGED } from "./firebase-saga";
 
 export function* createGame(action) {
   const newGameId = yield call(API.createGameId, null);
   yield call(API.createGame, newGameId, action.payload);
   yield put(createGameSuccess(newGameId, action.payload));
-  yield put(push(`/games/${newGameId}/edit`));
+  window.location.href = `/games/${newGameId}/edit`;
 }
 
 export function* watchCreateGame() {
@@ -26,17 +26,19 @@ export function* watchCreateGame() {
 export function* fetchGameAndDependents(gameId) {
   const game = yield call(get, "games", gameId);
   yield put(setGame(game));
-  const ref = database()
-    .ref("categories")
-    .orderByChild("game")
-    .equalTo(game.id);
-  const categories = yield call([ref, ref.once], "value");
+  const categoriesQuery = query(
+    ref(database, "categories"),
+    orderByChild("game"),
+    equalTo(game.id)
+  );
+  const categories = yield call(firebaseGet, categoriesQuery);
   yield put(setCategories(categories.val()));
-  const nomineesRef = database()
-    .ref("nominees")
-    .orderByChild("game")
-    .equalTo(game.id);
-  const nominees = yield call([nomineesRef, nomineesRef.once], "value");
+  const nomineesQuery = query(
+    ref(database, "nominees"),
+    orderByChild("game"),
+    equalTo(game.id)
+  );
+  const nominees = yield call(firebaseGet, nomineesQuery);
   yield put(setNominees(nominees.val()));
 }
 

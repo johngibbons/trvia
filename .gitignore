@@ -15,3 +15,5 @@ build
 npm-debug.log
 
 .firebase
+# Local environment variables
+.env.local

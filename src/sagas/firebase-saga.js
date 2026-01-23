@@ -1,6 +1,22 @@
 import { eventChannel } from "redux-saga";
 import { put, fork, call, take } from "redux-saga/effects";
-import firebase from "firebase";
+import {
+  ref,
+  get as firebaseGet,
+  set as firebaseSet,
+  update as firebaseUpdate,
+  push as firebasePush,
+  remove as firebaseRemove,
+  onValue,
+  onChildAdded,
+  onChildChanged,
+  onChildRemoved,
+  child,
+  query,
+  limitToLast,
+  off,
+} from "firebase/database";
+import { database } from "../firebaseSetup";
 
 export const CHILD_ADDED = "child_added";
 export const CHILD_REMOVED = "child_removed";
@@ -29,7 +45,7 @@ const newOpts = (name = "data") => {
   return chan;
 };
 
-const newKey = (path) => firebase.database().ref().child(path).push().key;
+const newKey = (path) => firebasePush(child(ref(database), path)).key;
 
 /**
  * Fetches a record specified by the key from the database
@@ -42,10 +58,10 @@ const newKey = (path) => firebase.database().ref().child(path).push().key;
  * const posts = yield call(get, 'posts', '1234');
  */
 export function* get(path, key) {
-  const ref = firebase.database().ref(`${path}/${key}`);
-  const data = yield call([ref, ref.once], "value");
+  const dbRef = ref(database, `${path}/${key}`);
+  const snapshot = yield call(firebaseGet, dbRef);
 
-  return data.val();
+  return snapshot.val();
 }
 
 /**
@@ -59,10 +75,10 @@ export function* get(path, key) {
  * const posts = yield call(getAll, 'posts');
  */
 export function* getAll(path) {
-  const ref = firebase.database().ref(path);
-  const data = yield call([ref, ref.once], "value");
+  const dbRef = ref(database, path);
+  const snapshot = yield call(firebaseGet, dbRef);
 
-  return data.val();
+  return snapshot.val();
 }
 
 /**
@@ -86,9 +102,17 @@ export function* create(path, fn) {
   const key = yield call(newKey, path);
   const payload = yield call(fn, key);
   const opts = newOpts("error");
-  const ref = firebase.database().ref();
+  const dbRef = ref(database);
+
+  // Create a wrapper function that returns a promise
+  const updatePromise = () =>
+    firebaseUpdate(dbRef, payload).then(
+      () => opts.handler(undefined),
+      (err) => opts.handler(err)
+    );
+
   const [_, { error }] = yield [
-    call([ref, ref.update], payload, opts.handler),
+    call(updatePromise),
     take(opts),
   ];
   return error;
@@ -110,9 +134,17 @@ export function* update(path, key, payload) {
     payload = yield call(payload);
   }
   const opts = newOpts("error");
-  const ref = firebase.database().ref(`${path}/${key}`);
+  const dbRef = ref(database, `${path}/${key}`);
+
+  // Create a wrapper function that returns a promise
+  const updatePromise = () =>
+    firebaseUpdate(dbRef, payload).then(
+      () => opts.handler(undefined),
+      (err) => opts.handler(err)
+    );
+
   const [_, { error }] = yield [
-    call([ref, ref.update], payload, opts.handler),
+    call(updatePromise),
     take(opts),
   ];
   return error;
@@ -138,9 +170,17 @@ export function* push(path, fn, getKey = false) {
   const key = yield call(newKey, path);
   const payload = yield call(fn, key);
   const opts = newOpts("error");
-  const ref = firebase.database().ref(path);
+  const dbRef = ref(database, path);
+
+  // Create a wrapper function that returns a promise
+  const setPromise = () =>
+    firebaseSet(child(dbRef, key), payload).then(
+      () => opts.handler(undefined),
+      (err) => opts.handler(err)
+    );
+
   const [_, { error }] = yield [
-    call([ref, ref.push], payload, opts.handler),
+    call(setPromise),
     take(opts),
   ];
 
@@ -180,17 +220,36 @@ export function* push(path, fn, getKey = false) {
  */
 export function* remove(path, key) {
   const opts = newOpts("error");
-  const ref = firebase.database().ref(`${path}/${key}`);
+  const dbRef = ref(database, `${path}/${key}`);
+
+  // Create a wrapper function that returns a promise
+  const removePromise = () =>
+    firebaseRemove(dbRef).then(
+      () => opts.handler(undefined),
+      (err) => opts.handler(err)
+    );
+
   const [_, { error }] = yield [
-    call([ref, ref.remove], opts.handler),
+    call(removePromise),
     take(opts),
   ];
   return error;
 }
 
-function* runSync(ref, eventType, actionCreator) {
+function* runSync(dbRef, eventType, actionCreator) {
   const opts = newOpts();
-  yield call([ref, ref.on], eventType, opts.handler);
+
+  const eventFnMap = {
+    [CHILD_ADDED]: onChildAdded,
+    [CHILD_REMOVED]: onChildRemoved,
+    [CHILD_CHANGED]: onChildChanged,
+    [VALUE]: onValue,
+  };
+
+  const eventFn = eventFnMap[eventType];
+  if (eventFn) {
+    yield call(eventFn, dbRef, opts.handler);
+  }
 
   while (true) {
     const { data } = yield take(opts);
@@ -215,16 +274,16 @@ function* runSync(ref, eventType, actionCreator) {
  *}
  */
 export function* sync(path, mapEventToAction = {}, limit) {
-  const ref =
+  const dbRef =
     typeof limit === "number"
-      ? firebase.database().ref(path).limitToLast(limit)
-      : firebase.database().ref(path);
+      ? query(ref(database, path), limitToLast(limit))
+      : ref(database, path);
 
   for (let type of EVENT_TYPES) {
     const action = mapEventToAction[type];
 
     if (typeof action === "function") {
-      yield fork(runSync, ref, type, action);
+      yield fork(runSync, dbRef, type, action);
     }
   }
 }

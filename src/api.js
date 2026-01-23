@@ -1,4 +1,6 @@
-import { database, auth } from "firebase";
+import { ref, set, update, push, child } from "firebase/database";
+import { signOut as firebaseSignOut } from "firebase/auth";
+import { database, auth } from "./firebaseSetup";
 import { Map } from "immutable";
 import Game from "./models/Game";
 import Group from "./models/Group";
@@ -6,38 +8,34 @@ import Entry from "./models/Entry";
 
 export default class API {
   static signOut() {
-    return auth().signOut();
+    return firebaseSignOut(auth);
   }
 
   static saveTitle(title) {
-    return database()
-      .ref(`/titles/${title.get("id")}`)
-      .set(title.toJS());
+    return set(ref(database, `/titles/${title.get("id")}`), title.toJS());
   }
 
   static savePerson(person) {
-    return database()
-      .ref(`/people/${person.get("id")}`)
-      .set(person.toJS());
+    return set(ref(database, `/people/${person.get("id")}`), person.toJS());
   }
 
   static createUser(user) {
-    return database().ref(`/users/${user.id}`).set(user.toJS());
+    return set(ref(database, `/users/${user.id}`), user.toJS());
   }
 
   static createGameId() {
-    return database().ref().child("games").push().key;
+    return push(child(ref(database), "games")).key;
   }
 
   static createGame(newGameId, game) {
     const updates = {
       [`/games/${newGameId}`]: new Game({ ...game, id: newGameId }).toJS(),
     };
-    return database().ref().update(updates);
+    return update(ref(database), updates);
   }
 
   static createGroupId() {
-    return database().ref().child("groups").push().key;
+    return push(child(ref(database), "groups")).key;
   }
 
   static createGroup(newGroupId, group, user, categoryValues) {
@@ -51,11 +49,11 @@ export default class API {
       [`/users/${user.id}/groups/${newGroupId}`]: { admin: true },
       [`/games/${group.game}/groups/${newGroupId}`]: true,
     };
-    return database().ref().update(updates);
+    return update(ref(database), updates);
   }
 
   static createEntryId() {
-    return database().ref().child("entries").push().key;
+    return push(child(ref(database), "entries")).key;
   }
 
   static createEntry(newEntryId, entry, user) {
@@ -79,24 +77,24 @@ export default class API {
           [`/users/${user.id}/groups/${entry.group}`]: true,
           [`/users/${user.id}/entries/${newEntryId}`]: true,
         };
-    return database().ref().update(updates);
+    return update(ref(database), updates);
   }
 
   static selectNominee(entryId, nominee) {
-    return database()
-      .ref(`/entries/${entryId}/selections/${nominee.category}`)
-      .set(nominee.id);
+    return set(
+      ref(database, `/entries/${entryId}/selections/${nominee.category}`),
+      nominee.id
+    );
   }
 
   static selectCorrectNominee(nominee) {
-    const key = database()
-      .ref()
-      .child(`games/${nominee.game}/answeredOrder`)
-      .push().key;
+    const key = push(
+      child(ref(database), `games/${nominee.game}/answeredOrder`)
+    ).key;
     const updates = {
       [`/categories/${nominee.category}/correctAnswer`]: nominee.id,
       [`/games/${nominee.game}/answeredOrder/${key}`]: nominee.id,
     };
-    return database().ref().update(updates);
+    return update(ref(database), updates);
   }
 }

@@ -1,9 +1,10 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./AlertBar.css";
 import { connect } from "react-redux";
 import { hideAlertBar } from "../../actions/ui-actions";
 
-import Snackbar from "material-ui/Snackbar";
+import Snackbar from "@mui/material/Snackbar";
 
 const AlertBar = ({ isOpen, message, onClose, isError }) => {
   return (
@@ -11,11 +12,13 @@ const AlertBar = ({ isOpen, message, onClose, isError }) => {
       open={isOpen}
       message={message}
       autoHideDuration={3000}
-      onRequestClose={onClose}
-      bodyStyle={{
-        backgroundColor: isError ? "rgb(220, 0, 0)" : "#b7a261",
+      onClose={onClose}
+      ContentProps={{
+        sx: {
+          backgroundColor: isError ? "rgb(220, 0, 0)" : "#b7a261",
+        },
       }}
-      style={{
+      sx={{
         boxSizing: "border-box",
         left: 0,
         width: "100vw",

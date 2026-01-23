@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { startFirebaseUI, stopFirebaseUI } from "../../firebaseSetup";
+import { ui } from "../../index";
 
 class FirebaseContainer extends Component {
   constructor() {
@@ -7,8 +8,8 @@ class FirebaseContainer extends Component {
     this.state = { ui: undefined };
   }
 
-  componentWillMount() {
-    this.setState({ ui: startFirebaseUI() });
+  componentDidMount() {
+    this.setState({ ui: startFirebaseUI(ui) });
   }
 
   componentWillUnmount() {

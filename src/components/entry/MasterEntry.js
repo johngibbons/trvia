@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./Entry.css";
 import EntryModel from "../../models/Entry";
 import Game from "../../models/Game";
@@ -12,6 +13,10 @@ import Category from "./category/Category";
 import CategoryModel from "../../models/Category";
 
 const MasterEntry = ({ game, categories }) => {
+  if (!game || !categories) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <PageHeading text="Master Entry">{game.name}</PageHeading>

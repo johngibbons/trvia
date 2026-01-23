@@ -1,18 +1,21 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import "./Home.css";
 import { connect } from "react-redux";
 import { Set } from "immutable";
 import User from "../../models/User";
 import { CURRENT_TITLE } from "../../constants";
+import { useNavigate } from "react-router-dom";
 
 import { openModal } from "../../actions/ui-actions";
 
-import RaisedButton from "material-ui/RaisedButton";
+import Button from "@mui/material/Button";
 import NewGroupModal from "../group/newGroupModal/NewGroupModal";
 import { gameNomineesSelector } from "../../selectors/nominees-selector";
-import { browserHistory } from "react-router";
 
 const Home = ({ currentUser, nominees, onClickNewGroup }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="Home">
       <div className="Home-header">
@@ -22,18 +25,19 @@ const Home = ({ currentUser, nominees, onClickNewGroup }) => {
           friends.
         </h2>
         {true ? (
-          <RaisedButton
-            primary
-            label="Start a group"
-            labelStyle={{
+          <Button
+            variant="contained"
+            sx={{
               color: "#424242",
             }}
             onClick={() => {
               currentUser.id
                 ? onClickNewGroup("NEW_GROUP")
-                : browserHistory.push("/login");
+                : navigate("/login");
             }}
-          />
+          >
+            Start a group
+          </Button>
         ) : (
           <div className="Home-game-complete-message">
             Note: The 2018 Oscars are complete! Please check back for the next
