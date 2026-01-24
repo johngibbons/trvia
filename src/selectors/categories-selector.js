@@ -1,7 +1,7 @@
 import Category from "../models/Category";
 import Group from "../models/Group";
 import { createSelector } from "reselect";
-import { currentGameSelector, entryGameSelector } from "./games-selector.js";
+import { currentGameSelector, entryGameSelector, groupGameSelector } from "./games-selector.js";
 import { currentEntrySelector } from "./entries-selector";
 import { Seq } from "immutable";
 
@@ -52,11 +52,13 @@ export const entryScoreSelector = createSelector(
   currentEntrySelector,
   entryGroupSelector,
   (categories, entry, group) => {
+    if (!categories || !group || !group.values) return 0;
     return categories.reduce(
       (acc, category) =>
+        category &&
         category.correctAnswer &&
         category.correctAnswer === entry.selections.get(category.id)
-          ? acc + group.values.get(category.id)
+          ? acc + (group.values.get(category.id) || 0)
           : acc,
       0
     );
@@ -67,9 +69,10 @@ export const entryPossibleScoreSelector = createSelector(
   entryCategoriesSelector,
   entryGroupSelector,
   (categories, group) => {
+    if (!categories || !group || !group.values) return 0;
     return categories
-      .filter((category) => category.correctAnswer)
-      .reduce((acc, category) => acc + group.values.get(category.id), 0);
+      .filter((category) => category && category.correctAnswer)
+      .reduce((acc, category) => acc + (group.values.get(category.id) || 0), 0);
   }
 );
 
@@ -83,9 +86,14 @@ export const groupCategoriesSelector = createSelector(
   groupFromPropsSelector,
   categoriesSelector,
   (group, categories) => {
-    return group.values.toKeyedSeq().map((val, key) => {
-      return categories.get(key).set("value", val);
-    });
+    if (!group || !group.values) return new Seq();
+    return group.values
+      .toKeyedSeq()
+      .map((val, key) => {
+        const category = categories.get(key);
+        return category ? category.set("value", val) : null;
+      })
+      .filter((cat) => cat !== null);
   }
 );
 
@@ -93,13 +101,38 @@ export const currentGroupCategoriesSelector = createSelector(
   groupFromParamsSelector,
   categoriesSelector,
   (group, categories) => {
-    return group
-      ? group.values
-          .toKeyedSeq()
-          .map((val, key) => {
-            return categories.get(key).set("value", val);
-          })
-          .sort((catA, catB) => catA.presentationOrder - catB.presentationOrder)
-      : new Seq();
+    if (!group) return new Seq();
+    return group.values
+      .toKeyedSeq()
+      .map((val, key) => {
+        const category = categories.get(key);
+        return category ? category.set("value", val) : null;
+      })
+      .filter((cat) => cat !== null)
+      .sort((catA, catB) => catA.presentationOrder - catB.presentationOrder);
+  }
+);
+
+export const reorderedGroupCategoriesSelector = createSelector(
+  currentGroupCategoriesSelector,
+  groupGameSelector,
+  (categories, game) => {
+    if (!categories || categories.size === 0) return categories;
+
+    const answeredOrder = game?.answered_order;
+    if (!answeredOrder || answeredOrder.size === 0) return categories;
+
+    const mostRecentId = answeredOrder.last();
+    const categoriesList = categories.toList();
+
+    // Find and remove the most recent category
+    const recentIndex = categoriesList.findIndex(cat => cat?.id === mostRecentId);
+    if (recentIndex === -1) return categories;
+
+    const recentCategory = categoriesList.get(recentIndex);
+    const withoutRecent = categoriesList.delete(recentIndex);
+
+    // Put it at the front
+    return withoutRecent.unshift(recentCategory).toKeyedSeq();
   }
 );

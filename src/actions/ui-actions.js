@@ -9,6 +9,7 @@ import {
   SET_NEXT_LOCATION,
   SHOW_ALERT_BAR,
   HIDE_ALERT_BAR,
+  CAPTURE_RANKINGS,
 } from "./action-types";
 
 export function openModal(id) {
@@ -92,5 +93,14 @@ export function showAlertBar(message, isError) {
 export function hideAlertBar() {
   return {
     type: HIDE_ALERT_BAR,
+  };
+}
+
+export function captureRankings(rankings) {
+  return {
+    type: CAPTURE_RANKINGS,
+    payload: {
+      rankings,
+    },
   };
 }

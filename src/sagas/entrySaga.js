@@ -75,9 +75,15 @@ export function* watchSelectNominee() {
 function* getAndSetGroup(id) {
   try {
     const group = yield call(get, "groups", id);
+    if (!group) {
+      console.log(`Group ${id} not found`);
+      return;
+    }
     yield put(setGroup(group));
     const game = yield call(get, "games", group.game);
-    yield put(setGame(game));
+    if (game) {
+      yield put(setGame(game));
+    }
   } catch (errors) {
     console.log(errors);
   }

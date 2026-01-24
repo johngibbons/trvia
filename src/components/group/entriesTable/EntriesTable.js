@@ -4,10 +4,11 @@ import "./EntriesTable.css";
 import { List, Seq } from "immutable";
 import WarningIcon from "@mui/icons-material/Warning";
 import CheckIcon from "@mui/icons-material/CheckCircle";
+import classNames from "classnames";
 
 import EntryRow from "./entryRow/EntryRow";
 
-const EntriesTable = ({ entries, categories, gameStarted }) => {
+const EntriesTable = ({ entries, categories, gameStarted, mostRecentCategoryId }) => {
   return (
     <div className="EntriesTable">
       {!gameStarted && (
@@ -44,11 +45,16 @@ const EntriesTable = ({ entries, categories, gameStarted }) => {
                 .toList()
                 .toJS()
                 .map((category) => {
+                  const headerClasses = classNames(
+                    "EntriesTable--headerCol",
+                    "EntriesTable--headerCol-diagonal",
+                    {
+                      "EntriesTable--headerCol-recent":
+                        category.id === mostRecentCategoryId,
+                    }
+                  );
                   return (
-                    <th
-                      key={category.id}
-                      className="EntriesTable--headerCol EntriesTable--headerCol-diagonal"
-                    >
+                    <th key={category.id} className={headerClasses}>
                       {category.name}
                     </th>
                   );
@@ -62,6 +68,7 @@ const EntriesTable = ({ entries, categories, gameStarted }) => {
                 key={entry.id || i}
                 entry={entry}
                 categories={categories}
+                mostRecentCategoryId={mostRecentCategoryId}
               />
             );
           })}
@@ -75,6 +82,7 @@ EntriesTable.propTypes = {
   entries: PropTypes.instanceOf(List),
   categories: PropTypes.instanceOf(Seq),
   gameStarted: PropTypes.bool,
+  mostRecentCategoryId: PropTypes.string,
 };
 
 export default EntriesTable;

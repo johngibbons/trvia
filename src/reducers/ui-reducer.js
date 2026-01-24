@@ -1,4 +1,5 @@
 import {
+  CAPTURE_RANKINGS,
   CLOSE_MODAL,
   CREATE_GAME,
   CREATE_GROUP_SUCCESS,
@@ -66,6 +67,8 @@ const ui = (state = new UI(), action) => {
         alertBarMessage: "",
         isAlertBarError: false,
       });
+    case CAPTURE_RANKINGS:
+      return state.set("previousRanks", action.payload.rankings);
     default:
       return state;
   }

@@ -10,6 +10,7 @@ import {
   entryUserSelector,
   entryCompleteSelector,
   entryPeoplesChoiceScore,
+  entryRankChangeSelector,
 } from "../../../../selectors/entries-selector";
 import { entryGameStartedSelector } from "../../../../selectors/games-selector";
 import classNames from "classnames";
@@ -18,6 +19,25 @@ import WarningIcon from "@mui/icons-material/Warning";
 import CheckIcon from "@mui/icons-material/CheckCircle";
 
 import UserAvatar from "../../../users/userAvatar/UserAvatar";
+
+const RankChangeIndicator = ({ rankChange }) => {
+  if (!rankChange) return null;
+
+  const indicators = {
+    up: { symbol: "↑", className: "EntryRow--rank-change-up" },
+    down: { symbol: "↓", className: "EntryRow--rank-change-down" },
+    same: { symbol: "–", className: "EntryRow--rank-change-same" },
+  };
+
+  const indicator = indicators[rankChange];
+  if (!indicator) return null;
+
+  return (
+    <span className={`EntryRow--rank-change ${indicator.className}`}>
+      {indicator.symbol}
+    </span>
+  );
+};
 
 const EntryRow = ({
   entry,
@@ -28,6 +48,8 @@ const EntryRow = ({
   entryComplete,
   gameStarted,
   user,
+  rankChange,
+  mostRecentCategoryId,
 }) => {
   const navigate = useNavigate();
 
@@ -39,7 +61,10 @@ const EntryRow = ({
     >
       <td className={"EntriesTable--col EntriesTable--col-rank"}>
         {gameStarted ? (
-          entry.rank
+          <span className="EntryRow--rank-container">
+            {entry.rank}
+            <RankChangeIndicator rankChange={rankChange} />
+          </span>
         ) : entryComplete ? (
           <CheckIcon
             className="EntriesTable__status-icon"
@@ -81,6 +106,10 @@ const EntryRow = ({
                 "EntriesTable--col-incorrect":
                   category.correctAnswer &&
                   category.correctAnswer !== entry.selections[category.id],
+              },
+              {
+                "EntriesTable--col-recent":
+                  category.id === mostRecentCategoryId,
               }
             );
             const selectedNomineeId = entry.selections[category.id];
@@ -93,6 +122,10 @@ const EntryRow = ({
   );
 };
 
+RankChangeIndicator.propTypes = {
+  rankChange: PropTypes.oneOf(["up", "down", "same", null]),
+};
+
 EntryRow.propTypes = {
   user: PropTypes.instanceOf(User),
   entry: PropTypes.object,
@@ -100,6 +133,8 @@ EntryRow.propTypes = {
   possibleScore: PropTypes.number,
   entryComplete: PropTypes.bool,
   gameStarted: PropTypes.bool,
+  rankChange: PropTypes.oneOf(["up", "down", "same", null]),
+  mostRecentCategoryId: PropTypes.string,
 };
 
 const mapStateToProps = (state, props) => {
@@ -110,6 +145,7 @@ const mapStateToProps = (state, props) => {
     entryComplete: entryCompleteSelector(state, props),
     gameStarted: entryGameStartedSelector(state, props),
     nominees: state.nominees.toJS(),
+    rankChange: entryRankChangeSelector(state, props.entry.id),
   };
 };
 
