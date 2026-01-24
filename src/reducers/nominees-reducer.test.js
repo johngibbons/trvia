@@ -29,11 +29,18 @@ describe("nominees reducer", () => {
       .set(2, new Nominee(existingNominees[2]))
       .set(3, new Nominee(existingNominees[3]));
     const action = setNominees(newNominees);
+
+    // SET_NOMINEES replaces all nominees with the new set (not merge)
     const expectedResult = new Map()
-      .set(1, new Nominee(newNominees[1]))
-      .set(2, new Nominee(newNominees[2]))
-      .set(3, new Nominee(existingNominees[3]));
+      .set("1", new Nominee(newNominees[1]))
+      .set("2", new Nominee(newNominees[2]));
 
     expect(reducer(initialState, action).toJS()).toEqual(expectedResult.toJS());
+  });
+
+  it("returns default state for unknown action", () => {
+    const initialState = new Map();
+    const action = { type: "UNKNOWN_ACTION" };
+    expect(reducer(initialState, action)).toEqual(initialState);
   });
 });

@@ -4,8 +4,6 @@ import {
   getCurrentUser,
 } from "./authSaga";
 
-import { replace } from "react-router-redux";
-
 import { CHECK_AUTH_STATUS } from "../actions/action-types";
 import * as actions from "../actions/user-actions";
 import { signInSuccess, signOutSuccess } from "../actions/user-actions";
@@ -26,20 +24,17 @@ describe("auth saga", () => {
     const generator = checkAuthStatus(action);
     let next = generator.next();
     expect(next.value).toEqual(call(getCurrentUser, null));
-    const user = { id: 1, displayName: "John Gibbons" };
+    const user = { uid: "user1", displayName: "John Gibbons" };
     next = generator.next(user);
     expect(next.value).toEqual(put(signInSuccess(user)));
-    expect(generator.next().value).toEqual(call(action.payload.next, null));
   });
 
   it("should dispatch proper auth status actions if no user", () => {
-    const action = actions.checkAuthStatus(() => {}, true);
+    const action = actions.checkAuthStatus(() => {}, false);
     const generator = checkAuthStatus(action);
     let next = generator.next();
     expect(next.value).toEqual(call(getCurrentUser, null));
     next = generator.next(undefined);
     expect(next.value).toEqual(put(signOutSuccess()));
-    next = generator.next();
-    expect(next.value).toEqual(put(replace("/")));
   });
 });

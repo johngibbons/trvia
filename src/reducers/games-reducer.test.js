@@ -1,5 +1,11 @@
 import { createGameSuccess, setGame } from "../actions/game-actions";
-import { Map } from "immutable";
+import {
+  UPDATE_GAME,
+  SAVE_PENDING_CATEGORY,
+  DELETE_GAME,
+  UPDATE_ANSWERED_ORDER,
+} from "../actions/action-types";
+import { Map, List, fromJS } from "immutable";
 import Game from "../models/Game";
 import reducer from "./games-reducer";
 
@@ -28,5 +34,150 @@ describe("games reducer", () => {
     );
     const expectedResult = currentState.set(2, game);
     expect(reducer(currentState, action)).toEqual(expectedResult);
+  });
+
+  it("should update game", () => {
+    const currentState = new Map().set(
+      1,
+      new Game({ id: 1, name: "Original Name", answered_order: List() })
+    );
+    const action = {
+      type: UPDATE_GAME,
+      payload: {
+        game: new Game({
+          id: 1,
+          name: "Updated Name",
+        }),
+      },
+    };
+    const result = reducer(currentState, action);
+    expect(result.getIn([1, "name"])).toBe("Updated Name");
+  });
+
+  it("should add category to game on save pending category", () => {
+    const currentState = new Map().set(
+      "game1",
+      new Game({ id: "game1", name: "Test Game", categories: Map() })
+    );
+    const action = {
+      type: SAVE_PENDING_CATEGORY,
+      payload: {
+        gameId: "game1",
+        pendingCategory: { id: "cat1", name: "Best Picture" },
+      },
+    };
+    const result = reducer(currentState, action);
+    expect(result.getIn(["game1", "categories", "cat1"])).toBe(true);
+  });
+
+  it("should delete game", () => {
+    const currentState = new Map()
+      .set("game1", new Game({ id: "game1", name: "Game 1" }))
+      .set("game2", new Game({ id: "game2", name: "Game 2" }));
+    const action = {
+      type: DELETE_GAME,
+      payload: { id: "game1" },
+    };
+    const result = reducer(currentState, action);
+    expect(result.has("game1")).toBe(false);
+    expect(result.has("game2")).toBe(true);
+  });
+
+  describe("UPDATE_ANSWERED_ORDER", () => {
+    it("should add category to answered_order when scoring", () => {
+      const currentState = new Map().set(
+        "game1",
+        new Game({ id: "game1", answered_order: List(["cat1", "cat2"]) })
+      );
+      const action = {
+        type: UPDATE_ANSWERED_ORDER,
+        payload: {
+          gameId: "game1",
+          categoryId: "cat3",
+          isScoring: true,
+        },
+      };
+      const result = reducer(currentState, action);
+      const answeredOrder = result.getIn(["game1", "answered_order"]);
+      expect(answeredOrder.toJS()).toEqual(["cat1", "cat2", "cat3"]);
+    });
+
+    it("should not add duplicate category to answered_order", () => {
+      const currentState = new Map().set(
+        "game1",
+        new Game({ id: "game1", answered_order: List(["cat1", "cat2"]) })
+      );
+      const action = {
+        type: UPDATE_ANSWERED_ORDER,
+        payload: {
+          gameId: "game1",
+          categoryId: "cat2",
+          isScoring: true,
+        },
+      };
+      const result = reducer(currentState, action);
+      const answeredOrder = result.getIn(["game1", "answered_order"]);
+      expect(answeredOrder.toJS()).toEqual(["cat1", "cat2"]);
+    });
+
+    it("should remove category from answered_order when un-scoring", () => {
+      const currentState = new Map().set(
+        "game1",
+        new Game({ id: "game1", answered_order: List(["cat1", "cat2", "cat3"]) })
+      );
+      const action = {
+        type: UPDATE_ANSWERED_ORDER,
+        payload: {
+          gameId: "game1",
+          categoryId: "cat2",
+          isScoring: false,
+        },
+      };
+      const result = reducer(currentState, action);
+      const answeredOrder = result.getIn(["game1", "answered_order"]);
+      expect(answeredOrder.toJS()).toEqual(["cat1", "cat3"]);
+    });
+
+    it("should initialize answered_order if missing when scoring", () => {
+      const currentState = new Map().set(
+        "game1",
+        new Game({ id: "game1" })
+      );
+      const action = {
+        type: UPDATE_ANSWERED_ORDER,
+        payload: {
+          gameId: "game1",
+          categoryId: "cat1",
+          isScoring: true,
+        },
+      };
+      const result = reducer(currentState, action);
+      const answeredOrder = result.getIn(["game1", "answered_order"]);
+      expect(answeredOrder.toJS()).toEqual(["cat1"]);
+    });
+
+    it("should handle un-scoring with empty answered_order", () => {
+      const currentState = new Map().set(
+        "game1",
+        new Game({ id: "game1", answered_order: List() })
+      );
+      const action = {
+        type: UPDATE_ANSWERED_ORDER,
+        payload: {
+          gameId: "game1",
+          categoryId: "cat1",
+          isScoring: false,
+        },
+      };
+      const result = reducer(currentState, action);
+      const answeredOrder = result.getIn(["game1", "answered_order"]);
+      expect(answeredOrder.toJS()).toEqual([]);
+    });
+  });
+
+  it("should return current state for unknown action", () => {
+    const currentState = new Map().set(1, new Game({ id: 1, name: "Game" }));
+    const action = { type: "UNKNOWN_ACTION" };
+    expect(reducer(currentState, action)).toBe(currentState);
   });
 });

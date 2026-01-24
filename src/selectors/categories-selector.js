@@ -1,5 +1,4 @@
 import Category from "../models/Category";
-import Group from "../models/Group";
 import { createSelector } from "reselect";
 import { currentGameSelector, entryGameSelector, groupGameSelector } from "./games-selector.js";
 import { currentEntrySelector } from "./entries-selector";
@@ -79,7 +78,7 @@ export const entryPossibleScoreSelector = createSelector(
 export const gameTotalPossibleSelector = createSelector(
   entryGroupSelector,
   (group) =>
-    group ? group.values.reduce((acc, value) => acc + value, 0) : new Group()
+    group ? group.values.reduce((acc, value) => acc + value, 0) : 0
 );
 
 export const groupCategoriesSelector = createSelector(

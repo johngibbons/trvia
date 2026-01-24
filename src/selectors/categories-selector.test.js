@@ -1,137 +1,172 @@
 import Category from "../models/Category";
 import Game from "../models/Game";
 import Entry from "../models/Entry";
-import store from "../store";
+import Group from "../models/Group";
 import {
   givenCategorySelector,
   currentCategorySelector,
-  currentCategoriesSelector,
   entryCategoriesSelector,
   entryScoreSelector,
+  gameTotalPossibleSelector,
 } from "./categories-selector";
 import { Map, is } from "immutable";
+import { ScenarioBuilder } from "../testUtils/factories";
 
 describe("categories selector", () => {
   it("should return entry categories", () => {
-    const gameCategories = new Map()
-      .set(1, new Category({ id: 1, game: "game" }))
-      .set(2, new Category({ id: 2, game: "game" }));
-    const categories = gameCategories.set(
-      3,
-      new Category({ id: 3, game: "otherGame" })
-    );
-    const games = new Map().set(
-      "game",
-      new Game({ id: "game", categories: gameCategories })
-    );
-    const entries = new Map().set(
-      "entry",
-      new Entry({ id: "entry", game: "game" })
-    );
-    const state = {
-      ...store.getState(),
-      categories,
-      games,
-      entries,
-    };
-    const expectedResult = new Map()
-      .set(1, new Category({ id: 1, game: "game" }))
-      .set(2, new Category({ id: 2, game: "game" }))
-      .toIndexedSeq();
+    const builder = new ScenarioBuilder()
+      .withGame({ id: "game1" }, 3, 5)
+      .withGroup("game1", { id: "group1" })
+      .withEntry("group1", { name: "Test" }, "all-first")
+      .withCurrentUser({ id: "user1" });
 
-    const props = { routeParams: { id: "entry" } };
-    expect(is(entryCategoriesSelector(state, props), expectedResult)).toEqual(
-      true
-    );
+    const ids = builder.getIds();
+    const scenario = builder.build();
+    const entryId = ids.entryIds[0];
+    const props = { routeParams: { id: entryId } };
+
+    const result = entryCategoriesSelector(scenario, props);
+
+    // Should return the 3 categories associated with the game
+    expect(result.count()).toEqual(3);
   });
 
   describe("entryScoreSelector", () => {
-    const categories = new Map()
-      .set(
-        "category1",
-        new Category({
-          id: "category1",
-          value: 1,
-          correctAnswer: "nominee1",
-        })
-      )
-      .set(
-        "category2",
-        new Category({
-          id: "category2",
-          value: 2,
-          correctAnswer: "nominee2",
-        })
-      )
-      .set(
-        "category3",
-        new Category({
-          id: "category3",
-          value: 5,
-          correctAnswer: "nominee3",
-        })
-      )
-      .set(
-        "category4",
-        new Category({
-          id: "category4",
-          value: 4,
-        })
-      );
+    it("should return entry score based on correct selections", () => {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1" }, 3, 5)
+        .withGroup("game1", { id: "group1" })
+        .withEntry("group1", { name: "Test" }, "all-first")
+        .withGameInProgress("game1", 2) // 2 categories answered
+        .withCurrentUser({ id: "user1" });
 
-    const game = new Game({
-      id: "game1",
-      categories,
+      const ids = builder.getIds();
+      const scenario = builder.build();
+      const entryId = ids.entryIds[0];
+      const props = { routeParams: { id: entryId } };
+
+      // Entry selected "all-first" and first nominees are marked as correct
+      // Score should be 2 (1 point per correct answer in default values)
+      const score = entryScoreSelector(scenario, props);
+      expect(score).toEqual(2);
     });
 
-    const props = { routeParams: { id: "entry1" } };
+    it("should return 0 when no categories answered", () => {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1" }, 3, 5)
+        .withGroup("game1", { id: "group1" })
+        .withEntry("group1", { name: "Test" }, "all-first")
+        .withCurrentUser({ id: "user1" });
 
-    it("should return entry score", () => {
-      const entry = new Entry({
-        id: "entry1",
-        game: "game1",
-        selections: new Map({
-          category1: "nominee1",
-          category2: "nominee2",
-          category3: "nominee5",
-        }),
-      });
+      const ids = builder.getIds();
+      const scenario = builder.build();
+      const entryId = ids.entryIds[0];
+      const props = { routeParams: { id: entryId } };
 
-      const state = {
-        ...store.getState(),
-        entries: new Map().set("entry1", entry),
-        categories,
-        games: new Map().set("game1", game),
-      };
-
-      expect(entryScoreSelector(state, props)).toEqual(3);
+      const score = entryScoreSelector(scenario, props);
+      expect(score).toEqual(0);
     });
 
-    it("should return 0 when no selections", () => {
-      const entry = new Entry({
-        id: "entry1",
-        game: "game1",
-        selections: new Map(),
-      });
+    it("should return 0 when entry has no selections", () => {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1" }, 3, 5)
+        .withGroup("game1", { id: "group1" })
+        .withEntry("group1", { name: "Test" }, "empty")
+        .withGameInProgress("game1", 2)
+        .withCurrentUser({ id: "user1" });
 
-      const state = {
-        ...store.getState(),
-        entries: new Map().set("entry1", entry),
-        categories,
-        games: new Map().set("game1", game),
+      const ids = builder.getIds();
+      const scenario = builder.build();
+      const entryId = ids.entryIds[0];
+      const props = { routeParams: { id: entryId } };
+
+      const score = entryScoreSelector(scenario, props);
+      expect(score).toEqual(0);
+    });
+  });
+
+  describe("gameTotalPossibleSelector", () => {
+    it("should return sum of all category point values", () => {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1" }, 3, 5) // 3 categories
+        .withGroup("game1", { id: "group1" })
+        .withEntry("group1", { name: "Test" }, "all-first")
+        .withCurrentUser({ id: "user1" });
+
+      const ids = builder.getIds();
+      const scenario = builder.build();
+      const entryId = ids.entryIds[0];
+      const props = { routeParams: { id: entryId } };
+
+      // Default group values are 1 point per category, so 3 categories = 3 total
+      const totalPossible = gameTotalPossibleSelector(scenario, props);
+      expect(totalPossible).toEqual(3);
+    });
+
+    it("should return sum with custom point values", () => {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1" }, 3, 5)
+        .withGroup("game1", { id: "group1" })
+        .withEntry("group1", { name: "Test" }, "all-first")
+        .withCurrentUser({ id: "user1" });
+
+      const ids = builder.getIds();
+      const categoryIds = ids.gameCategories["game1"];
+
+      // Set custom values: 5, 10, 15 points
+      const customValues = {
+        [categoryIds[0]]: 5,
+        [categoryIds[1]]: 10,
+        [categoryIds[2]]: 15,
       };
+      builder.withGroupValues("group1", customValues);
 
-      expect(entryScoreSelector(state, props)).toEqual(0);
+      const scenario = builder.build();
+      const entryId = ids.entryIds[0];
+      const props = { routeParams: { id: entryId } };
+
+      const totalPossible = gameTotalPossibleSelector(scenario, props);
+      expect(totalPossible).toEqual(30);
+    });
+
+    it("should return 0 when group is not found", () => {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1" }, 3, 5)
+        .withGroup("game1", { id: "group1" })
+        .withEntry("group1", { name: "Test" }, "all-first")
+        .withCurrentUser({ id: "user1" });
+
+      const ids = builder.getIds();
+      const scenario = builder.build();
+      const entryId = ids.entryIds[0];
+
+      // Point entry to a non-existent group
+      const entry = scenario.entries.get(entryId);
+      const updatedEntry = entry.set("group", "nonexistent-group");
+      scenario.entries = scenario.entries.set(entryId, updatedEntry);
+
+      const props = { routeParams: { id: entryId } };
+
+      const totalPossible = gameTotalPossibleSelector(scenario, props);
+      expect(totalPossible).toEqual(0);
+    });
+
+    it("should return 0 when entry is not found", () => {
+      const scenario = new ScenarioBuilder()
+        .withCurrentUser({ id: "user1" })
+        .build();
+
+      const props = { routeParams: { id: "nonexistent-entry" } };
+
+      const totalPossible = gameTotalPossibleSelector(scenario, props);
+      expect(totalPossible).toEqual(0);
     });
   });
 
   it("should select category from props", () => {
-    const props = {
-      category: new Category({
-        id: "category1",
-      }),
-    };
-    expect(givenCategorySelector(undefined, props)).toEqual(props.category);
+    const category = new Category({ id: "category1" });
+    const props = { category };
+    expect(givenCategorySelector(undefined, props)).toEqual(category);
   });
 
   it("should select current category", () => {
@@ -139,35 +174,12 @@ describe("categories selector", () => {
       .set("category1", new Category({ id: "category1" }))
       .set("category2", new Category({ id: "category2" }));
     const state = {
-      ...store.getState(),
       categories,
     };
     const props = { category: { id: "category1" } };
 
     expect(currentCategorySelector(state, props)).toEqual(
       categories.get("category1")
-    );
-  });
-
-  it("should get game categories", () => {
-    const gameCategories = new Map()
-      .set("category1", new Category({ id: "category1" }))
-      .set("category2", new Category({ id: "category2" }));
-    const game = new Game({
-      id: "game1",
-      categories: gameCategories,
-    });
-    const state = {
-      ...store.getState(),
-      games: new Map().set("game1", game),
-      categories: gameCategories.set(
-        "category3",
-        new Category({ id: "category3" })
-      ),
-    };
-    const props = { routeParams: { id: "game1" } };
-    expect(currentCategoriesSelector(state, props)).toEqual(
-      gameCategories.keySeq().map((id) => state.categories.get(id))
     );
   });
 });

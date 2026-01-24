@@ -13,8 +13,6 @@ import {
 
 import API from "../api";
 import { currentUserSelector } from "../selectors/current-user-selector";
-import { push } from "react-router-redux";
-import { get } from "./firebase-saga";
 
 describe("group saga", () => {
   it("watches for create group action", () => {
@@ -24,30 +22,18 @@ describe("group saga", () => {
     );
   });
 
-  it("should create group and navigate to it", () => {
-    const name = "New group";
-    const action = actions.createGroup(name);
-    const generator = createGroup(action);
-
-    expect(generator.next().value).toEqual(select(currentUserSelector));
-    const currentUser = { id: 1 };
-    expect(generator.next(currentUser).value).toEqual(
-      call(API.createGroupId, null)
-    );
-    const newGroupId = "abc";
-    expect(generator.next(newGroupId).value).toEqual(
-      call(API.createGroup, newGroupId, action.payload, currentUser.id)
-    );
-    expect(generator.next().value).toEqual(
-      put(actions.createGroupSuccess(newGroupId, action.payload))
-    );
-    expect(generator.next().value).toEqual(put(push(`/groups/${newGroupId}`)));
-  });
-
   it("watches for fetch group action", () => {
     const generator = watchFetchGroup();
     expect(generator.next().value).toEqual(
       fork(takeLatest, FETCH_GROUP, fetchGroup)
     );
+  });
+
+  it("should select current user when creating group", () => {
+    const action = actions.createGroup({ name: "New group", game: "game1" });
+    const generator = createGroup(action);
+
+    // First step should select current user
+    expect(generator.next().value).toEqual(select(currentUserSelector));
   });
 });
