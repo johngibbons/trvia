@@ -244,9 +244,9 @@ export async function deleteGame(deleteGroups = false) {
   await firebaseRemove(ref(database, `games/${CURRENT_GAME}`));
 }
 
-const toOptionalLowercaseText = (text) => (text ? text.toLowerCase() : "");
+export const toOptionalLowercaseText = (text) => (text ? text.toLowerCase() : "");
 
-function findMatch(titlesAndPeopleArray, nomineeToFind) {
+export function findMatch(titlesAndPeopleArray, nomineeToFind) {
   const matches = titlesAndPeopleArray.filter((titleOrPerson) => {
     const titleOrPersonStrings = [
       titleOrPerson.title,
@@ -293,7 +293,7 @@ function setImage(nominee, image) {
     });
 }
 
-function determineNomineeType(nominee, categoryName) {
+export function determineNomineeType(nominee, categoryName) {
   // If nominee has secondaryText, it's likely a person (text = person name, secondaryText = movie)
   if (nominee.secondaryText) {
     return "person";
@@ -315,7 +315,7 @@ function determineNomineeType(nominee, categoryName) {
   return "title";
 }
 
-function isExactMatch(result, nominee) {
+export function isExactMatch(result, nominee) {
   const resultName = (result.name || result.title || "").toLowerCase().trim();
   const nomineeText = (nominee.text || "").toLowerCase().trim();
   const nomineeMovieDBName = (nominee.movieDBName || "").toLowerCase().trim();
@@ -323,7 +323,7 @@ function isExactMatch(result, nominee) {
   return resultName === nomineeText || resultName === nomineeMovieDBName;
 }
 
-function selectBestMatch(searchResults, nominee, nomineeType) {
+export function selectBestMatch(searchResults, nominee, nomineeType) {
   if (
     !searchResults ||
     !searchResults.results ||

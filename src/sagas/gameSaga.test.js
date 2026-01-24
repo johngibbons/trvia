@@ -5,7 +5,6 @@ import * as actions from "../actions/game-actions";
 
 import { fork, takeLatest, call, put } from "redux-saga/effects";
 import API from "../api";
-import { push } from "react-router-redux";
 
 describe("game saga", () => {
   it("should watch for game create", () => {

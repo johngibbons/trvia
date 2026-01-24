@@ -21,7 +21,7 @@ const games = (state = new Map(), action) => {
       return state.set(game.id, new Game(fromJS(game)));
     }
     case UPDATE_GAME:
-      return state.mergeIn(action.payload.game.id, action.payload.game);
+      return state.mergeIn([action.payload.game.id], action.payload.game);
     case SAVE_PENDING_CATEGORY:
       return state.setIn(
         [

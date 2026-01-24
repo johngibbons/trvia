@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^14.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "ajv": "^8.17.1",
+    "msw": "^2.12.7",
     "prettier": "2.2.1",
     "react-scripts": "^5.0.1"
   },
@@ -32,10 +37,16 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:mock": "REACT_APP_USE_MOCK_DATA=true react-scripts start",
+    "start:mock:progress": "REACT_APP_USE_MOCK_DATA=true REACT_APP_MOCK_SCENARIO=inProgress react-scripts start",
+    "start:mock:completed": "REACT_APP_USE_MOCK_DATA=true REACT_APP_MOCK_SCENARIO=completed react-scripts start",
     "build": "react-scripts build",
     "build:prod": "REACT_APP_ENVIRONMENT=production react-scripts build",
     "build:staging": "REACT_APP_ENVIRONMENT=staging react-scripts build",
     "test": "react-scripts test --env=jsdom",
+    "test:coverage": "react-scripts test --coverage --watchAll=false --env=jsdom",
+    "test:integration": "react-scripts test --testPathPattern=__integration__ --env=jsdom",
+    "test:unit": "react-scripts test --testPathIgnorePatterns=__integration__ --env=jsdom",
     "eject": "react-scripts eject"
   },
   "browserslist": {
