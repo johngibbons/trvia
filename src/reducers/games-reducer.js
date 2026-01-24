@@ -18,7 +18,28 @@ const games = (state = new Map(), action) => {
       );
     case SET_GAME: {
       const { game } = action.payload;
-      return state.set(game.id, new Game(fromJS(game)));
+
+      // If game is already a Game Record (from test), just set it
+      if (game instanceof Game) {
+        return state.set(game.id, game);
+      }
+
+      // Handle migration from answeredOrder (object with keys) to answered_order (array)
+      let gameData = { ...game };
+      if (game.answeredOrder && !game.answered_order) {
+        // Convert old answeredOrder object to array
+        const answeredOrderObj = game.answeredOrder;
+        if (typeof answeredOrderObj === 'object' && !Array.isArray(answeredOrderObj)) {
+          // It's an object with keys, extract the values and get unique category IDs
+          // The old structure stored nominee IDs, we need to map them to category IDs
+          // For now, just initialize as empty and let future scoring populate it
+          gameData.answered_order = [];
+          console.log("🔄 Migrating game from old answeredOrder structure to answered_order array");
+        } else if (Array.isArray(answeredOrderObj)) {
+          gameData.answered_order = answeredOrderObj;
+        }
+      }
+      return state.set(game.id, new Game(fromJS(gameData)));
     }
     case UPDATE_GAME:
       return state.mergeIn([action.payload.game.id], action.payload.game);
@@ -37,8 +58,9 @@ const games = (state = new Map(), action) => {
       const { gameId, categoryId, isScoring } = action.payload;
       const currentOrder = state.getIn([gameId, "answered_order"]) || new List();
       const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+      const isProduction = process.env.NODE_ENV === "production";
 
-      if (isMockMode) {
+      if (isMockMode || isProduction) {
         console.log("🎭 Reducer: UPDATE_ANSWERED_ORDER for game", gameId, "category", categoryId, "isScoring:", isScoring);
         console.log("🎭 Current answered_order:", currentOrder.toJS());
       }
@@ -47,7 +69,7 @@ const games = (state = new Map(), action) => {
         // Add category to the end if not already present
         if (!currentOrder.includes(categoryId)) {
           const newState = state.setIn([gameId, "answered_order"], currentOrder.push(categoryId));
-          if (isMockMode) {
+          if (isMockMode || isProduction) {
             console.log("🎭 New answered_order:", newState.getIn([gameId, "answered_order"]).toJS());
           }
           return newState;
@@ -58,7 +80,7 @@ const games = (state = new Map(), action) => {
           [gameId, "answered_order"],
           currentOrder.filter((id) => id !== categoryId)
         );
-        if (isMockMode) {
+        if (isMockMode || isProduction) {
           console.log("🎭 New answered_order:", newState.getIn([gameId, "answered_order"]).toJS());
         }
         return newState;

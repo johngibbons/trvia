@@ -97,4 +97,12 @@ export default class API {
     };
     return update(ref(database), updates);
   }
+
+  static updateGame(gameId, updates) {
+    const gameUpdates = Object.keys(updates).reduce((acc, key) => {
+      acc[`/games/${gameId}/${key}`] = updates[key];
+      return acc;
+    }, {});
+    return update(ref(database), gameUpdates);
+  }
 }

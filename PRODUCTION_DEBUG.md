@@ -2,7 +2,7 @@
 
 ## Changes Made
 
-I've fixed two critical issues and added extensive logging to help debug in production:
+I've fixed three critical issues and added extensive logging to help debug in production:
 
 ### Issue 1: Category Not Moving to Leftmost Position
 **Problem**: The `answered_order` was only being updated in Redux state, not in Firebase.
@@ -18,6 +18,16 @@ yield call(API.updateGame, nominee.game, { answered_order: newOrder.toJS() });
 **Fix**: Updated production logic in `src/sagas/gameSaga.js` to match the mock mode logic:
 - Capture ranks BEFORE scoring when adding a correct answer
 - Capture ranks AFTER unscoring when removing a correct answer
+
+### Issue 3: Saga Crashing - API Method Missing
+**Problem**: `API.updateGame` didn't exist, causing error: "call: argument fn is undefined"
+
+**Fix**:
+- Added `API.updateGame` method in `src/api.js` to update game fields in Firebase
+- Added migration logic in `src/reducers/games-reducer.js` to handle old `answeredOrder` structure
+- Added defensive check to skip Firebase update if answered_order hasn't changed
+
+**Note**: Existing games with scored categories may have empty `answered_order` initially. The array will populate as new categories are scored going forward.
 
 ## How to Debug in Production
 

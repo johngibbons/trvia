@@ -208,6 +208,15 @@ export function* toggleCorrectNominee(action) {
       // IMPORTANT: Also update answered_order in Firebase
       const games = yield select((state) => state.games);
       const game = games.get(nominee.game);
+
+      // Debug: Check what's in the game object
+      console.log("🔥 Game object:", {
+        id: game?.id,
+        name: game?.name,
+        answered_order: game?.answered_order?.toJS?.() || game?.answered_order,
+        answeredOrder: game?.answeredOrder?.toJS?.() || game?.answeredOrder,
+      });
+
       const currentOrder = game?.answered_order || new List();
 
       let newOrder;
@@ -220,7 +229,14 @@ export function* toggleCorrectNominee(action) {
       }
 
       console.log("🔥 Updating Firebase answered_order from", currentOrder.toJS(), "to", newOrder.toJS());
-      yield call(API.updateGame, nominee.game, { answered_order: newOrder.toJS() });
+
+      // Only update if the order actually changed
+      if (!currentOrder.equals(newOrder)) {
+        yield call(API.updateGame, nominee.game, { answered_order: newOrder.toJS() });
+        console.log("🔥 Firebase update complete");
+      } else {
+        console.log("🔥 No change in answered_order, skipping Firebase update");
+      }
     }
   } catch (errors) {
     console.log("❌ Error in toggleCorrectNominee:", errors);
