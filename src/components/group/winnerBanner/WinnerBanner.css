@@ -26,6 +26,9 @@
 }
 
 .WinnerBanner--winner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 25px;
 }
 
@@ -48,4 +51,5 @@
 .WinnerBanner--winner-avatar {
   width: 75px !important;
   height: 75px !important;
+  margin-bottom: 15px;
 }
