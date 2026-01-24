@@ -10,11 +10,12 @@ import {
   winningEntriesSelector,
 } from "../../selectors/entries-selector";
 import { currentGroupSelector } from "../../selectors/group-selector";
-import { currentGroupCategoriesSelector } from "../../selectors/categories-selector";
+import { reorderedGroupCategoriesSelector } from "../../selectors/categories-selector";
 import {
   groupGameStartedSelector,
   groupGameEndedSelector,
   groupGameSelector,
+  mostRecentlyScoredCategorySelector,
 } from "../../selectors/games-selector";
 import { openModal } from "../../actions/ui-actions";
 
@@ -35,6 +36,7 @@ const Group = ({
   routeParams,
   gameStarted,
   gameEnded,
+  mostRecentCategoryId,
   onClickNewEntry,
 }) => {
   // Show loading state if data isn't loaded yet
@@ -89,6 +91,7 @@ const Group = ({
         entries={entries}
         categories={categories}
         gameStarted={gameStarted}
+        mostRecentCategoryId={mostRecentCategoryId}
       />
       {group.id && <NewEntryModal groupId={routeParams.id} gameId={group.game} />}
       {currentUser.id === group.admin && <EditValuesModal group={group} />}
@@ -106,6 +109,7 @@ Group.propTypes = {
   routeParams: PropTypes.object,
   gameStarted: PropTypes.bool,
   gameEnded: PropTypes.bool,
+  mostRecentCategoryId: PropTypes.string,
   onClickNewEntry: PropTypes.func.isRequired,
 };
 
@@ -114,11 +118,12 @@ const mapStateToProps = (state, props) => {
     currentUser: state.currentUser,
     entries: rankedGroupEntriesSelector(state, props),
     group: currentGroupSelector(state, props),
-    categories: currentGroupCategoriesSelector(state, props),
+    categories: reorderedGroupCategoriesSelector(state, props),
     gameStarted: groupGameStartedSelector(state, props),
     gameEnded: groupGameEndedSelector(state, props),
     game: groupGameSelector(state, props),
     winningEntries: winningEntriesSelector(state, props),
+    mostRecentCategoryId: mostRecentlyScoredCategorySelector(state, props),
   };
 };
 

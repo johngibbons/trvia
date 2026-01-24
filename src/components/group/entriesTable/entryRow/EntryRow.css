@@ -1,0 +1,23 @@
+/* Rank change indicator styles */
+.EntryRow--rank-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.EntryRow--rank-change {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.EntryRow--rank-change-up {
+  color: #689f38;
+}
+
+.EntryRow--rank-change-down {
+  color: #d32f2f;
+}
+
+.EntryRow--rank-change-same {
+  color: #999;
+}

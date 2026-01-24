@@ -47,6 +47,7 @@
   overflow: hidden;
   white-space: normal;
   line-height: 1.4;
+  padding-left: 12px;
 }
 
 .EntriesTable--headerCol-avatar {
@@ -108,6 +109,7 @@
   white-space: normal;
   line-height: 1.4;
   font-size: 13px;
+  padding-left: 12px;
 }
 
 .EntriesTable--col-correct {
@@ -171,4 +173,31 @@
 
 .EntriesTable__status-icon {
   margin-right: 5px;
+}
+
+/* Recently scored category highlight */
+.EntriesTable--headerCol-recent,
+.EntriesTable--col-recent {
+  background: linear-gradient(
+    135deg,
+    rgba(183, 162, 97, 0.15) 0%,
+    rgba(183, 162, 97, 0.08) 100%
+  );
+  border-left: 3px solid #b7a261;
+  box-shadow: inset 0 0 12px rgba(183, 162, 97, 0.1);
+  animation: recentHighlight 0.5s ease-out;
+}
+
+.EntriesTable--headerCol-recent {
+  color: #8a7a4a;
+  font-weight: 700;
+}
+
+@keyframes recentHighlight {
+  0% {
+    background-color: rgba(183, 162, 97, 0.4);
+  }
+  100% {
+    background-color: transparent;
+  }
 }

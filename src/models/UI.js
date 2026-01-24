@@ -11,4 +11,5 @@ export const UI = Record({
   newEntryName: "",
   values: new Map(),
   nextLocation: "",
+  previousRanks: new Map(),
 });

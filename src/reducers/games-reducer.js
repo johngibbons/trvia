@@ -4,9 +4,10 @@ import {
   UPDATE_GAME,
   SAVE_PENDING_CATEGORY,
   DELETE_GAME,
+  UPDATE_ANSWERED_ORDER,
 } from "../actions/action-types";
 import Game from "../models/Game";
-import { fromJS, Map } from "immutable";
+import { fromJS, Map, List } from "immutable";
 
 const games = (state = new Map(), action) => {
   switch (action.type) {
@@ -32,6 +33,23 @@ const games = (state = new Map(), action) => {
       );
     case DELETE_GAME:
       return state.delete(action.payload.id);
+    case UPDATE_ANSWERED_ORDER: {
+      const { gameId, categoryId, isScoring } = action.payload;
+      const currentOrder = state.getIn([gameId, "answered_order"]) || new List();
+      if (isScoring) {
+        // Add category to the end if not already present
+        if (!currentOrder.includes(categoryId)) {
+          return state.setIn([gameId, "answered_order"], currentOrder.push(categoryId));
+        }
+      } else {
+        // Remove category from the list when un-scoring
+        return state.setIn(
+          [gameId, "answered_order"],
+          currentOrder.filter((id) => id !== categoryId)
+        );
+      }
+      return state;
+    }
     default:
       return state;
   }

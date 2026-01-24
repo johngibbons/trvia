@@ -80,3 +80,14 @@ export const groupGameEndedSelector = createSelector(
 export const entriesGameSelector = (state, props) => {
   return state.games.get(props.group.first().game);
 };
+
+export const mostRecentlyScoredCategorySelector = createSelector(
+  groupGameSelector,
+  (game) => {
+    const answeredOrder = game.answered_order;
+    if (!answeredOrder || answeredOrder.size === 0) {
+      return null;
+    }
+    return answeredOrder.last();
+  }
+);

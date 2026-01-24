@@ -17,6 +17,7 @@ const groups = (state = new Map(), action) => {
     case SET_GROUP_ATTR:
     case SET_GROUP: {
       const { group } = action.payload;
+      if (!group || !group.id) return state;
       return state.set(group.id, new Group(fromJS(group)));
     }
     case SAVE_GROUP_VALUES_SUCCESS: {

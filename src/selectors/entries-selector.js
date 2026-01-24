@@ -205,3 +205,83 @@ export const winningEntriesSelector = createSelector(
   rankedGroupEntriesSelector,
   (entries) => entries.filter((entry) => entry.rank === 1)
 );
+
+const previousRanksSelector = (state) => state.ui.previousRanks;
+
+// Selector to get ranks for all entries (used by saga, doesn't require props)
+export const allEntryRanksSelector = createSelector(
+  entriesSelector,
+  groupsSelector,
+  categoriesSelector,
+  gamesSelector,
+  (entries, groups, categories, games) => {
+    // Calculate ranks for all entries across all groups
+    let allRanks = new Map();
+
+    groups.forEach((group) => {
+      if (!group || !group.entries) return;
+
+      const rankedEntries = group.entries
+        .keySeq()
+        .map((key) => {
+          const entry = entries.get(key);
+          return entry
+            ? entry.set("score", entryScore(entry, categories, games, group))
+            : new Entry({ user: new User() });
+        })
+        .sort((entryA, entryB) => entryB.score - entryA.score)
+        .reduce(entryRankReducer, new List());
+
+      rankedEntries.forEach((entry) => {
+        if (entry.id) {
+          allRanks = allRanks.set(entry.id, entry.rank);
+        }
+      });
+    });
+
+    return allRanks;
+  }
+);
+
+export const entryRankChangeSelector = (state, entryId) => {
+  const previousRanks = previousRanksSelector(state);
+  const previousRank = previousRanks.get(entryId);
+
+  if (previousRank === undefined) {
+    return null;
+  }
+
+  const entries = state.entries;
+  const categories = state.categories;
+  const games = state.games;
+  const groups = state.groups;
+  const users = state.users;
+
+  // Find the group that contains this entry
+  const entry = entries.get(entryId);
+  if (!entry) return null;
+
+  const group = groups.get(entry.group);
+  if (!group) return null;
+
+  // Calculate current rank for this entry
+  const rankedEntries = group.entries
+    .keySeq()
+    .map((key) => {
+      const e = entries.get(key);
+      return e
+        ? e.set("score", entryScore(e, categories, games, group))
+        : new Entry({ user: new User() });
+    })
+    .sort((entryA, entryB) => entryB.score - entryA.score)
+    .reduce(entryRankReducer, new List());
+
+  const currentEntry = rankedEntries.find((e) => e.id === entryId);
+  const currentRank = currentEntry ? currentEntry.rank : null;
+
+  if (currentRank === null) return null;
+
+  if (currentRank < previousRank) return "up";
+  if (currentRank > previousRank) return "down";
+  return "same";
+};

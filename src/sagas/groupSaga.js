@@ -76,6 +76,10 @@ export function* fetchGroup(action) {
   const { id } = action.payload;
   try {
     const group = yield call(get, "groups", id);
+    if (!group) {
+      console.log(`Group ${id} not found`);
+      return;
+    }
     yield put(setGroup(group));
     yield call(fetchGameAndDependents, group.game);
     yield call(syncGroupAndDependents, null);

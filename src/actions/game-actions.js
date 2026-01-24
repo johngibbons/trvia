@@ -4,6 +4,7 @@ import {
   UPDATE_GAME,
   FETCH_GAME,
   SET_GAME,
+  UPDATE_ANSWERED_ORDER,
 } from "./action-types";
 
 export function createGame(name) {
@@ -43,5 +44,12 @@ export function setGame(game) {
   return {
     type: SET_GAME,
     payload: { game },
+  };
+}
+
+export function updateAnsweredOrder(gameId, categoryId, isScoring) {
+  return {
+    type: UPDATE_ANSWERED_ORDER,
+    payload: { gameId, categoryId, isScoring },
   };
 }
