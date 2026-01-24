@@ -20,6 +20,16 @@ export function getCurrentUser() {
 
 export function* checkAuthStatus(action) {
   try {
+    // In mock mode, currentUser is already set in the initial state
+    const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+    if (isMockMode) {
+      // Just call the next callback, auth is handled by mock data
+      if (action.payload && action.payload.next) {
+        yield call(action.payload.next, null);
+      }
+      return;
+    }
+
     const { nextState } = action.payload || {};
     const nextLocation = nextState && nextState.location && nextState.location.pathname;
     const user = yield call(getCurrentUser, null);

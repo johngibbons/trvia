@@ -75,6 +75,18 @@ export function* watchCreateGroup() {
 export function* fetchGroup(action) {
   const { id } = action.payload;
   try {
+    // Check if group already exists in store (useful for mock mode)
+    const existingGroups = yield select((state) => state.groups);
+    const existingGroup = existingGroups.get(id);
+
+    if (existingGroup) {
+      // Group already in store, just ensure game and dependents are loaded
+      yield call(fetchGameAndDependents, existingGroup.game);
+      yield call(syncGroupAndDependents, null);
+      return;
+    }
+
+    // Group not in store, fetch from Firebase
     const group = yield call(get, "groups", id);
     if (!group) {
       console.log(`Group ${id} not found`);
@@ -110,6 +122,12 @@ export function* syncUsers() {
 }
 
 export function* syncGroupAndDependents() {
+  // Skip syncing in mock mode - data is already in store
+  const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+  if (isMockMode) {
+    return;
+  }
+
   yield fork(syncGroup, null);
   yield fork(syncCategories, null);
   yield fork(syncEntries, null);

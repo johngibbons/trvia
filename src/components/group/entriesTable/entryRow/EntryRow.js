@@ -14,7 +14,7 @@ import {
 } from "../../../../selectors/entries-selector";
 import { entryGameStartedSelector } from "../../../../selectors/games-selector";
 import classNames from "classnames";
-import { Seq } from "immutable";
+import { Map, Seq } from "immutable";
 import WarningIcon from "@mui/icons-material/Warning";
 import CheckIcon from "@mui/icons-material/CheckCircle";
 
@@ -129,7 +129,10 @@ RankChangeIndicator.propTypes = {
 EntryRow.propTypes = {
   user: PropTypes.instanceOf(User),
   entry: PropTypes.object,
-  categories: PropTypes.instanceOf(Seq),
+  categories: PropTypes.oneOfType([
+    PropTypes.instanceOf(Map),
+    PropTypes.instanceOf(Seq),
+  ]),
   possibleScore: PropTypes.number,
   entryComplete: PropTypes.bool,
   gameStarted: PropTypes.bool,

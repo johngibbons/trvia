@@ -39,6 +39,7 @@
     "start": "react-scripts start",
     "start:mock": "REACT_APP_USE_MOCK_DATA=true react-scripts start",
     "start:mock:progress": "REACT_APP_USE_MOCK_DATA=true REACT_APP_MOCK_SCENARIO=inProgress react-scripts start",
+    "start:mock:early": "REACT_APP_USE_MOCK_DATA=true REACT_APP_MOCK_SCENARIO=earlyProgress react-scripts start",
     "start:mock:completed": "REACT_APP_USE_MOCK_DATA=true REACT_APP_MOCK_SCENARIO=completed react-scripts start",
     "build": "react-scripts build",
     "build:prod": "REACT_APP_ENVIRONMENT=production react-scripts build",

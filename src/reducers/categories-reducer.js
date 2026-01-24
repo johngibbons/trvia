@@ -43,10 +43,26 @@ const categories = (state = new Map(), action) => {
     }
     case TOGGLE_CORRECT_NOMINEE: {
       const { nominee } = action.payload;
-      if (state.getIn([nominee.category, "correctAnswer"]) === nominee.id) {
-        return state.deleteIn([nominee.category, "correctAnswer"]);
+      const currentCorrect = state.getIn([nominee.category, "correctAnswer"]);
+      const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+
+      if (isMockMode) {
+        console.log("🎭 Reducer: TOGGLE_CORRECT_NOMINEE for category", nominee.category);
+        console.log("🎭 Current correctAnswer:", currentCorrect, "→ Toggle to:", nominee.id);
+      }
+
+      if (currentCorrect === nominee.id) {
+        const newState = state.deleteIn([nominee.category, "correctAnswer"]);
+        if (isMockMode) {
+          console.log("🎭 Reducer: Removed correctAnswer");
+        }
+        return newState;
       } else {
-        return state.setIn([nominee.category, "correctAnswer"], nominee.id);
+        const newState = state.setIn([nominee.category, "correctAnswer"], nominee.id);
+        if (isMockMode) {
+          console.log("🎭 Reducer: Set correctAnswer to", nominee.id);
+        }
+        return newState;
       }
     }
     default:

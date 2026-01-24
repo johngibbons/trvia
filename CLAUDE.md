@@ -18,8 +18,9 @@ This is a React application for award show prediction games (Oscars, Golden Glob
 ```bash
 # Development
 npm start                    # Start dev server
-npm run start:mock           # Start with mock data
-npm run start:mock:progress  # Start with in-progress game scenario
+npm run start:mock           # Start with mock data (basic scenario)
+npm run start:mock:early     # Start with early game progress (3 categories answered)
+npm run start:mock:progress  # Start with in-progress game (10 categories answered)
 npm run start:mock:completed # Start with completed game scenario
 
 # Testing
@@ -33,6 +34,14 @@ npm run build               # Build for development
 npm run build:staging       # Build for staging
 npm run build:prod          # Build for production
 ```
+
+### Mock Mode Notes
+
+Mock mode persists state to localStorage, so changes you make (like scoring categories) will survive page refreshes and navigation:
+
+- **First run**: Loads fresh mock scenario data
+- **Subsequent runs**: Uses persisted state from your last session
+- **To reset**: Open browser console and run `localStorage.removeItem('TRVIA')` then refresh
 
 ## Project Structure
 

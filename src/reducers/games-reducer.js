@@ -36,17 +36,32 @@ const games = (state = new Map(), action) => {
     case UPDATE_ANSWERED_ORDER: {
       const { gameId, categoryId, isScoring } = action.payload;
       const currentOrder = state.getIn([gameId, "answered_order"]) || new List();
+      const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+
+      if (isMockMode) {
+        console.log("🎭 Reducer: UPDATE_ANSWERED_ORDER for game", gameId, "category", categoryId, "isScoring:", isScoring);
+        console.log("🎭 Current answered_order:", currentOrder.toJS());
+      }
+
       if (isScoring) {
         // Add category to the end if not already present
         if (!currentOrder.includes(categoryId)) {
-          return state.setIn([gameId, "answered_order"], currentOrder.push(categoryId));
+          const newState = state.setIn([gameId, "answered_order"], currentOrder.push(categoryId));
+          if (isMockMode) {
+            console.log("🎭 New answered_order:", newState.getIn([gameId, "answered_order"]).toJS());
+          }
+          return newState;
         }
       } else {
         // Remove category from the list when un-scoring
-        return state.setIn(
+        const newState = state.setIn(
           [gameId, "answered_order"],
           currentOrder.filter((id) => id !== categoryId)
         );
+        if (isMockMode) {
+          console.log("🎭 New answered_order:", newState.getIn([gameId, "answered_order"]).toJS());
+        }
+        return newState;
       }
       return state;
     }

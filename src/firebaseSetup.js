@@ -15,6 +15,11 @@ export function startFirebase(config) {
 }
 
 export function startFirebaseUI(ui) {
+  // In mock mode, ui will be null - just return null
+  if (!ui) {
+    return null;
+  }
+
   const uiConfig = {
     callbacks: {
       signInSuccessWithAuthResult(authResult) {
@@ -38,5 +43,9 @@ export function startFirebaseUI(ui) {
 }
 
 export function stopFirebaseUI(ui) {
+  // In mock mode, ui will be null
+  if (!ui) {
+    return;
+  }
   ui.reset();
 }

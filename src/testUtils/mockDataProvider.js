@@ -30,6 +30,9 @@ export const getMockInitialState = () => {
     case "inProgress":
       return createInProgressScenario();
 
+    case "earlyProgress":
+      return createEarlyProgressScenario();
+
     case "completed":
       return createCompletedScenario();
 
@@ -70,16 +73,32 @@ const createBasicScenario = () => {
 
 /**
  * Create an in-progress scenario (game partially scored)
+ * This scenario is designed to demonstrate rank changes as the game progresses.
+ *
+ * Current state (10 categories answered):
+ * - Alice: Leading with all correct picks (will stay #1)
+ * - Bob: Second place, picked first nominees (mixed results)
+ * - Charlie: Middle of the pack with random picks
+ * - Diana: Behind but could catch up
+ * - Eve: Last place with all wrong picks
+ *
+ * As more categories are answered, you'll see rank changes and indicators.
  */
 const createInProgressScenario = () => {
   const builder = new ScenarioBuilder()
     .withGame({ id: "game-2024", name: "96th Academy Awards" }, 23, 5)
     .withGroup("game-2024", { id: "group-office", name: "Office Pool" })
     .withGroupAdmin("group-office", "user-current")
-    .withEntry("group-office", { name: "Leading Entry" }, "all-first")
-    .withEntry("group-office", { name: "Second Place" }, "random")
-    .withEntry("group-office", { name: "Third Place" }, "all-last")
-    .withEntry("group-office", { name: "Fourth Place" }, "random")
+    // Alice - picks all first nominees (most will be correct in withGameInProgress)
+    .withEntry("group-office", { name: "Alice's Picks" }, "all-first")
+    // Bob - also picks first nominees, will tie with Alice
+    .withEntry("group-office", { name: "Bob's Predictions" }, "all-first")
+    // Charlie - random picks, some correct
+    .withEntry("group-office", { name: "Charlie's Guesses" }, "random")
+    // Diana - different strategy, picks last nominees (mostly wrong)
+    .withEntry("group-office", { name: "Diana's Choices" }, "all-last")
+    // Eve - also picks last, will tie for last with Diana
+    .withEntry("group-office", { name: "Eve's Entry" }, "all-last")
     .withGameInProgress("game-2024", 10)
     .withCurrentUser({
       id: "user-current",
@@ -87,7 +106,62 @@ const createInProgressScenario = () => {
       email: "demo@example.com",
     });
 
-  return builder.build();
+  const ids = builder.getIds();
+  const state = builder.build();
+
+  // Add previousRanks to show rank change indicators
+  // Simulate that Bob was previously #1, Alice was #2
+  state.ui = state.ui.set("previousRanks", fromJS({
+    [ids.entryIds[0]]: 2, // Alice was #2, now #1 (tie) - will show up arrow
+    [ids.entryIds[1]]: 1, // Bob was #1, now #1 (tie) - will show down arrow or same
+    [ids.entryIds[2]]: 3, // Charlie stayed #3
+    [ids.entryIds[3]]: 4, // Diana stayed #4
+    [ids.entryIds[4]]: 5, // Eve stayed #5
+  }));
+
+  return state;
+};
+
+/**
+ * Create an early progress scenario (only 3 categories answered)
+ * This scenario is great for testing how ranks change as more categories are answered.
+ *
+ * Current state (3 categories answered):
+ * - Rankings are still volatile
+ * - One correct answer can dramatically change positions
+ * - Great for testing the rank change indicators
+ */
+const createEarlyProgressScenario = () => {
+  const builder = new ScenarioBuilder()
+    .withGame({ id: "game-2024", name: "96th Academy Awards" }, 15, 5)
+    .withGroup("game-2024", { id: "group-office", name: "Office Pool" })
+    .withGroupAdmin("group-office", "user-current")
+    // Create entries with different picking strategies
+    .withEntry("group-office", { name: "Alice's Picks" }, "all-first")
+    .withEntry("group-office", { name: "Bob's Predictions" }, "all-first")
+    .withEntry("group-office", { name: "Charlie's Guesses" }, "random")
+    .withEntry("group-office", { name: "Diana's Choices" }, "random")
+    .withEntry("group-office", { name: "Eve's Entry" }, "all-last")
+    .withGameInProgress("game-2024", 3) // Only 3 categories answered
+    .withCurrentUser({
+      id: "user-current",
+      name: "Demo User",
+      email: "demo@example.com",
+    });
+
+  const ids = builder.getIds();
+  const state = builder.build();
+
+  // Add previousRanks showing dramatic changes
+  state.ui = state.ui.set("previousRanks", fromJS({
+    [ids.entryIds[0]]: 3, // Alice jumped from #3 to #1 - big up arrow
+    [ids.entryIds[1]]: 2, // Bob improved from #2 to #1
+    [ids.entryIds[2]]: 1, // Charlie dropped from #1 to #3 - down arrow
+    [ids.entryIds[3]]: 4, // Diana stayed #4
+    [ids.entryIds[4]]: 5, // Eve stayed last
+  }));
+
+  return state;
 };
 
 /**

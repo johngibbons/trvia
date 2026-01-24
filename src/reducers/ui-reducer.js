@@ -68,6 +68,10 @@ const ui = (state = new UI(), action) => {
         isAlertBarError: false,
       });
     case CAPTURE_RANKINGS:
+      const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+      if (isMockMode) {
+        console.log("💾 UI Reducer: CAPTURE_RANKINGS", action.payload.rankings.toJS());
+      }
       return state.set("previousRanks", action.payload.rankings);
     default:
       return state;
