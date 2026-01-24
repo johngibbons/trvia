@@ -282,30 +282,10 @@ export const entryRankChangeSelector = (state, entryId) => {
   const isProduction = process.env.NODE_ENV === "production";
   const shouldLog = isMockMode || isProduction;
 
-  const previousRanks = previousRanksSelector(state);
-
-  // Handle case where previousRanks doesn't exist (e.g., after loading from localStorage)
-  if (!previousRanks) {
-    if (shouldLog) {
-      console.log(`📊 entryRankChangeSelector(${entryId}): No previousRanks`);
-    }
-    return null;
-  }
-
-  const previousRank = previousRanks.get(entryId);
-
-  if (previousRank === undefined) {
-    if (shouldLog) {
-      console.log(`📊 entryRankChangeSelector(${entryId}): Entry not in previousRanks`);
-    }
-    return null;
-  }
-
   const entries = state.entries;
   const categories = state.categories;
   const games = state.games;
   const groups = state.groups;
-  const users = state.users;
 
   // Find the group that contains this entry
   const entry = entries.get(entryId);
@@ -314,8 +294,46 @@ export const entryRankChangeSelector = (state, entryId) => {
   const group = groups.get(entry.group);
   if (!group) return null;
 
-  // Calculate current rank for this entry
-  const rankedEntries = group.entries
+  const game = games.get(group.game);
+  if (!game) return null;
+
+  const answeredOrder = game.answered_order;
+
+  // If no categories have been scored yet, or only one, no indicators to show
+  if (!answeredOrder || answeredOrder.size === 0) {
+    if (shouldLog) {
+      console.log(`📊 entryRankChangeSelector(${entryId}): No answered_order, no indicators`);
+    }
+    return null;
+  }
+
+  // Get the most recently scored category (last in answered_order)
+  const mostRecentCategoryId = answeredOrder.last();
+
+  if (shouldLog) {
+    console.log(`📊 entryRankChangeSelector(${entryId}): Most recent category: ${mostRecentCategoryId}`);
+    console.log(`  answered_order:`, answeredOrder.toJS());
+  }
+
+  // Calculate ranks WITHOUT the most recent category (previous state)
+  const categoriesBeforeRecent = categories.deleteIn([mostRecentCategoryId, "correctAnswer"]);
+
+  const rankedEntriesBefore = group.entries
+    .keySeq()
+    .map((key) => {
+      const e = entries.get(key);
+      return e
+        ? e.set("score", entryScore(e, categoriesBeforeRecent, games, group))
+        : new Entry({ user: new User() });
+    })
+    .sort((entryA, entryB) => entryB.score - entryA.score)
+    .reduce(entryRankReducer, new List());
+
+  const entryBefore = rankedEntriesBefore.find((e) => e.id === entryId);
+  const previousRank = entryBefore ? entryBefore.rank : null;
+
+  // Calculate current rank WITH the most recent category
+  const rankedEntriesAfter = group.entries
     .keySeq()
     .map((key) => {
       const e = entries.get(key);
@@ -326,13 +344,13 @@ export const entryRankChangeSelector = (state, entryId) => {
     .sort((entryA, entryB) => entryB.score - entryA.score)
     .reduce(entryRankReducer, new List());
 
-  const currentEntry = rankedEntries.find((e) => e.id === entryId);
+  const currentEntry = rankedEntriesAfter.find((e) => e.id === entryId);
   const currentRank = currentEntry ? currentEntry.rank : null;
 
-  if (currentRank === null) return null;
+  if (currentRank === null || previousRank === null) return null;
 
   if (shouldLog) {
-    console.log(`📊 entryRankChangeSelector(${entryId}): previousRank=${previousRank}, currentRank=${currentRank}`);
+    console.log(`  previousRank=${previousRank}, currentRank=${currentRank}`);
   }
 
   if (currentRank < previousRank) return "up";
