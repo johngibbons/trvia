@@ -202,10 +202,7 @@ export function* toggleCorrectNominee(action) {
         yield put(captureRankings(currentRanks));
       }
 
-      // Update the answered order for the game (in Redux)
-      yield put(updateAnsweredOrder(nominee.game, nominee.category, isScoring));
-
-      // IMPORTANT: Also update answered_order in Firebase
+      // Calculate the new answered_order BEFORE dispatching the action
       const games = yield select((state) => state.games);
       const game = games.get(nominee.game);
 
@@ -228,12 +225,24 @@ export function* toggleCorrectNominee(action) {
         newOrder = currentOrder.filter(id => id !== nominee.category);
       }
 
-      console.log("🔥 Updating Firebase answered_order from", currentOrder.toJS(), "to", newOrder.toJS());
+      console.log("🔥 Calculated answered_order from", currentOrder.toJS(), "to", newOrder.toJS());
 
+      // Update the answered order for the game (in Redux)
+      // This updates the local state optimistically
+      yield put(updateAnsweredOrder(nominee.game, nominee.category, isScoring));
+
+      // Update Firebase with the calculated new order
       // Only update if the order actually changed
       if (!currentOrder.equals(newOrder)) {
+        console.log("🔥 Updating Firebase answered_order to", newOrder.toJS());
         yield call(API.updateGame, nominee.game, { answered_order: newOrder.toJS() });
         console.log("🔥 Firebase update complete");
+
+        // Verify the local state is in sync (for debugging)
+        const updatedGames = yield select((state) => state.games);
+        const updatedGame = updatedGames.get(nominee.game);
+        const updatedOrder = updatedGame?.answered_order || new List();
+        console.log("🔥 Redux state answered_order after update:", updatedOrder.toJS());
       } else {
         console.log("🔥 No change in answered_order, skipping Firebase update");
       }

@@ -41,40 +41,78 @@ When you select a nominee as the correct answer, you should see:
 ```
 🔥 Production mode: Toggling nominee [nomineeId] for category [categoryId]
 🔥 currentId: null isScoring: true
+🔥 Game object: {id: "...", name: "...", answered_order: []}
+🔥 Calculated answered_order from [] to ["cat-id"]
 🔥 Capturing ranks BEFORE scoring: {entryId1: 1, entryId2: 2, ...}
 💾 UI Reducer: CAPTURE_RANKINGS {entryId1: 1, entryId2: 2, ...}
-🔥 Updating Firebase answered_order from ["cat1", "cat2"] to ["cat1", "cat2", "cat3"]
+🎭 Reducer: UPDATE_ANSWERED_ORDER for game ... category ... isScoring: true
+🎭 Current answered_order: []
+🎭 New answered_order: ["cat-id"]
+🔥 Updating Firebase answered_order to ["cat-id"]
+🔥 Firebase update complete
+🔥 Redux state answered_order after update: ["cat-id"]
 ```
 
-Then when the component renders:
+Then when you navigate to the group page, you should see:
 
 ```
+📋 reorderedGroupCategoriesSelector:
+  answered_order: ["cat-id"]
+  mostRecentId: cat-id
+  Reordered categories (mostRecent moved to front): ["cat-id", "other-cat-1", "other-cat-2", ...]
 🏆 rankedGroupEntriesSelector called
   Group: [groupId]
-  Categories with correctAnswer: [{id: "cat1", correctAnswer: "nom1"}, ...]
+  Categories with correctAnswer: [{id: "cat-id", correctAnswer: "nom-id"}, ...]
   previousRanks: {entryId1: 1, entryId2: 2, ...}
   Ranked entries: [{id: "entryId1", name: "User 1", score: 5, rank: 1}, ...]
-📋 reorderedGroupCategoriesSelector:
-  answered_order: ["cat1", "cat2", "cat3"]
-  mostRecentId: cat3
-  Reordered categories (mostRecent moved to front): ["cat3", "cat1", "cat2"]
 📊 entryRankChangeSelector(entryId1): previousRank=2, currentRank=1
 ```
+
+**Key things to verify:**
+- ✅ `answered_order` should contain the category ID you just scored
+- ✅ `mostRecentId` should match that category ID
+- ✅ `Reordered categories` should show that category first in the array
+- ✅ The table should visually show that category column on the left
 
 ### 3. Common Issues & Solutions
 
 #### Categories Not Reordering
-**Symptom**: You see `answered_order: null or empty` in the console
+**Symptom**: You see `answered_order: null or empty` in the console when viewing the group page
+
+**Step 1: Check if Redux was updated**
+Look for these logs after selecting a nominee:
+```
+🎭 New answered_order: ["cat-id"]
+🔥 Redux state answered_order after update: ["cat-id"]
+```
+
+If you see empty arrays `[]` instead, the Redux update failed.
+
+**Step 2: Check if the group page sees the updated state**
+When you navigate to the group page, look for:
+```
+📋 reorderedGroupCategoriesSelector:
+  answered_order: ["cat-id"]
+```
+
+If you see `answered_order: null or empty`, the state isn't being passed to the selector.
 
 **Possible causes**:
-1. Firebase update failed - check for errors in console
-2. Game doesn't have `answered_order` field initialized
-3. Firebase rules blocking the update
+1. **Different game ID**: Master entry and group page are for different games
+   - Check the game ID in both URLs
+2. **Page cached**: Browser cached the old state
+   - Try hard refresh (Cmd+Shift+R or Ctrl+Shift+R)
+3. **Firebase update failed**: Check for errors in console
+4. **Firebase rules**: Rules might be blocking the update
+   - Check Firebase Database: `games/[gameId]/answered_order`
+   - Should be an array like `["cat1", "cat2", "cat3"]`
 
-**How to check**:
-- Look for Firebase errors in console
-- Check Firebase Database in console: `games/[gameId]/answered_order`
-- Should be an array like `["cat1", "cat2", "cat3"]`
+**Step 3: Check if the category is in the list**
+If answered_order has a value but categories don't reorder, look for:
+```
+mostRecent category not found in list
+```
+This means the category ID in answered_order doesn't match any category in the group.
 
 #### Rank Indicators Not Showing
 **Symptom**: You see `No previousRanks` or `Entry not in previousRanks`
