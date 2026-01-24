@@ -88,7 +88,6 @@ describe("Group", () => {
       preloadedState: scenario,
     });
 
-    // WinnerBanner shows either "Congratulations Champion!" or "Contratulations Champions!"
     const winnerText = screen.queryByText(/champion/i);
     expect(winnerText).toBeInTheDocument();
   });

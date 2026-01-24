@@ -40,8 +40,7 @@ describe("WinnerBanner", () => {
 
     render(<WinnerBanner winningEntries={winners} />);
 
-    // Note: There's a typo in the original component "Contratulations"
-    expect(screen.getByText("Contratulations Champions!")).toBeInTheDocument();
+    expect(screen.getByText("Congratulations Champions!")).toBeInTheDocument();
     expect(screen.getByText("Alice's Entry")).toBeInTheDocument();
     expect(screen.getByText("Bob's Entry")).toBeInTheDocument();
     expect(screen.getByText("Alice Smith")).toBeInTheDocument();
@@ -57,7 +56,7 @@ describe("WinnerBanner", () => {
 
     render(<WinnerBanner winningEntries={winners} />);
 
-    expect(screen.getByText("Contratulations Champions!")).toBeInTheDocument();
+    expect(screen.getByText("Congratulations Champions!")).toBeInTheDocument();
     expect(screen.getByText("Entry 1")).toBeInTheDocument();
     expect(screen.getByText("Entry 2")).toBeInTheDocument();
     expect(screen.getByText("Entry 3")).toBeInTheDocument();

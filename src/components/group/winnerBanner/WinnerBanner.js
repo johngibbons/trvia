@@ -10,7 +10,7 @@ const WinnerBanner = ({ winningEntries }) => {
       <div id="WinnerBanner" className="WinnerBanner">
         <div className="WinnerBanner--title">
           {winningEntries.size > 1
-            ? "Contratulations Champions!"
+            ? "Congratulations Champions!"
             : "Congratulations Champion!"}
         </div>
         {winningEntries.map((entry, i) => {
