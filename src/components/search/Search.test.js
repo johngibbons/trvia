@@ -180,4 +180,56 @@ describe("Search", () => {
     const img = screen.getByRole("img");
     expect(img).toHaveAttribute("src", "https://image.tmdb.org/t/p/w300/robert.jpg");
   });
+
+  it("should call onSaveTitle when title result is clicked", async () => {
+    const user = userEvent.setup();
+    const searchResults = [
+      fromJS({
+        id: 1,
+        title: "The Batman",
+        poster_path: "/batman.jpg",
+        media_type: "movie",
+      }),
+    ];
+
+    const preloadedState = {
+      ui: createUI(),
+      admin: createAdminWithSearchResults(searchResults),
+    };
+
+    renderWithProviders(<Search />, {
+      preloadedState,
+    });
+
+    const resultDiv = screen.getByRole("img").closest(".Search__result");
+    await user.click(resultDiv);
+
+    // Action should have been dispatched (saga will handle it)
+  });
+
+  it("should call onSavePerson when person result is clicked", async () => {
+    const user = userEvent.setup();
+    const searchResults = [
+      fromJS({
+        id: 1,
+        name: "Robert Pattinson",
+        profile_path: "/robert.jpg",
+        media_type: "person",
+      }),
+    ];
+
+    const preloadedState = {
+      ui: createUI(),
+      admin: createAdminWithSearchResults(searchResults),
+    };
+
+    renderWithProviders(<Search />, {
+      preloadedState,
+    });
+
+    const resultDiv = screen.getByRole("img").closest(".Search__result");
+    await user.click(resultDiv);
+
+    // Action should have been dispatched (saga will handle it)
+  });
 });

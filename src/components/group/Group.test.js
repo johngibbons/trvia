@@ -159,4 +159,21 @@ describe("Group", () => {
     // Check that the modal state has changed
     expect(store.getState().ui.modal).toBe("NEW_ENTRY");
   });
+
+  it("should dispatch openModal action when edit values is clicked", async () => {
+    const user = userEvent.setup();
+    const scenario = createGroupScenario()
+      .withGroupAdmin("group1", "user1")
+      .build();
+    const props = { routeParams: { id: "group1" } };
+
+    const { store } = renderWithProviders(<Group {...props} />, {
+      preloadedState: scenario,
+    });
+
+    await user.click(screen.getByRole("button", { name: "Edit Category Values" }));
+
+    // Check that the modal state has changed to EDIT_VALUES
+    expect(store.getState().ui.modal).toBe("EDIT_VALUES");
+  });
 });

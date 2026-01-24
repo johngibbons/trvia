@@ -1,6 +1,7 @@
 import { savePendingCategory } from "../actions/pending-game-actions";
 import {
   setCategories,
+  setCategory,
   toggleCorrectNominee,
 } from "../actions/category-actions";
 import Category from "../models/Category";
@@ -112,5 +113,69 @@ describe("categories reducer", () => {
       .set("category2", new Category());
 
     expect(reducer(initialState, action)).toEqual(expectedResult);
+  });
+
+  it("should toggle off correct answer when nominee is already set", () => {
+    const nominee = new Nominee({
+      id: "abc",
+      category: "category1",
+    });
+    const initialState = new Map()
+      .set("category1", new Category({ correctAnswer: "abc" }))
+      .set("category2", new Category());
+    const action = toggleCorrectNominee(nominee);
+    const expectedResult = new Map()
+      .set("category1", new Category())
+      .set("category2", new Category());
+
+    expect(reducer(initialState, action)).toEqual(expectedResult);
+  });
+
+  it("should set individual category", () => {
+    const category = {
+      id: "cat1",
+      name: "Best Picture",
+      nominees: {
+        nom1: true,
+        nom2: true,
+      },
+    };
+    const initialState = new Map();
+    const action = setCategory({ value: category });
+    const result = reducer(initialState, action);
+
+    expect(result.has("cat1")).toBe(true);
+    expect(result.getIn(["cat1", "name"])).toBe("Best Picture");
+    expect(result.getIn(["cat1", "nominees", "nom1"])).toBe(true);
+  });
+
+  it("should update existing category with setCategory", () => {
+    const initialState = new Map().set(
+      "cat1",
+      new Category({
+        id: "cat1",
+        name: "Old Name",
+        nominees: new Map({ nom1: true }),
+      })
+    );
+    const category = {
+      id: "cat1",
+      name: "Updated Name",
+      nominees: {
+        nom1: true,
+        nom2: true,
+      },
+    };
+    const action = setCategory({ value: category });
+    const result = reducer(initialState, action);
+
+    expect(result.getIn(["cat1", "name"])).toBe("Updated Name");
+    expect(result.getIn(["cat1", "nominees", "nom2"])).toBe(true);
+  });
+
+  it("should return current state for unknown action", () => {
+    const initialState = new Map().set("cat1", new Category({ id: "cat1" }));
+    const action = { type: "UNKNOWN_ACTION" };
+    expect(reducer(initialState, action)).toBe(initialState);
   });
 });
