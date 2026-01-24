@@ -4,6 +4,7 @@ import {
   CREATE_GAME_SUCCESS,
   FETCH_GAME,
   SET_GAME,
+  SET_GAME_ATTR,
 } from "./action-types";
 
 import {
@@ -12,6 +13,7 @@ import {
   updateGame,
   fetchGame,
   setGame,
+  setGameAttr,
 } from "./game-actions";
 
 describe("game actions", () => {
@@ -59,6 +61,18 @@ describe("game actions", () => {
       },
     };
     expect(setGame(game)).toEqual(expectedAction);
+  });
+
+  it("should create set game attr action from Firebase sync response", () => {
+    const game = { id: 1, name: "Some name", answered_order: ["cat1", "cat2"] };
+    const response = { key: "1", value: game };
+    const expectedAction = {
+      type: SET_GAME_ATTR,
+      payload: {
+        game,
+      },
+    };
+    expect(setGameAttr(response)).toEqual(expectedAction);
   });
 
   it("should create game update action", () => {

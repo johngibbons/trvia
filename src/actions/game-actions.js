@@ -4,6 +4,7 @@ import {
   UPDATE_GAME,
   FETCH_GAME,
   SET_GAME,
+  SET_GAME_ATTR,
   UPDATE_ANSWERED_ORDER,
 } from "./action-types";
 
@@ -44,6 +45,15 @@ export function setGame(game) {
   return {
     type: SET_GAME,
     payload: { game },
+  };
+}
+
+export function setGameAttr(response) {
+  return {
+    type: SET_GAME_ATTR,
+    payload: {
+      game: response.value,
+    },
   };
 }
 

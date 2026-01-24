@@ -16,6 +16,7 @@ export const UPDATE_GAME = "UPDATE_GAME";
 export const DELETE_GAME = "DELETE_GAME";
 export const FETCH_GAME = "FETCH_GAME";
 export const SET_GAME = "SET_GAME";
+export const SET_GAME_ATTR = "SET_GAME_ATTR";
 
 export const CREATE_NEW_CATEGORY = "CREATE_NEW_CATEGORY";
 export const UPDATE_CATEGORY = "UPDATE_CATEGORY";

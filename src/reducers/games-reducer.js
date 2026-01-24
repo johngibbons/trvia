@@ -1,6 +1,7 @@
 import {
   CREATE_GAME_SUCCESS,
   SET_GAME,
+  SET_GAME_ATTR,
   UPDATE_GAME,
   SAVE_PENDING_CATEGORY,
   DELETE_GAME,
@@ -16,6 +17,7 @@ const games = (state = new Map(), action) => {
         action.payload.gameId,
         new Game(fromJS({ ...action.payload.game, id: action.payload.gameId }))
       );
+    case SET_GAME_ATTR:
     case SET_GAME: {
       const { game } = action.payload;
 

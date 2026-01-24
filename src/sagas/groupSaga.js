@@ -15,7 +15,7 @@ import { syncUser } from "../actions/user-actions";
 import API from "../api";
 import { currentUserSelector } from "../selectors/current-user-selector";
 import { pendingValuesSelector } from "../selectors/ui-selector.js";
-import { fetchGameAndDependents, syncCategories } from "./gameSaga";
+import { fetchGameAndDependents, syncCategories, syncGames } from "./gameSaga";
 import {
   get,
   sync,
@@ -129,6 +129,7 @@ export function* syncGroupAndDependents() {
   }
 
   yield fork(syncGroup, null);
+  yield fork(syncGames, null);
   yield fork(syncCategories, null);
   yield fork(syncEntries, null);
   yield fork(syncUsers, null);

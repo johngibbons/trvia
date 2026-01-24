@@ -4,7 +4,7 @@ import {
   FETCH_GAME,
   TOGGLE_CORRECT_NOMINEE,
 } from "../actions/action-types";
-import { createGameSuccess, setGame, updateAnsweredOrder } from "../actions/game-actions";
+import { createGameSuccess, setGame, setGameAttr, updateAnsweredOrder } from "../actions/game-actions";
 import { setCategories, setCategory } from "../actions/category-actions";
 import { setNominees } from "../actions/nominee-actions";
 import { captureRankings } from "../actions/ui-actions";
@@ -259,5 +259,11 @@ export function* watchSelectCorrectNominee() {
 export function* syncCategories() {
   yield fork(sync, "categories", {
     [CHILD_CHANGED]: setCategory,
+  });
+}
+
+export function* syncGames() {
+  yield fork(sync, "games", {
+    [CHILD_CHANGED]: setGameAttr,
   });
 }

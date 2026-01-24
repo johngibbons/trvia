@@ -1,4 +1,4 @@
-import { createGameSuccess, setGame } from "../actions/game-actions";
+import { createGameSuccess, setGame, setGameAttr } from "../actions/game-actions";
 import {
   UPDATE_GAME,
   SAVE_PENDING_CATEGORY,
@@ -34,6 +34,43 @@ describe("games reducer", () => {
     );
     const expectedResult = currentState.set(2, game);
     expect(reducer(currentState, action)).toEqual(expectedResult);
+  });
+
+  it("should update game from Firebase sync (SET_GAME_ATTR)", () => {
+    const currentState = new Map().set(
+      "game1",
+      new Game({ id: "game1", name: "Original Name", answered_order: List() })
+    );
+    const updatedGameData = {
+      id: "game1",
+      name: "Original Name",
+      answered_order: ["cat1", "cat2"],
+    };
+    const response = { key: "game1", value: updatedGameData };
+    const action = setGameAttr(response);
+    const result = reducer(currentState, action);
+
+    expect(result.getIn(["game1", "id"])).toBe("game1");
+    expect(result.getIn(["game1", "name"])).toBe("Original Name");
+    expect(result.getIn(["game1", "answered_order"]).toJS()).toEqual(["cat1", "cat2"]);
+  });
+
+  it("should handle migration from old answeredOrder structure on SET_GAME_ATTR", () => {
+    const currentState = new Map().set(
+      "game1",
+      new Game({ id: "game1", name: "Game Name", answered_order: List() })
+    );
+    const oldGameData = {
+      id: "game1",
+      name: "Game Name",
+      answeredOrder: { key1: "nominee1", key2: "nominee2" }, // Old structure
+    };
+    const response = { key: "game1", value: oldGameData };
+    const action = setGameAttr(response);
+    const result = reducer(currentState, action);
+
+    // Should migrate to empty array since old structure can't be converted
+    expect(result.getIn(["game1", "answered_order"]).toJS()).toEqual([]);
   });
 
   it("should update game", () => {
