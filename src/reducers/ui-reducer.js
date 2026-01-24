@@ -69,7 +69,8 @@ const ui = (state = new UI(), action) => {
       });
     case CAPTURE_RANKINGS:
       const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
-      if (isMockMode) {
+      const isProduction = process.env.NODE_ENV === "production";
+      if (isMockMode || isProduction) {
         console.log("💾 UI Reducer: CAPTURE_RANKINGS", action.payload.rankings.toJS());
       }
       return state.set("previousRanks", action.payload.rankings);

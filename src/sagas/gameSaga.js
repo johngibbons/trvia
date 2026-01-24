@@ -168,10 +168,8 @@ export function* toggleCorrectNominee(action) {
       yield put(updateAnsweredOrder(nominee.game, nominee.category, isScoring));
       console.log("🎭 Dispatched UPDATE_ANSWERED_ORDER");
     } else {
-      // Normal Firebase mode
-      // Capture current rankings before scoring changes
-      const currentRanks = yield select(allEntryRanksSelector);
-      yield put(captureRankings(currentRanks));
+      // Production Firebase mode
+      console.log("🔥 Production mode: Toggling nominee", nominee.id, "for category", nominee.category);
 
       const currentId = yield call(
         get,
@@ -180,14 +178,49 @@ export function* toggleCorrectNominee(action) {
       );
       const isScoring = nominee.id !== currentId;
 
+      console.log("🔥 currentId:", currentId, "isScoring:", isScoring);
+
+      // Capture rankings BEFORE making the change
+      if (isScoring) {
+        // About to score a category - capture current ranks as "before"
+        const currentRanks = yield select(allEntryRanksSelector);
+        console.log("🔥 Capturing ranks BEFORE scoring:", currentRanks.toJS());
+        yield put(captureRankings(currentRanks));
+      }
+
+      // Make the Firebase change
       if (nominee.id === currentId) {
         yield call(remove, `/categories/${nominee.category}`, "correctAnswer");
       } else {
         yield call(API.selectCorrectNominee, nominee);
       }
 
-      // Update the answered order for the game
+      // After unscoring, capture new ranks as "before" for next change
+      if (!isScoring) {
+        const currentRanks = yield select(allEntryRanksSelector);
+        console.log("🔥 Capturing ranks AFTER unscoring:", currentRanks.toJS());
+        yield put(captureRankings(currentRanks));
+      }
+
+      // Update the answered order for the game (in Redux)
       yield put(updateAnsweredOrder(nominee.game, nominee.category, isScoring));
+
+      // IMPORTANT: Also update answered_order in Firebase
+      const games = yield select((state) => state.games);
+      const game = games.get(nominee.game);
+      const currentOrder = game?.answered_order || new List();
+
+      let newOrder;
+      if (isScoring) {
+        newOrder = currentOrder.includes(nominee.category)
+          ? currentOrder
+          : currentOrder.push(nominee.category);
+      } else {
+        newOrder = currentOrder.filter(id => id !== nominee.category);
+      }
+
+      console.log("🔥 Updating Firebase answered_order from", currentOrder.toJS(), "to", newOrder.toJS());
+      yield call(API.updateGame, nominee.game, { answered_order: newOrder.toJS() });
     }
   } catch (errors) {
     console.log("❌ Error in toggleCorrectNominee:", errors);

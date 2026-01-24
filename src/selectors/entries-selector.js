@@ -101,8 +101,10 @@ export const rankedGroupEntriesSelector = createSelector(
   (state) => state.ui.previousRanks, // Get previousRanks directly from state
   (entries, group, categories, games, users, previousRanks) => {
     const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+    const isProduction = process.env.NODE_ENV === "production";
+    const shouldLog = isMockMode || isProduction;
 
-    if (isMockMode) {
+    if (shouldLog) {
       console.log("🏆 rankedGroupEntriesSelector called");
       console.log(`  Group: ${group ? group.id : 'null'}`);
       console.log(`  Categories with correctAnswer:`, categories.filter(cat => cat.correctAnswer).map((cat, id) => ({ id, correctAnswer: cat.correctAnswer })).toJS());
@@ -124,7 +126,7 @@ export const rankedGroupEntriesSelector = createSelector(
       .sort((entryA, entryB) => entryB.score - entryA.score)
       .reduce(entryRankReducer, new List());
 
-    if (isMockMode) {
+    if (shouldLog) {
       console.log("  Ranked entries:", rankedEntries.map(e => ({ id: e.id, name: e.user?.name || 'Unknown', score: e.score, rank: e.rank })).toJS());
     }
 
@@ -277,11 +279,14 @@ export const allEntryRanksSelector = createSelector(
 
 export const entryRankChangeSelector = (state, entryId) => {
   const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+  const isProduction = process.env.NODE_ENV === "production";
+  const shouldLog = isMockMode || isProduction;
+
   const previousRanks = previousRanksSelector(state);
 
   // Handle case where previousRanks doesn't exist (e.g., after loading from localStorage)
   if (!previousRanks) {
-    if (isMockMode) {
+    if (shouldLog) {
       console.log(`📊 entryRankChangeSelector(${entryId}): No previousRanks`);
     }
     return null;
@@ -290,7 +295,7 @@ export const entryRankChangeSelector = (state, entryId) => {
   const previousRank = previousRanks.get(entryId);
 
   if (previousRank === undefined) {
-    if (isMockMode) {
+    if (shouldLog) {
       console.log(`📊 entryRankChangeSelector(${entryId}): Entry not in previousRanks`);
     }
     return null;
@@ -326,7 +331,7 @@ export const entryRankChangeSelector = (state, entryId) => {
 
   if (currentRank === null) return null;
 
-  if (isMockMode) {
+  if (shouldLog) {
     console.log(`📊 entryRankChangeSelector(${entryId}): previousRank=${previousRank}, currentRank=${currentRank}`);
   }
 

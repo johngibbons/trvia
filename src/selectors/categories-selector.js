@@ -116,22 +116,46 @@ export const reorderedGroupCategoriesSelector = createSelector(
   currentGroupCategoriesSelector,
   groupGameSelector,
   (categories, game) => {
+    const isProduction = process.env.NODE_ENV === "production";
+    const isMockMode = process.env.REACT_APP_USE_MOCK_DATA === "true";
+    const shouldLog = isMockMode || isProduction;
+
     if (!categories || categories.size === 0) return categories;
 
     const answeredOrder = game?.answered_order;
+    if (shouldLog) {
+      console.log("📋 reorderedGroupCategoriesSelector:");
+      console.log("  answered_order:", answeredOrder ? answeredOrder.toJS() : "null or empty");
+    }
+
     if (!answeredOrder || answeredOrder.size === 0) return categories;
 
     const mostRecentId = answeredOrder.last();
+    if (shouldLog) {
+      console.log("  mostRecentId:", mostRecentId);
+    }
+
     const categoriesList = categories.toList();
 
     // Find and remove the most recent category
     const recentIndex = categoriesList.findIndex(cat => cat?.id === mostRecentId);
-    if (recentIndex === -1) return categories;
+    if (recentIndex === -1) {
+      if (shouldLog) {
+        console.log("  mostRecent category not found in list");
+      }
+      return categories;
+    }
 
     const recentCategory = categoriesList.get(recentIndex);
     const withoutRecent = categoriesList.delete(recentIndex);
 
     // Put it at the front
-    return withoutRecent.unshift(recentCategory).toKeyedSeq();
+    const reordered = withoutRecent.unshift(recentCategory).toKeyedSeq();
+
+    if (shouldLog) {
+      console.log("  Reordered categories (mostRecent moved to front):", reordered.map(c => c.id).toJS());
+    }
+
+    return reordered;
   }
 );
