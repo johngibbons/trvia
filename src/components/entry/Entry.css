@@ -96,16 +96,21 @@
 }
 
 .Entry--group-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
-  color: #666;
+  color: #333;
   text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .Entry--group-link:hover {
-  filter: brightness(75%);
+  background-color: #eee;
 }
 
 .Entry--completion-progress {
