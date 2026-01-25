@@ -3,28 +3,9 @@ import { renderWithProviders } from "../../../../testUtils/testUtils";
 import { screen } from "@testing-library/react";
 import EntryRow from "./EntryRow";
 import { ScenarioBuilder } from "../../../../testUtils/factories";
-import { fromJS } from "immutable";
+import { List } from "immutable";
 
 describe("EntryRow - Rank Change Indicators", () => {
-  let scenario;
-  let ids;
-  let entry;
-  let categories;
-
-  beforeEach(() => {
-    const builder = new ScenarioBuilder()
-      .withGame({ id: "game1", name: "Test Game" }, 3, 5)
-      .withGroup("game1", { id: "group1", name: "Test Group" })
-      .withEntry("group1", { id: "entry-1", name: "Test Entry" }, "all-first")
-      .withEntry("group1", { id: "entry-2", name: "Other Entry" }, "all-last")
-      .withGameInProgress("game1", 1); // Score first category
-
-    scenario = builder.build();
-    ids = builder.getIds();
-    entry = scenario.entries.get(ids.entryIds[0]);
-    categories = scenario.categories;
-  });
-
   describe("when game has not started", () => {
     it("should not display rank change indicator", () => {
       const builderNoScore = new ScenarioBuilder()
@@ -48,7 +29,7 @@ describe("EntryRow - Rank Change Indicators", () => {
         { preloadedState: scenarioNoScore }
       );
 
-      // Should show checkmark/warning icon, not rank
+      // Should show checkmark/warning icon, not rank indicators
       expect(screen.queryByText("↑")).not.toBeInTheDocument();
       expect(screen.queryByText("↓")).not.toBeInTheDocument();
       expect(screen.queryByText("–")).not.toBeInTheDocument();
@@ -57,14 +38,33 @@ describe("EntryRow - Rank Change Indicators", () => {
 
   describe("when entry rank improved", () => {
     it("should display up arrow (↑)", () => {
-      const stateWithPreviousRanks = {
+      // Create scenario where Entry 2 moves from rank 2 to rank 1
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first")
+        .withEntry("group1", { id: "entry-2", name: "Entry 2" }, "all-last");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      // Score cat0 with first nominee, then cat1 with last nominee
+      // After cat0: Entry 1 has 1 pt (rank 1), Entry 2 has 0 (rank 2)
+      // After cat1: both have 1 pt (tied at rank 1)
+      // Entry 2 goes from rank 2 → rank 1 = "up"
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const entry2 = scenario.entries.get(ids.entryIds[1]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry2.selections.get(ids.categoryIds[1]);
+
+      const stateWithTwoScored = {
         ...scenario,
-        ui: scenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [ids.entryIds[0]]: 2, // Was rank 2, now rank 1
-            [ids.entryIds[1]]: 1,
-          })
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1]])
         ),
       };
 
@@ -72,13 +72,13 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={entry.toJS()}
-              categories={categories}
-              mostRecentCategoryId={null}
+              entry={entry2.toJS()}
+              categories={stateWithTwoScored.categories}
+              mostRecentCategoryId={ids.categoryIds[1]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithPreviousRanks }
+        { preloadedState: stateWithTwoScored }
       );
 
       expect(screen.getByText("↑")).toBeInTheDocument();
@@ -86,14 +86,29 @@ describe("EntryRow - Rank Change Indicators", () => {
     });
 
     it("should display rank number alongside up arrow", () => {
-      const stateWithPreviousRanks = {
+      // Same scenario as above
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first")
+        .withEntry("group1", { id: "entry-2", name: "Entry 2" }, "all-last");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const entry2 = scenario.entries.get(ids.entryIds[1]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry2.selections.get(ids.categoryIds[1]);
+
+      const stateWithTwoScored = {
         ...scenario,
-        ui: scenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [ids.entryIds[0]]: 3, // Was rank 3
-            [ids.entryIds[1]]: 1,
-          })
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1]])
         ),
       };
 
@@ -101,43 +116,64 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={entry.toJS()}
-              categories={categories}
-              mostRecentCategoryId={null}
+              entry={entry2.toJS()}
+              categories={stateWithTwoScored.categories}
+              mostRecentCategoryId={ids.categoryIds[1]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithPreviousRanks }
+        { preloadedState: stateWithTwoScored }
       );
 
       // Should show both rank and indicator
-      expect(screen.getByText("1")).toBeInTheDocument(); // Current rank
+      expect(screen.getByText("1")).toBeInTheDocument(); // Current rank (tied for 1st)
       expect(screen.getByText("↑")).toBeInTheDocument();
     });
   });
 
   describe("when entry rank worsened", () => {
     it("should display down arrow (↓)", () => {
-      // Create a fresh builder where entry will actually drop in rank
-      const builderWithDrop = new ScenarioBuilder()
-        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+      // Create scenario where entry drops from rank 1 to rank 2
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 3, 5)
         .withGroup("game1", { id: "group1", name: "Test Group" })
-        .withEntry("group1", { name: "Entry Drop" }, "all-last") // Will pick last
-        .withEntry("group1", { name: "Entry Win" }, "all-first") // Will pick first
-        .withGameInProgress("game1", 1); // Score first category with first nominee
+        .withEntry("group1", { name: "Entry 1" }, "all-first")
+        .withEntry("group1", { name: "Entry 2" }, "all-last");
 
-      const dropScenario = builderWithDrop.build();
-      const dropIds = builderWithDrop.getIds();
+      const scenario = builder.build();
+      const ids = builder.getIds();
 
-      // Entry that picked last was rank 1, but after scoring it drops to rank 2
-      const stateWithDrop = {
-        ...dropScenario,
-        ui: dropScenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [dropIds.entryIds[0]]: 1, // Was rank 1
-            [dropIds.entryIds[1]]: 1, // Was also rank 1 (tied)
-          })
+      // Score cat0 and cat1 with first nominee, then cat2 with first nominee too
+      // After cat0: Entry 1 rank 1 (1 pt), Entry 2 rank 2 (0 pts)
+      // After cat1: Entry 1 rank 1 (2 pts), Entry 2 rank 2 (0 pts)
+      // Entry 2 stays at rank 2 = "same"
+      // We need a different scenario for "down"
+
+      // Let's score cat0 with last, cat1 with first
+      // After cat0: Entry 2 rank 1 (1 pt), Entry 1 rank 2 (0 pts)
+      // After cat1: Entry 1 rank 1 (1 pt), Entry 2 rank 2 (1 pt) - wait, they'd be tied
+
+      // Better: score 3 categories
+      // cat0: first nominee (Entry 1 gets it)
+      // cat1: last nominee (Entry 2 gets it)
+      // cat2: first nominee (Entry 1 gets it)
+      // After cat1: both tied at rank 1 (1 pt each)
+      // After cat2: Entry 1 rank 1 (2 pts), Entry 2 rank 2 (1 pt)
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const entry2 = scenario.entries.get(ids.entryIds[1]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry2.selections.get(ids.categoryIds[1]);
+      const nominee2 = entry1.selections.get(ids.categoryIds[2]);
+
+      const stateWithThreeScored = {
+        ...scenario,
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1)
+          .setIn([ids.categoryIds[2], "correctAnswer"], nominee2),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1], ids.categoryIds[2]])
         ),
       };
 
@@ -145,13 +181,13 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={stateWithDrop.entries.get(dropIds.entryIds[0]).toJS()}
-              categories={dropScenario.categories}
-              mostRecentCategoryId={null}
+              entry={entry2.toJS()}
+              categories={stateWithThreeScored.categories}
+              mostRecentCategoryId={ids.categoryIds[2]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithDrop }
+        { preloadedState: stateWithThreeScored }
       );
 
       expect(screen.getByText("↓")).toBeInTheDocument();
@@ -161,14 +197,29 @@ describe("EntryRow - Rank Change Indicators", () => {
 
   describe("when entry rank stayed the same", () => {
     it("should display dash (–)", () => {
-      const stateWithPreviousRanks = {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first")
+        .withEntry("group1", { id: "entry-2", name: "Entry 2" }, "all-last");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      // Score both categories with first nominee
+      // Entry 1 stays at rank 1 throughout
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry1.selections.get(ids.categoryIds[1]);
+
+      const stateWithTwoScored = {
         ...scenario,
-        ui: scenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [ids.entryIds[0]]: 1, // Stays at rank 1
-            [ids.entryIds[1]]: 2,
-          })
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1]])
         ),
       };
 
@@ -176,13 +227,13 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={entry.toJS()}
-              categories={categories}
-              mostRecentCategoryId={null}
+              entry={entry1.toJS()}
+              categories={stateWithTwoScored.categories}
+              mostRecentCategoryId={ids.categoryIds[1]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithPreviousRanks }
+        { preloadedState: stateWithTwoScored }
       );
 
       expect(screen.getByText("–")).toBeInTheDocument();
@@ -190,37 +241,53 @@ describe("EntryRow - Rank Change Indicators", () => {
     });
   });
 
-  describe("when previousRanks is not available", () => {
+  describe("when answered_order is not available", () => {
     it("should not display any rank change indicator", () => {
-      const stateWithoutPreviousRanks = {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      // No answered_order - no indicators
+      const stateWithoutAnsweredOrder = {
         ...scenario,
-        ui: scenario.ui.set("previousRanks", null),
+        games: scenario.games.setIn(["game1", "answered_order"], List()),
       };
 
       renderWithProviders(
         <table>
           <tbody>
             <EntryRow
-              entry={entry.toJS()}
-              categories={categories}
+              entry={scenario.entries.get(ids.entryIds[0]).toJS()}
+              categories={scenario.categories}
               mostRecentCategoryId={null}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithoutPreviousRanks }
+        { preloadedState: stateWithoutAnsweredOrder }
       );
 
-      // Should show rank but no indicator
-      expect(screen.getByText("1")).toBeInTheDocument(); // Rank
+      // Should show rank (1) but no indicator
       expect(screen.queryByText("↑")).not.toBeInTheDocument();
       expect(screen.queryByText("↓")).not.toBeInTheDocument();
       expect(screen.queryByText("–")).not.toBeInTheDocument();
     });
 
-    it("should not crash when previousRanks is undefined", () => {
-      const stateWithUndefinedRanks = {
+    it("should not crash when answered_order is undefined", () => {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      const stateWithUndefinedAnsweredOrder = {
         ...scenario,
-        ui: scenario.ui.delete("previousRanks"),
+        games: scenario.games.deleteIn(["game1", "answered_order"]),
       };
 
       expect(() => {
@@ -228,13 +295,13 @@ describe("EntryRow - Rank Change Indicators", () => {
           <table>
             <tbody>
               <EntryRow
-                entry={entry.toJS()}
-                categories={categories}
+                entry={scenario.entries.get(ids.entryIds[0]).toJS()}
+                categories={scenario.categories}
                 mostRecentCategoryId={null}
               />
             </tbody>
           </table>,
-          { preloadedState: stateWithUndefinedRanks }
+          { preloadedState: stateWithUndefinedAnsweredOrder }
         );
       }).not.toThrow();
     });
@@ -242,14 +309,28 @@ describe("EntryRow - Rank Change Indicators", () => {
 
   describe("styling and CSS classes", () => {
     it("should apply correct CSS class for up indicator", () => {
-      const stateWithPreviousRanks = {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first")
+        .withEntry("group1", { id: "entry-2", name: "Entry 2" }, "all-last");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const entry2 = scenario.entries.get(ids.entryIds[1]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry2.selections.get(ids.categoryIds[1]);
+
+      const stateWithTwoScored = {
         ...scenario,
-        ui: scenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [ids.entryIds[0]]: 2,
-            [ids.entryIds[1]]: 1,
-          })
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1]])
         ),
       };
 
@@ -257,13 +338,13 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={entry.toJS()}
-              categories={categories}
-              mostRecentCategoryId={null}
+              entry={entry2.toJS()}
+              categories={stateWithTwoScored.categories}
+              mostRecentCategoryId={ids.categoryIds[1]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithPreviousRanks }
+        { preloadedState: stateWithTwoScored }
       );
 
       const upArrow = screen.getByText("↑");
@@ -272,25 +353,30 @@ describe("EntryRow - Rank Change Indicators", () => {
     });
 
     it("should apply correct CSS class for down indicator", () => {
-      // Create scenario where entry actually drops
-      const builderWithDrop = new ScenarioBuilder()
-        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 3, 5)
         .withGroup("game1", { id: "group1", name: "Test Group" })
-        .withEntry("group1", { name: "Entry Drop" }, "all-last")
-        .withEntry("group1", { name: "Entry Win" }, "all-first")
-        .withGameInProgress("game1", 1);
+        .withEntry("group1", { name: "Entry 1" }, "all-first")
+        .withEntry("group1", { name: "Entry 2" }, "all-last");
 
-      const dropScenario = builderWithDrop.build();
-      const dropIds = builderWithDrop.getIds();
+      const scenario = builder.build();
+      const ids = builder.getIds();
 
-      const stateWithDrop = {
-        ...dropScenario,
-        ui: dropScenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [dropIds.entryIds[0]]: 1,
-            [dropIds.entryIds[1]]: 1,
-          })
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const entry2 = scenario.entries.get(ids.entryIds[1]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry2.selections.get(ids.categoryIds[1]);
+      const nominee2 = entry1.selections.get(ids.categoryIds[2]);
+
+      const stateWithThreeScored = {
+        ...scenario,
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1)
+          .setIn([ids.categoryIds[2], "correctAnswer"], nominee2),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1], ids.categoryIds[2]])
         ),
       };
 
@@ -298,13 +384,13 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={stateWithDrop.entries.get(dropIds.entryIds[0]).toJS()}
-              categories={dropScenario.categories}
-              mostRecentCategoryId={null}
+              entry={entry2.toJS()}
+              categories={stateWithThreeScored.categories}
+              mostRecentCategoryId={ids.categoryIds[2]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithDrop }
+        { preloadedState: stateWithThreeScored }
       );
 
       const downArrow = screen.getByText("↓");
@@ -313,14 +399,27 @@ describe("EntryRow - Rank Change Indicators", () => {
     });
 
     it("should apply correct CSS class for same indicator", () => {
-      const stateWithPreviousRanks = {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first")
+        .withEntry("group1", { id: "entry-2", name: "Entry 2" }, "all-last");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry1.selections.get(ids.categoryIds[1]);
+
+      const stateWithTwoScored = {
         ...scenario,
-        ui: scenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [ids.entryIds[0]]: 1,
-            [ids.entryIds[1]]: 2,
-          })
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1]])
         ),
       };
 
@@ -328,13 +427,13 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={entry.toJS()}
-              categories={categories}
-              mostRecentCategoryId={null}
+              entry={entry1.toJS()}
+              categories={stateWithTwoScored.categories}
+              mostRecentCategoryId={ids.categoryIds[1]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithPreviousRanks }
+        { preloadedState: stateWithTwoScored }
       );
 
       const sameIndicator = screen.getByText("–");
@@ -345,14 +444,27 @@ describe("EntryRow - Rank Change Indicators", () => {
 
   describe("accessibility", () => {
     it("should have rank container for proper semantic structure", () => {
-      const stateWithPreviousRanks = {
+      const builder = new ScenarioBuilder()
+        .withGame({ id: "game1", name: "Test Game" }, 2, 5)
+        .withGroup("game1", { id: "group1", name: "Test Group" })
+        .withEntry("group1", { id: "entry-1", name: "Entry 1" }, "all-first")
+        .withEntry("group1", { id: "entry-2", name: "Entry 2" }, "all-last");
+
+      const scenario = builder.build();
+      const ids = builder.getIds();
+
+      const entry1 = scenario.entries.get(ids.entryIds[0]);
+      const nominee0 = entry1.selections.get(ids.categoryIds[0]);
+      const nominee1 = entry1.selections.get(ids.categoryIds[1]);
+
+      const stateWithTwoScored = {
         ...scenario,
-        ui: scenario.ui.set(
-          "previousRanks",
-          fromJS({
-            [ids.entryIds[0]]: 2,
-            [ids.entryIds[1]]: 1,
-          })
+        categories: scenario.categories
+          .setIn([ids.categoryIds[0], "correctAnswer"], nominee0)
+          .setIn([ids.categoryIds[1], "correctAnswer"], nominee1),
+        games: scenario.games.setIn(
+          ["game1", "answered_order"],
+          List([ids.categoryIds[0], ids.categoryIds[1]])
         ),
       };
 
@@ -360,19 +472,19 @@ describe("EntryRow - Rank Change Indicators", () => {
         <table>
           <tbody>
             <EntryRow
-              entry={entry.toJS()}
-              categories={categories}
-              mostRecentCategoryId={null}
+              entry={entry1.toJS()}
+              categories={stateWithTwoScored.categories}
+              mostRecentCategoryId={ids.categoryIds[1]}
             />
           </tbody>
         </table>,
-        { preloadedState: stateWithPreviousRanks }
+        { preloadedState: stateWithTwoScored }
       );
 
       const rankContainer = container.querySelector(".EntryRow--rank-container");
       expect(rankContainer).toBeInTheDocument();
       expect(rankContainer).toContainHTML("1"); // Rank
-      expect(rankContainer).toContainHTML("↑"); // Indicator
+      expect(rankContainer).toContainHTML("–"); // Indicator (same)
     });
   });
 });
