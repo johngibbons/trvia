@@ -3,8 +3,40 @@
   overflow: auto;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 24px;
+}
+
+/* Hide scrollbar by default, show on hover */
+.EntriesTable::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.EntriesTable::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.EntriesTable::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.EntriesTable:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.EntriesTable::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox scrollbar styling */
+.EntriesTable {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.EntriesTable:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
 .EntriesTable--table {
