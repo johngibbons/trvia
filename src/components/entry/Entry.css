@@ -63,10 +63,9 @@
 .Entry--score {
   margin: 0;
   color: #b7a261;
-  border: 1px solid #b7a261;
-  padding: 16px 24px;
+  padding: 0;
   white-space: nowrap;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
 }
 
