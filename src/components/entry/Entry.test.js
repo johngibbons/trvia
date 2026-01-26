@@ -163,7 +163,9 @@ describe("Entry", () => {
       preloadedState: scenario,
     });
 
-    expect(screen.getByText(/back to/i)).toBeInTheDocument();
+    // There are now two "Back to" links (top and footer), verify both exist
+    const backToLinks = screen.getAllByText(/back to/i);
+    expect(backToLinks.length).toBe(2);
     // Office Pool appears multiple times, verify at least one exists
     expect(screen.getAllByText("Office Pool").length).toBeGreaterThan(0);
   });

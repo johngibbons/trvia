@@ -62,13 +62,14 @@ const Entry = ({
           width: `calc(${score}/${totalPossible} * 100%)`,
         }}
       />
+      <Link to={`/groups/${entry.group}`} className={"Entry--group-link"}>
+        <BackArrowIcon sx={{ fontSize: 14, marginRight: "5px" }} />
+        Back to <span className="Entry--group-link-name">{group.name}</span>
+      </Link>
       <h5 className="Entry--game-name">{game.name}</h5>
       <div className="Entry--title-container">
         <div className="Entry--title-left">
           <h1 className="Entry--entry-name">{entry.name}</h1>
-          <Link to={`/groups/${entry.group}`} className={"Entry--group-link"}>
-            {group.name}
-          </Link>
         </div>
         <div className="Entry--score-container">
           {hasStarted ? (
