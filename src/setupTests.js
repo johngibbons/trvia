@@ -37,6 +37,9 @@ jest.mock("firebase/database", () => ({
   off: jest.fn(),
   push: jest.fn().mockReturnValue({ key: "mock-key" }),
   remove: jest.fn().mockResolvedValue(undefined),
+  query: jest.fn((...args) => ({ _query: args })),
+  orderByChild: jest.fn((child) => ({ _orderByChild: child })),
+  equalTo: jest.fn((value) => ({ _equalTo: value })),
 }));
 
 // Mock Firebase app module
