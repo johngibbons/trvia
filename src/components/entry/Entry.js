@@ -63,7 +63,7 @@ const Entry = ({
         }}
       />
       <Link to={`/groups/${entry.group}`} className={"Entry--group-link"}>
-        <BackArrowIcon sx={{ fontSize: 16, marginRight: "6px" }} />
+        <BackArrowIcon sx={{ fontSize: 14, marginRight: "5px" }} />
         Back to <span className="Entry--group-link-name">{group.name}</span>
       </Link>
       <h5 className="Entry--game-name">{game.name}</h5>
