@@ -67,7 +67,8 @@ const Entry = ({
         <div className="Entry--title-left">
           <h1 className="Entry--entry-name">{entry.name}</h1>
           <Link to={`/groups/${entry.group}`} className={"Entry--group-link"}>
-            {group.name}
+            <BackArrowIcon sx={{ fontSize: 16, marginRight: "6px" }} />
+            Back to <span className="Entry--group-link-name">{group.name}</span>
           </Link>
         </div>
         <div className="Entry--score-container">

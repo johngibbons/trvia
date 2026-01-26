@@ -98,9 +98,9 @@
 .Entry--group-link {
   display: inline-flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
-  color: #333;
+  color: #666;
   text-decoration: none;
   padding: 6px 12px;
   border-radius: 6px;
@@ -111,6 +111,12 @@
 
 .Entry--group-link:hover {
   background-color: #eee;
+}
+
+.Entry--group-link-name {
+  font-weight: 600;
+  margin-left: 4px;
+  color: #333;
 }
 
 .Entry--completion-progress {
