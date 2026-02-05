@@ -1,5 +1,6 @@
 import {
   entriesSelector,
+  groupEntriesSelector,
   rankedGroupEntriesSelector,
   currentEntrySelector,
   entryVisibleSelector,
@@ -32,6 +33,78 @@ import {
 
 // Create a base empty state for tests
 const getBaseState = () => createInitialState({});
+
+describe("groupEntriesSelector", () => {
+  it("should return empty Map when currentGroup is undefined", () => {
+    // This test would have caught the production bug where accessing
+    // .get("entries") on undefined currentGroup caused a crash
+    const state = {
+      ...getBaseState(),
+      entries: new Map().set("entry1", new Entry({ id: "entry1" })),
+      groups: new Map(), // No groups - currentGroup will be undefined
+    };
+    const props = { routeParams: { id: "nonexistent-group" } };
+
+    const result = groupEntriesSelector(state, props);
+
+    expect(result).toEqual(new Map());
+    expect(result.size).toBe(0);
+  });
+
+  it("should filter out entries that exist in group but not in entries state", () => {
+    // This test would have caught the production bug where entries referenced
+    // in a group but not yet loaded caused "Cannot read 'selections' of undefined"
+    const entries = new Map().set(
+      "entry1",
+      new Entry({
+        id: "entry1",
+        selections: fromJS({ cat1: "nominee1" }),
+      })
+    );
+    // Group references entry1 (loaded) and entry2 (NOT loaded)
+    const group = new Group({
+      id: "group1",
+      entries: fromJS({ entry1: true, entry2: true }),
+    });
+
+    const state = {
+      ...getBaseState(),
+      entries,
+      groups: new Map().set("group1", group),
+    };
+    const props = { routeParams: { id: "group1" } };
+
+    const result = groupEntriesSelector(state, props);
+
+    // Should only include entry1, not the undefined entry2
+    expect(result.size).toBe(1);
+    expect(result.has("entry1")).toBe(true);
+    expect(result.has("entry2")).toBe(false);
+  });
+
+  it("should return all entries when all are loaded", () => {
+    const entries = new Map()
+      .set("entry1", new Entry({ id: "entry1" }))
+      .set("entry2", new Entry({ id: "entry2" }));
+    const group = new Group({
+      id: "group1",
+      entries: fromJS({ entry1: true, entry2: true }),
+    });
+
+    const state = {
+      ...getBaseState(),
+      entries,
+      groups: new Map().set("group1", group),
+    };
+    const props = { routeParams: { id: "group1" } };
+
+    const result = groupEntriesSelector(state, props);
+
+    expect(result.size).toBe(2);
+    expect(result.has("entry1")).toBe(true);
+    expect(result.has("entry2")).toBe(true);
+  });
+});
 
 describe("entries selector", () => {
   it("should select all entries", () => {
@@ -470,6 +543,52 @@ describe("entries selector", () => {
   });
 
   describe("peoplesChoicesSelector", () => {
+    it("should handle missing entries gracefully without crashing", () => {
+      // This test would have caught the production bug:
+      // "Cannot read properties of undefined (reading 'selections')"
+      // When entries are referenced in group.entries but not loaded in state
+      const entries = new Map().set(
+        "entry1",
+        new Entry({
+          id: "entry1",
+          selections: fromJS({ cat1: "nominee1" }),
+        })
+      );
+      // Group references entry1 (exists) and entry2 (does NOT exist)
+      const group = new Group({
+        id: "group1",
+        entries: fromJS({ entry1: true, entry2: true }),
+      });
+
+      const state = {
+        ...getBaseState(),
+        entries,
+        groups: new Map().set("group1", group),
+      };
+      const props = { routeParams: { id: "group1" } };
+
+      // This should NOT throw "Cannot read properties of undefined (reading 'selections')"
+      const result = peoplesChoicesSelector(state, props);
+
+      // Should work with the entries that do exist
+      expect(result.get("cat1").get("nominee1")).toBe(1);
+    });
+
+    it("should return empty Map when currentGroup is undefined", () => {
+      // This test ensures peoplesChoicesSelector handles undefined group
+      const state = {
+        ...getBaseState(),
+        entries: new Map().set("entry1", new Entry({ id: "entry1" })),
+        groups: new Map(), // No groups
+      };
+      const props = { routeParams: { id: "nonexistent-group" } };
+
+      // Should NOT throw "Cannot read properties of undefined (reading 'get')"
+      const result = peoplesChoicesSelector(state, props);
+
+      expect(result).toEqual(new Map());
+    });
+
     it("should return the most popular pick for each category", () => {
       const entries = new Map()
         .set(
