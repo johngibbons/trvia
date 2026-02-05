@@ -55,10 +55,13 @@ const entryRankReducer = (entries, curr) => {
 export const groupEntriesSelector = createSelector(
   entriesSelector,
   currentGroupSelector,
-  (entries, currentGroup) =>
-    currentGroup
+  (entries, currentGroup) => {
+    if (!currentGroup) return new Map();
+    return currentGroup
       .get("entries")
       .mapEntries(([key, val]) => [key, entries.get(key)])
+      .filter((entry) => entry !== undefined);
+  }
 );
 
 export const peoplesChoicesSelector = createSelector(
