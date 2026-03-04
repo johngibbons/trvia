@@ -1,6 +1,6 @@
 import { signInSuccess, fetchOrCreateUser } from "./actions/user-actions";
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider, EmailAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, EmailAuthProvider } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import store from "./store";
 
@@ -26,15 +26,14 @@ export function startFirebaseUI(ui) {
         const currentUser = authResult.user;
         store.dispatch(signInSuccess(currentUser));
         store.dispatch(fetchOrCreateUser(currentUser));
-        const nextLocation = store.getState().ui.nextLocation;
-        window.location.href = nextLocation || "/";
+        // Don't redirect here — let the fetchOrCreateUser saga handle
+        // the redirect after the user record is created/fetched.
         return false;
       },
     },
     signInFlow: "popup",
     signInOptions: [
       GoogleAuthProvider.PROVIDER_ID,
-      FacebookAuthProvider.PROVIDER_ID,
       EmailAuthProvider.PROVIDER_ID,
     ],
   };
