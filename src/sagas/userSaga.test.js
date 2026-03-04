@@ -9,7 +9,7 @@ import {
 import { FETCH_USER, FETCH_OR_CREATE_USER } from "../actions/action-types";
 import * as actions from "../actions/user-actions";
 
-import { fork, takeLatest, call, put } from "redux-saga/effects";
+import { fork, takeLatest, call, put, select } from "redux-saga/effects";
 import API from "../api";
 import { get } from "./firebase-saga";
 import User from "../models/User";
@@ -87,7 +87,7 @@ describe("user saga", () => {
   });
 
   describe("fetchOrCreateUser", () => {
-    it("should fetch existing user", () => {
+    it("should fetch existing user and redirect", () => {
       const firebaseUser = {
         uid: "user1",
         displayName: "Test User",
@@ -109,9 +109,16 @@ describe("user saga", () => {
       expect(generator.next(existingUser).value).toEqual(
         put(actions.setUser(existingUser))
       );
+
+      // Select nextLocation and redirect
+      const selectEffect = generator.next().value;
+      expect(selectEffect).toHaveProperty("SELECT");
+      // Provide null nextLocation — should redirect to "/"
+      generator.next(null);
+      expect(window.location.href).toBe("/");
     });
 
-    it("should create new user if not found", () => {
+    it("should create new user if not found and redirect", () => {
       const firebaseUser = {
         uid: "user1",
         displayName: "Test User",
@@ -138,6 +145,12 @@ describe("user saga", () => {
 
       // Put setUser with new user
       expect(generator.next().value).toEqual(put(actions.setUser(newUser)));
+
+      // Select nextLocation and redirect
+      const selectEffect = generator.next().value;
+      expect(selectEffect).toHaveProperty("SELECT");
+      generator.next("/groups/123");
+      expect(window.location.href).toBe("/groups/123");
     });
 
     it("should handle errors gracefully", () => {

@@ -25,6 +25,9 @@ const RequireAuth = ({ children }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const currentUserId = useSelector((state) => state.currentUser.get("id"));
+  const userLoaded = useSelector(
+    (state) => currentUserId && state.users.has(currentUserId)
+  );
 
   useEffect(() => {
     if (!currentUserId) {
@@ -32,8 +35,8 @@ const RequireAuth = ({ children }) => {
     }
   }, [currentUserId, dispatch, location.pathname]);
 
-  if (!currentUserId) {
-    return null; // or a loading spinner
+  if (!currentUserId || !userLoaded) {
+    return null; // wait for full user record to load
   }
 
   return children;

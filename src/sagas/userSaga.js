@@ -1,6 +1,6 @@
 import { FETCH_USER, FETCH_OR_CREATE_USER } from "../actions/action-types";
 import { setUser } from "../actions/user-actions";
-import { call, fork, takeLatest, put } from "redux-saga/effects";
+import { call, fork, takeLatest, put, select } from "redux-saga/effects";
 import { get } from "./firebase-saga";
 import Api from "../api";
 import User from "../models/User";
@@ -42,6 +42,9 @@ export function* fetchOrCreateUser(action) {
       yield call(Api.createUser, newUser);
       yield put(setUser(newUser));
     }
+    // Redirect after user record is ready
+    const nextLocation = yield select((state) => state.ui.nextLocation);
+    window.location.href = nextLocation || "/";
   } catch (errors) {
     console.log(errors);
   }
