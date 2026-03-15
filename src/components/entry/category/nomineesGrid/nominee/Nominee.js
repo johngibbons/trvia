@@ -106,19 +106,21 @@ Nominee.propTypes = {
   onClickNominee: PropTypes.func.isRequired,
 };
 
+const isMasterCheck = (nominee, routeParams) =>
+  routeParams?.id && nominee.game?.toLowerCase() === routeParams.id.toLowerCase();
+
 const mapStateToProps = (state, props) => {
   return {
     hasStarted: gameStartedSelector(state, props),
-    isMaster: props.nominee.game === props.routeParams.id,
+    isMaster: isMasterCheck(props.nominee, props.routeParams),
   };
 };
 
 const mapDispatchToProps = (dispatch, props) => {
   return {
-    onClickNominee:
-      props.nominee.game === props.routeParams.id
-        ? (_, nominee) => dispatch(toggleCorrectNominee(nominee))
-        : (entryId, nominee) => {
+    onClickNominee: isMasterCheck(props.nominee, props.routeParams)
+      ? (_, nominee) => dispatch(toggleCorrectNominee(nominee))
+      : (entryId, nominee) => {
             dispatch(selectNominee(entryId, nominee));
           },
   };

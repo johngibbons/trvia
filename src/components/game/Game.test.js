@@ -32,4 +32,18 @@ describe("Game", () => {
 
     expect(screen.getByText("97th Academy Awards")).toBeInTheDocument();
   });
+
+  it("should render game name with case-insensitive route id", () => {
+    const game = createGame({ id: "2026Oscars", name: "98th Academy Awards" });
+    const preloadedState = {
+      games: Map({ "2026Oscars": game }),
+    };
+    const props = { routeParams: { id: "2026oscars" } };
+
+    renderWithProviders(<Game {...props} />, {
+      preloadedState,
+    });
+
+    expect(screen.getByText("98th Academy Awards")).toBeInTheDocument();
+  });
 });

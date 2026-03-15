@@ -62,6 +62,19 @@ describe("MasterEntry", () => {
     expect(categoryElements.length).toBe(3);
   });
 
+  it("should render categories with case-insensitive route id", () => {
+    const scenario = createMasterEntryScenario().build();
+    const props = { routeParams: { id: "GAME1" } };
+
+    const { container } = renderWithProviders(<MasterEntry {...props} />, {
+      preloadedState: scenario,
+    });
+
+    expect(screen.getByText("97th Academy Awards")).toBeInTheDocument();
+    const categoryElements = container.querySelectorAll(".Category");
+    expect(categoryElements.length).toBe(3);
+  });
+
   it("should display correct answer selections when present", () => {
     const builder = createMasterEntryScenario();
     const scenario = builder.withGameInProgress("game1", 1).build();

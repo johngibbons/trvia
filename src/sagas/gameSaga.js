@@ -12,7 +12,7 @@ import { allEntryRanksSelector } from "../selectors/entries-selector";
 import API from "../api";
 import { ref, query, orderByChild, equalTo, get as firebaseGet } from "firebase/database";
 import { database } from "../firebaseSetup";
-import { get, sync, remove, CHILD_CHANGED } from "./firebase-saga";
+import { get, getAll, sync, remove, CHILD_CHANGED } from "./firebase-saga";
 import { Map, List } from "immutable";
 import Entry from "../models/Entry";
 import User from "../models/User";
@@ -48,7 +48,24 @@ export function* fetchGameAndDependents(gameId) {
   }
 
   // Need to fetch from Firebase
-  const game = yield call(get, "games", gameId);
+  let game = yield call(get, "games", gameId);
+  if (!game) {
+    // Browser may lowercase the URL path, so try fetching all games
+    // and find a case-insensitive match
+    const allGames = yield call(getAll, "games");
+    if (allGames) {
+      const matchingKey = Object.keys(allGames).find(
+        (key) => key.toLowerCase() === gameId.toLowerCase()
+      );
+      if (matchingKey) {
+        game = allGames[matchingKey];
+      }
+    }
+    if (!game) {
+      console.error(`Game not found in Firebase: ${gameId}`);
+      return;
+    }
+  }
   yield put(setGame(game));
   const categoriesQuery = query(
     ref(database, "categories"),

@@ -21,6 +21,16 @@ describe("game selector", () => {
     expect(currentGameSelector(state, props)).toEqual(currentGame);
   });
 
+  it("should select current game with case-insensitive match", () => {
+    const props = { routeParams: { id: "2026oscars" } };
+    const currentGame = new Game({ id: "2026Oscars", name: "2026 Oscars" });
+    const state = {
+      ...store.getState(),
+      games: new Map().set("2026Oscars", currentGame),
+    };
+    expect(currentGameSelector(state, props)).toEqual(currentGame);
+  });
+
   it("should select entry game", () => {
     const entryId = 1;
     const gameId = 2;
