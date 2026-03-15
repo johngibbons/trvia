@@ -8,8 +8,14 @@ const categoriesSelector = (state) => state.categories;
 const currentGroupSelector = (state, props) =>
   state.groups.get(props.routeParams.id);
 
-export const currentGameSelector = (state, props) =>
-  state.games.get(props.routeParams.id) || new Game();
+export const currentGameSelector = (state, props) => {
+  const id = props.routeParams.id;
+  const direct = state.games.get(id);
+  if (direct) return direct;
+  // Case-insensitive fallback (browser may lowercase URL path)
+  const match = state.games.find((_, key) => key.toLowerCase() === id.toLowerCase());
+  return match || new Game();
+};
 
 export const entryGameSelector = createSelector(
   currentEntrySelector,
