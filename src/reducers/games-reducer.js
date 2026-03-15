@@ -21,6 +21,10 @@ const games = (state = new Map(), action) => {
     case SET_GAME: {
       const { game } = action.payload;
 
+      if (!game) {
+        return state;
+      }
+
       // If game is already a Game Record (from test), just set it
       if (game instanceof Game) {
         return state.set(game.id, game);
