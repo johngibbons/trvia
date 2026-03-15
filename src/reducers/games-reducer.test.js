@@ -55,6 +55,20 @@ describe("games reducer", () => {
     expect(result.getIn(["game1", "answered_order"]).toJS()).toEqual(["cat1", "cat2"]);
   });
 
+  it("should handle null game from Firebase sync without crashing", () => {
+    const currentState = new Map().set(
+      "game1",
+      new Game({ id: "game1", name: "Existing Game" })
+    );
+    const response = { key: "game1", value: null };
+    const action = setGameAttr(response);
+    const result = reducer(currentState, action);
+
+    // Should return state unchanged
+    expect(result).toBe(currentState);
+    expect(result.getIn(["game1", "name"])).toBe("Existing Game");
+  });
+
   it("should handle migration from old answeredOrder structure on SET_GAME_ATTR", () => {
     const currentState = new Map().set(
       "game1",
